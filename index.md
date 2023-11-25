@@ -12,10 +12,11 @@ Welcome to our Grade 7 course page. Here you will find important dates, class ma
 <!--- To access the schoology page use this code: HRGC-TB6H-K38HK. ---> 
 
 ### Homework
-* **November 22-28** Finish Algebra 4 packet in FULL. 
-  
+* **November 22-28** Finish Algebra 4 and Algebra 3 packet in FULL.
+* **November 22- December 5** Finish D1 Chapter 5 in FULL.
+
 ### Important Dates 
-* **Unit 1 Test:** 
+* **Unit Test (Algebra):** December 6 
 
 
 
