@@ -14,6 +14,7 @@ Welcome to our Grade 7 course page. Here you will find important dates, class ma
 ### Homework
 * **November 22-28** Finish Algebra 4 and Algebra 3 packet in FULL.
 * **November 22- December 5** Finish D1 Chapter 5 in FULL.
+* **December 11-22** Finish in class class practice problems. Finish Algebra 5 handout. 
 
 ### Important Dates 
 * **Unit Test (Algebra):** December 6 
