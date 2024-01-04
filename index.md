@@ -18,7 +18,7 @@ Welcome to our Grade 7 course page. Here you will find important dates, class ma
 * **January 2 - 14** Finish algebra 6 handout. 
 
 ### Important Dates 
-* **Unit Test (Algebra mechanics):** January 4
+* **Unit Test (Algebra mechanics):** January 10
 
 
 
