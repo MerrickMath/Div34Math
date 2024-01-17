@@ -15,10 +15,12 @@ Welcome to our Grade 7 course page. Here you will find important dates, class ma
 * **November 22-28** Finish Algebra 4 and Algebra 3 packet in FULL.
 * **November 22- December 5** Finish D1 Chapter 5 in FULL.
 * **December 11-22** Finish in class class practice problems. Finish Algebra 5 / D1 Chapter 6.
-* **January 2 - 14** Finish algebra 6 handout. 
+* **January 2 - 14** Finish algebra 6 handout.
+* **January 15 - 22** Finish additional algebra handout, complete any remaining problems from algebra 6 and D1 Chapter 6. 
 
 ### Important Dates 
-* **Unit Test (Solving Equations):** January 10
+* **Unit Test (Solving Equations, Algebra 4/5 and D1 Chapter 6):** January 10
+* **Unit Test (Word Problems, D1 Chapter 6, and Algebra 6):** January 25
 
 
 
