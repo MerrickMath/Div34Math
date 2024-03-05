@@ -21,12 +21,13 @@ Welcome to our Grade 7 course page. Here you will find important dates, class ma
 * **January 28 - February 7** Finish Algebra 7.
 * **February 8 - 13** D1 Chapter 12.1
 * **February 15 - 26** Finish D1 Chapter 12. Finish practice Pascal. 
+* **Feb 26 - March 5** Finish area puzzles (Test Wednessday) 
   
 ### Important Dates 
 * **Unit Test (Solving Equations, Algebra 4/5 and D1 Chapter 6):** January 10
 * **Unit Test (Word Problems, D1 Chapter 6, and Algebra 6):** January 25
 * **Unit Test (Algebra 7):** February 8 
-
+* **Unit Test (Area/Perimeter):** March 6
 
   
 
