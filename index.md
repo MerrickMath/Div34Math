@@ -25,13 +25,15 @@ Welcome to our Grade 7 course page. Here you will find important dates, class ma
 * **March 8 - 12** Finish Chapter 7.1
 * **March 12 - 18** Finish up to end of 7.4
 * **March 22 - 28** Chapter 7 finished to completion. First page algebra 8 (this will be given on Monday). 
-   
+* **April 1 - 10** Algebra 8 D2 Chapter 4.1
+    
 ### Important Dates 
 * **Unit Test (Solving Equations, Algebra 4/5 and D1 Chapter 6):** January 10
 * **Unit Test (Word Problems, D1 Chapter 6, and Algebra 6):** January 25
 * **Unit Test (Algebra 7):** February 8 
 * **Unit Test (Area/Perimeter):** March 6
 * **Unit Test (rate/ratio):** March 28
+* **Unit Test (Algebra 8 / D2 Chapter 4):** April 11 
 
   
 
