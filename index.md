@@ -28,14 +28,17 @@ Welcome to our Grade 7 course page. Here you will find important dates, class ma
 * **April 1 - 10** Algebra 8 D2 Chapter 4.1
 * **April 11 - 17** Revise questions from Algebra 8 / Chapter 4.1
 * **April 17 - 29** Revise questions from Algebra 8. Mixed Bag revision problems. Work on chapter 9 (9.1/9.2). 
-    
+* **May 1 - 12** Finish ALL problems in chapter 9. Chapter 13.1/13.2. 
+      
 ### Important Dates 
 * **Unit Test (Solving Equations, Algebra 4/5 and D1 Chapter 6):** January 10
 * **Unit Test (Word Problems, D1 Chapter 6, and Algebra 6):** January 25
 * **Unit Test (Algebra 7):** February 8 
 * **Unit Test (Area/Perimeter):** March 6
 * **Unit Test (rate/ratio):** March 28
-* **Unit Test (Algebra 8 / D2 Chapter 4):** April 11 
+* **Unit Test (Algebra 8 / D2 Chapter 4):** April 11
+* **Unit Test (Chapter 9):** May 9
+* **Unit Test (Chapter 13):** May 16 
 
   
 
