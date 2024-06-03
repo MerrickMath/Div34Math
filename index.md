@@ -41,6 +41,7 @@ Welcome to our Grade 7 course page. Here you will find important dates, class ma
 * **Unit Test (Algebra 8 / D2 Chapter 4):** April 11
 * **Unit Test (Chapter 9):** May 14
 * **Unit Test (Chapter 13):** May 24
+* **Unit Test (Chapter 13 Retest):** June 6
   
 
 
