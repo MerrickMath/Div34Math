@@ -12,12 +12,11 @@ Welcome to our Grade 8 course page. Here you will find important dates, class ma
 <!--- To access the schoology page use this code: HRGC-TB6H-K38HK. ---> 
 
 ### Homework
-* **September 5-9** 
+* **September 5-9:** Finish exercises up to chapter 5.3
      
 ### Important Dates 
-* **Unit Test (Solving Equations, Algebra 4/5 and D1 Chapter 6):** January 10
-* **Unit Test (Word Problems, D1 Chapter 6, and Algebra 6):** January 25
-* **Unit Test (Algebra 7):** February 8 
+* **Unit Test 1 (Coordinates and Lines):** 
+
 
 
 
