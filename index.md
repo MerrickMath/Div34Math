@@ -16,7 +16,7 @@ Welcome to our Grade 8 course page. Here you will find important dates, class ma
 * **September 9-16:** Finish exercises up to 5.4 
      
 ### Important Dates 
-* **Unit Test 1 (Coordinates and Lines):** September 23
+* **Unit Test 1 (Coordinates and Lines):** September 24
 
 
 
