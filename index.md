@@ -16,7 +16,8 @@ Welcome to our Grade 8 course page. Here you will find important dates, class ma
 * **September 9-16:** Finish exercises up to 5.4
 * **September 16-23:** Finish entire chapter 5. Complete additional in class assigned exercises (draw lines with two points, solve systems of equations).
 * **September 16 - October 1:** Finish chapter 11 handout (in full) 
-* **September 16 - October 1:** Transformation Exercises (Test Tuesday) 
+* **September 16 - October 1:** Transformation Exercises (Test Tuesday)
+* **October 8 - October 15:** Finish up to chapter 2.4 
     
 ### Important Dates 
 * **Unit Test 1 (Coordinates and Lines):** September 24
