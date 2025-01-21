@@ -24,7 +24,9 @@ Welcome to our Grade 8 course page. Here you will find important dates, class ma
 * **Nov 19-25:** Finish D2 Chapter 7 booklet (test Wedensday) 
 * **Nov 26 - Dec 10:** Finish all Pythagoraas and Trigonometry handouts (test Thursday)
 * **Dec 11 - Dec 16:** Finish D1 Chapter 11 Handout (Test Wednesday) 
-* **January 6 - January 13:** Finish D2 Chapter 1  
+* **January 6 - January 13:** Finish D2 Chapter 1
+* **January 13 - January 21:** Finish D1 Chapter 14 (similarity) 
+* **January 21 - January 24:** Finish D1 Chapter 10 (polygons)
      
 ### Important Dates 
 * **Unit Test 1 (Coordinates and Lines):** September 24
@@ -33,7 +35,8 @@ Welcome to our Grade 8 course page. Here you will find important dates, class ma
 * **Unit Test 4 (Inequalities):** November 27
 * **Unit Test 5 (Pythagoras/Trig):** December 12
 * **Unit Test 6 (Symmetry):** December 18
-* **Unit Test 7 (Symmetry):** January 16 
-  
+* **Unit Test 7 (Expoonents):** January 16
+* **Unit Test 7 RETEST (Expoonents):** Week of Jan 27 in testing center. 
+* **Unit Test 8 (Symmetry):** January 30 
 
 
