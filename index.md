@@ -29,7 +29,8 @@ Welcome to our Grade 8 course page. Here you will find important dates, class ma
 * **January 21 - January 24:** Finish D1 Chapter 10 (Polygons)
 * **January 24 - Feb 3:** Finish D2 Chapter 8 (Congruence and Similarity)
 * **Feb 24 - March 3:** Finish ALL Circle Geomety Handouts
-    
+* **Mrach 10 - March 27:** Finish all curriculum reviews
+  
 ### Important Dates 
 * **Unit Test 1 (Coordinates and Lines):** September 24
 * **Unit Test 2 (Transformations):** October 8
@@ -41,5 +42,6 @@ Welcome to our Grade 8 course page. Here you will find important dates, class ma
 * **Unit Test 7 RETEST (Expoonents):** Week of Jan 27 in testing center. 
 * **Unit Test 8 (Symmetry):** February 3
 * **Unit Test 9 (Circle Geometry):** March 5
-
+* **Practice PAT 9:** March 18
+* **Practice PAT 9:** March 27
 
