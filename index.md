@@ -43,5 +43,5 @@ Welcome to our Grade 8 course page. Here you will find important dates, class ma
 * **Unit Test 8 (Symmetry):** February 3
 * **Unit Test 9 (Circle Geometry):** March 5
 * **Practice PAT 9:** March 18
-* **Practice PAT 9:** March 27
+* **Grade 7/8/9 Review Test:** April 1
 
