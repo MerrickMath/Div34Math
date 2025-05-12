@@ -30,7 +30,9 @@ Welcome to our Grade 8 course page. Here you will find important dates, class ma
 * **January 24 - Feb 3:** Finish D2 Chapter 8 (Congruence and Similarity)
 * **Feb 24 - March 3:** Finish ALL Circle Geomety Handouts
 * **March 10 - March 27:** Finish all curriculum reviews
-* **April 21 - April 28:** Finish Spring Break handout **ask questions** 
+* **April 21 - April 28:** Finish Spring Break handout **ask questions**
+* **May 1 - May 19:** Math 10 Unit 1, finish practice Gauss form 
+
   
 ### Important Dates 
 * **Unit Test 1 (Coordinates and Lines):** September 24
