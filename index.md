@@ -26,6 +26,13 @@ Welcome to our MATH course page. Here you will find important the important date
 * **Unit Test 8 ():** 
 * **Unit Test 9 ():** 
 
+<!-- In Class Materials-->
+<!--
+<h2 id="resources">Materials</h2>
+<ul>
+  <li><a href="https://www.desmos.com">Desmos</a></li>
+</ul>
+-->
 
 <!-- Resources -->
 <h2 id="resources">Class Resources</h2>
