@@ -27,6 +27,22 @@ Welcome to our MATH course page. Here you will find important the important date
 * **Unit Test 9 ():** 
 
 
+<!-- Resources -->
+<h2 id="resources">Class Resources</h2>
+<ul>
+  <li><a href="https://www.desmos.com">Desmos</a></li>
+  <li class="linkitem"><a href="https://www.cemc.uwaterloo.ca/contests/past_contests.html" target="_blank" rel="noopener"><span>CEMC Past Contests</span></a></li>
+  <li class="linkitem"><a href="https://artofproblemsolving.com/wiki/index.php/AMC_Problems_and_Solutions" target="_blank" rel="noopener"><span>AMC Problems and Solutions</span></a></li>
+</ul>
+
+<h2 id="sec-cool"> Cool Stuff</h2>
+      <ul class="linklist">
+        <li class="linkitem"><a href="https://www.3blue1brown.com" target="_blank" rel="noopener"><span>3 Blue 1 Brown</span></a></li>
+        <li class="linkitem"><a href="https://www.veritasium.com" target="_blank" rel="noopener"><span>Veritasium</span></a></li>
+        <li class="linkitem"><a href="https://www.youtube.com/user/standupmaths" target="_blank" rel="noopener"><span>Stand Up Maths</span></a></li>
+        <li class="linkitem"><a href="https://www.youtube.com/numberphile" target="_blank" rel="noopener"><span>Numberphile</span></a></li>
+      </ul>
+
 <!-- Footer -->
 <p style="color:#777;margin-top:1.25rem">
   <small>Last updated: {{ page.last_updated | default: site.time | date: "%b %d, %Y" }}</small>
