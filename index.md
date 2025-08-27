@@ -1,6 +1,6 @@
 ---
 layout: coursepage
-title: Math 10/20 
+title: Divison 3 Mathematics
 description: Mr. Merrick 
 show_downloads: FALSE
 
