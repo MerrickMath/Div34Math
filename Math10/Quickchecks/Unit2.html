@@ -143,12 +143,15 @@
         ]},
 
       {
-        title:'B. Numeric Response',
-        note:'Write your final answer clearly in the box.',
-        items:[
-          { type:'gen', gen: genNR_GCD },
-          { type:'gen', gen: genNR_LCM3 },
-          { type:'gen', gen: genNR_SumPrimeExponents }
+        title: 'B. Numeric Response',
+        note: 'Write your final answer clearly in the box.',
+        items: [
+          { type: 'gen', gen: genNR_U2_RationalExp },
+          { type: 'gen', gen: genNR_U2_SciAdd },
+          { type: 'gen', gen: genNR_U2_SciDivide },
+          { type: 'gen', gen: genNR_U2_RationalExpNegative },
+          { type: 'gen', gen: genNR_U2_SolveExponentEquation },
+          { type: 'gen', gen: genNR_U2_SciCompound }
         ]},
 
       {
@@ -1275,6 +1278,101 @@
       const choices=[correct,wrong1,wrong2,wrong3].sort(()=>Math.random()-0.5);
       return { q:`Simplify ${qText} (assume $a,b>0$).`, choices, answerIndex: choices.indexOf(correct) };
     }
+
+        // ---------- Unit 2: Numeric Response Generators ----------
+    // Uses your existing ri(a,b). If missing, uncomment:
+    // const ri = (a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+    
+    // helper: normalize mantissa/exponent to [1,10)
+    function normSci(m, e){
+      let M = m, E = e;
+      while (M >= 10) { M /= 10; E++; }
+      while (M < 1)   { M *= 10; E--; }
+      return { M, E };
+    }
+    
+    // NR1: Evaluate (perfect-power)^{p/q}
+    function genNR_U2_RationalExp(){
+      const c = ri(2, 6);
+      const q = sample([2,3,4,5]);
+      const p = sample([1,2,3]);
+      const base = c ** q;
+      const val = c ** p;
+      return {
+        q: `Evaluate $(${base})^{${p}/${q}}$.`,
+        answer: `$${val}$`
+      };
+    }
+    
+    // NR2: Evaluate (perfect-power)^{-p/q}
+    function genNR_U2_RationalExpNegative(){
+      const c = ri(2, 6);
+      const q = sample([2,3,4,5]);
+      const p = sample([1,2,3]);
+      const base = c ** q;
+      const valN = c ** p;
+      return {
+        q: `Evaluate $(${base})^{-\\,${p}/${q}}$.`,
+        answer: `$\\dfrac{1}{${valN}}$`
+      };
+    }
+    
+    // NR3: (a×10^m) + (b×10^n)  → scientific notation
+    function genNR_U2_SciAdd(){
+      const a = (ri(12,95)/10);       // 1.2–9.5
+      const b = (ri(12,95)/10);       // 1.2–9.5
+      const m = ri(4,7), n = m + sample([-2,-1,0,1]); // keep close for nice sums
+      const sum = a * (10**m) + b * (10**n);
+      // convert to mantissa×10^E
+      const E0 = Math.floor(Math.log10(sum));
+      const M0 = sum / (10**E0);
+      const { M, E } = normSci(M0, E0);
+      return {
+        q: `Compute $(${a.toFixed(2)}\\times 10^{${m}})+(${b.toFixed(2)}\\times 10^{${n}})$ in scientific notation.`,
+        answer: `$${M.toFixed(2)}\\times 10^{${E}}$`
+      };
+    }
+    
+    // NR4: (a×10^m) / (b×10^n)  → scientific notation
+    function genNR_U2_SciDivide(){
+      const a = (ri(11,99)/10);   // 1.1–9.9
+      const b = (ri(12,95)/10);   // 1.2–9.5
+      const m = ri(-6,6);
+      const n = ri(-6,6);
+      const mant = a / b;
+      const exp = m - n;
+      const { M, E } = normSci(mant, exp);
+      return {
+        q: `Compute $\\dfrac{${a.toFixed(1)}\\times 10^{${m}}}{${b.toFixed(1)}\\times 10^{${n}}}$ in scientific notation.`,
+        answer: `$${M.toFixed(2)}\\times 10^{${E}}$`
+      };
+    }
+    
+    // NR5: Exponent equation in base 2 → solve for x
+    function genNR_U2_SolveExponentEquation(){
+      const x = ri(2,10);
+      const K = 3*x + 4; // from (2^{x-1})(2^{2x+5})=2^{3x+4}
+      return {
+        q: `If $(2^{x-1})(2^{2x+5})=2^{${K}}$, find $x$.`,
+        answer: `$${x}$`
+      };
+    }
+    
+    // NR6: Compound sci-notation with powers, then division
+    function genNR_U2_SciCompound(){
+      // ((p×10^r)^2) / (q×10^s), choose so mantissa is clean
+      const p = sample([3,4,5,6,7,8,9]);
+      const q = sample([3,6,12]); // choose a divisor of p^2 to keep tidy
+      const r = ri(-3,2), s = ri(-5,3);
+      const mant = (p**2)/q;
+      const exp  = 2*r - s;
+      const { M, E } = normSci(mant, exp);
+      return {
+        q: `Evaluate $\\dfrac{(${p}\\times 10^{${r}})^{2}}{${q}\\times 10^{${s}}}$ in scientific notation.`,
+        answer: `$${M.toFixed(2)}\\times 10^{${E}}$`
+      };
+    }
+
 
 
     
