@@ -76,28 +76,40 @@
     /* Answer key: hidden on screen, shown only when printing */
     #answerKey{display:none}
   
-    /* Print */
-    @media print {
-      .toolbar { display: none }
-      body { background:#fff }
-      .card { box-shadow:none }
+    /* hide answer key on screen */
+#answerKey {
+  display: none;
+}
+
+  /* Print */
+  @media print {
+    .toolbar { display: none }
+    body { background:#fff }
+    .card { box-shadow:none }
   
-      /* hide inline answers in quiz */
-      .ans { display:none !important }
+    /* hide inline answers in quiz */
+    .ans { display:none !important }
   
-      /* show compiled answer key on new page */
-      #answerKey {
-        display:block;
-        page-break-before:always;
-        font-size:14px;
-        padding:0 8px;
-      }
-      #answerKey h2 {
-        margin:0 0 8px 0;
-        font-size:16px;
-      }
-      #answerKey .ansItem{margin:4px 0}
+    /* show compiled answer key on a new page */
+    #answerKey {
+      display:block;
+      page-break-before:always;
+      font-size:14px;
+      padding:0 8px;
     }
+  
+    #answerKey h2 {
+      margin:0 0 8px 0;
+      font-size:16px;
+    }
+  
+    #answerKey .ansItem {
+      margin:4px 0;
+    }
+  }
+
+
+    
   </style>
 
 
