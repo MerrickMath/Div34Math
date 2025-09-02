@@ -142,22 +142,16 @@
         title: 'A. Multiple Choice',
         note: 'Select one option.',
         items: [
-          { type: 'mcgen', gen: genU789_MC_Distance },
-          { type: 'mcgen', gen: genU789_MC_Midpoint },
-          { type: 'mcgen', gen: genU789_MC_SlopeBetween },
-          { type: 'mcgen', gen: genU789_MC_ParallelSlope },
-          { type: 'mcgen', gen: genU789_MC_PerpendicularSlope },
-          { type: 'mcgen', gen: genU789_MC_SlopeInterceptFromPointSlope },
-          { type: 'mcgen', gen: genU789_MC_GeneralForm },
-          { type: 'mcgen', gen: genU789_MC_SymbolicSlopeEquivalence },
-          { type: 'mcgen', gen: genU789_MC_SystemType_Coincident },
-          { type: 'mcgen', gen: genU789_MC_SystemType_Inconsistent },
-          { type: 'mcgen', gen: genU789_MC_Intersection },
-          { type: 'mcgen', gen: genU789_MC_SteepestSlope },
-          { type: 'mcgen', gen: genU789_MC_SlopeAsROC },
-          { type: 'mcgen', gen: genU789_MC_LineThroughTwoPoints },
-          { type: 'mcgen', gen: genU789_MC_SystemParallel },
-          { type: 'mcgen', gen: genU789_MC_StandardFromSlopeIntercept }
+          { type: 'mcgen', gen: genU6_MC_Distance },
+          { type: 'mcgen', gen: genU6_MC_Midpoint },
+          { type: 'mcgen', gen: genU6_MC_SlopeBetween },
+          { type: 'mcgen', gen: genU6_MC_ParallelSlope },
+          { type: 'mcgen', gen: genU6_MC_PerpendicularSlope },
+          { type: 'mcgen', gen: genU6_MC_GeneralFormFromSlopeIntercept },
+          { type: 'mcgen', gen: genU6_MC_WhichHasYIntercept },
+          { type: 'mcgen', gen: genU6_MC_SlopeFromGeneralFormConcept },
+          { type: 'mcgen', gen: genU6_MC_SteepestSlope },
+          { type: 'mcgen', gen: genU6_MC_PerpThroughOrigin }
         ]},
         
       {
@@ -2764,34 +2758,31 @@
 
     // ================== Unit 7–9 (Linear) — Multiple Choice Generators ==================
     // small helpers
-    // ================== Unit 7–9 (Linear) — Helpers (guarded) ==================
+   /* ======================= Tiny helpers (guarded) ======================= */
     if (typeof _gcd !== 'function'){
-      var _gcd = function(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ var t=a%b; a=b; b=t; } return a; };
+      var _gcd = function(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ [a,b]=[b,a%b]; } return a; };
     }
     if (typeof reduceFrac !== 'function'){
       var reduceFrac = function(n,d){
-        if(d===0) return {n:1,d:0}; // undefined slope sentinel
-        var s = (n<0)^(d<0) ? -1 : 1;
+        if(d===0) return {n:1,d:0};               // protect against 0 denominator
+        let s = (n<0)^(d<0) ? -1 : 1;
         n=Math.abs(n); d=Math.abs(d);
-        var g=_gcd(n,d); n/=g; d/=g;
+        const g=_gcd(n,d); n/=g; d/=g;
         return { n: s*n, d };
       };
     }
-    if (typeof rsign !== 'function'){
-      var rsign = function(){ return Math.random()<0.5 ? -1 : 1; };
-    }
-    function shuffle(arr){ return arr.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(p=>p[1]); }
+    const rsign = ()=> Math.random()<0.5? -1 : 1;
+    const fmtFrac = (n,d)=> d===1 ? `${n}` : `\\tfrac{${n}}{${d}}`;
     
-    // ================== Unit 7–9 (Linear) — Multiple Choice Generators ==================
+    /* ================== Unit 6 — MC Generators (Linear) ================== */
     
-    // 1) Distance between two points (use a Pythagorean triple → integer distance)
-    function genU789_MC_Distance(){
+    /** 1) Distance between two points (use a Pythagorean triple → exact integer) */
+    function genU6_MC_Distance(){
       const triples = [[3,4,5],[5,12,13],[8,15,17],[7,24,25]];
       const [a,b,c] = sample(triples);
-      const dx = a * (Math.random()<0.5?-1:1);
-      const dy = b * (Math.random()<0.5?-1:1);
       const x1 = ri(-6,6), y1 = ri(-6,6);
-      const x2 = x1 + dx,   y2 = y1 + dy;
+      const x2 = x1 + (Math.random()<0.5? a : -a);
+      const y2 = y1 + (Math.random()<0.5? b : -b);
       const correct = `$${c}$`;
       const wrongs = [
         `$\\sqrt{${a*a + (b-1)*(b-1)}}$`,
@@ -2803,233 +2794,174 @@
       return { q, choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // 2) Midpoint
-    function genU789_MC_Midpoint(){
+    /** 2) Midpoint of two points (answers may be integers or halves) */
+    function genU6_MC_Midpoint(){
       const x1=ri(-10,10), y1=ri(-10,10), x2=ri(-10,10), y2=ri(-10,10);
-      const mx = (x1+x2)/2, my=(y1+y2)/2;
-      const fmtX = Number.isInteger(mx) ? `${mx}` : `\\dfrac{${x1+x2}}{2}`;
-      const fmtY = Number.isInteger(my) ? `${my}` : `\\dfrac{${y1+y2}}{2}`;
-      const correct = `$\\Big(${fmtX},\\,${fmtY}\\Big)$`;
+      const mx=(x1+x2)/2, my=(y1+y2)/2;
+      const fx = Number.isInteger(mx)? `${mx}` : `\\dfrac{${x1+x2}}{2}`;
+      const fy = Number.isInteger(my)? `${my}` : `\\dfrac{${y1+y2}}{2}`;
+      const correct = `$\\big(${fx},\\,${fy}\\big)$`;
       const wrongs = [
         `$\\big(${x2-x1},\\,${y2-y1}\\big)$`,
         `$\\big(${x1+x2},\\,${y1+y2}\\big)$`,
-        `$\\Big(${x1},\\,${y2}\\Big)$`
+        `$\\big(${x1},\\,${y2}\\big)$`
       ];
       const q = `The midpoint of $(${x1},${y1})$ and $(${x2},${y2})$ is`;
       const choices=[correct,...wrongs].sort(()=>Math.random()-0.5);
       return { q, choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // 3) Slope between two points (reduced fraction)
-    function genU789_MC_SlopeBetween(){
+    /** 3) Slope through two points (reduced fraction / integer) */
+    function genU6_MC_SlopeBetween(){
       let x1=ri(-8,8), x2=ri(-8,8);
-      while(x2===x1) x2=ri(-8,8);
+      while (x2===x1) x2=ri(-8,8);
       const y1=ri(-8,8), y2=ri(-8,8);
-      const dy=y2-y1, dx=x2-x1;
-      const {n,d} = reduceFrac(dy,dx);
-      const correct = d===1 ? `$${n}$` : `$\\tfrac{${n}}{${d}}$`;
+      const {n:dy,d:dx} = reduceFrac(y2-y1, x2-x1);
+      const correct = `$${fmtFrac(dy,dx)}$`;
       const wrongs = [
-        d===1 ? `$${-n}$` : `$\\tfrac{${-n}}{${d}}$`,
-        `$\\tfrac{${dx}}{${dy}}$`, // inverted
-        `$\\tfrac{${dy}}{${Math.abs(dx)}}$` // dropped sign
+        `$${fmtFrac(-dy,dx)}$`,
+        `$${fmtFrac(dx,dy)}$`,        // inverted
+        `$${fmtFrac(Math.abs(dy),Math.abs(dx))}$`  // lost sign
       ];
       const q = `The slope of the line through $(${x1},${y1})$ and $(${x2},${y2})$ is`;
       const choices=[correct,...wrongs].sort(()=>Math.random()-0.5);
       return { q, choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // 4) Parallel slope to Ax + By + C = 0  (slope = -A/B)
-    function genU789_MC_ParallelSlope(){
+    /** 4) Parallel slope to Ax + By + C = 0 → slope = -A/B */
+    function genU6_MC_ParallelSlope(){
       let A=rsign()*ri(1,6), B=rsign()*ri(1,6);
-      while(B===0) B=rsign()*ri(1,6);
+      while (B===0) B=rsign()*ri(1,6);
       const C=rsign()*ri(0,10);
       const {n,d} = reduceFrac(-A,B);
-      const correct = d===1? `$${n}$` : `$\\tfrac{${n}}{${d}}$`;
+      const correct = `$${fmtFrac(n,d)}$`;
       const wrongs = [
-        d===1? `$${-n}$` : `$\\tfrac{${-n}}{${d}}$`,
-        `$\\tfrac{${B}}{${A}}$`,
-        `$\\tfrac{${A}}{${B}}$`
+        `$${fmtFrac(-n,d)}$`,
+        `$${fmtFrac(B,A)}$`,
+        `$${fmtFrac(A,B)}$`
       ];
-      const q = `A line parallel to $${A}x+${B}y${C>=0?'+':''}${C}=0$ has slope`;
+      const q = `A line parallel to $${A}x${B>=0?'+':''}${B}y${C>=0?'+':''}${C}=0$ has slope`;
       const choices=[correct,...wrongs].sort(()=>Math.random()-0.5);
       return { q, choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // 5) Perpendicular slope to y = m x + b (slope = -1/m)
-    function genU789_MC_PerpendicularSlope(){
-      let num=rsign()*ri(1,6), den=ri(1,6);
-      const {n:pn,d:pd} = reduceFrac(-den,num); // -1/m = -den/num
-      const mStr = den===1? `${num}` : `\\tfrac{${num}}{${den}}`;
-      const correct = pd===1? `$${pn}$` : `$\\tfrac{${pn}}{${pd}}$`;
-      const wrongs = [
-        den===1? `$${num}$` : `$\\tfrac{${num}}{${den}}$`,
-        `$\\tfrac{${den}}{${num}}$`,
-        pd===1? `$${-pn}$` : `$\\tfrac{${-pn}}{${pd}}$`
-      ];
-      const q = `A line perpendicular to $y=\\,${mStr}x+${rsign()*ri(0,6)}$ has slope`;
-      const choices=[correct,...wrongs].sort(()=>Math.random()-0.5);
-      return { q, choices, answerIndex: choices.indexOf(correct) };
-    }
-    
-    // 6) Equation through (0,b) with slope m  → y = m x + b
-    function genU789_MC_SlopeInterceptFromPointSlope(){
-      const b=rsign()*ri(1,8);
-      const num=rsign()*ri(1,6), den=ri(1,6);
+    /** 5) Perpendicular slope to y = m x + b → slope = -1/m */
+    function genU6_MC_PerpendicularSlope(){
+      const num=rsign()*ri(1,6), den=ri(1,6);    // m = num/den
       const mLatex = den===1? `${num}` : `\\tfrac{${num}}{${den}}`;
-      const correct = `$y=${mLatex}x${b>=0?'+':''}${b}$`;
+      const {n:pn,d:pd} = reduceFrac(-den, num); // -1/m = -den/num
+      const correct = `$${fmtFrac(pn,pd)}$`;
       const wrongs = [
-        `$y=${mLatex}x${b>=0?'-':'+'}${Math.abs(b)}$`,
-        `$y=\\tfrac{${den}}{${num}}x${b>=0?'+':''}${b}$`,
-        `$y=${mLatex}x$`
+        `$${fmtFrac(num,den)}$`,
+        `$${fmtFrac(den,num)}$`,
+        `$${fmtFrac(-pn,pd)}$`
       ];
-      const q = `The equation of the line through $(0,${b})$ with slope $${mLatex}$ is`;
+      const q = `A line perpendicular to $y=${mLatex}x${rsign()*ri(0,6)>=0?'+':''}${rsign()*ri(0,6)}$ has slope`;
       const choices=[correct,...wrongs].sort(()=>Math.random()-0.5);
       return { q, choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // 7) General form of y = (p/q)x + b  →  p x - q y + q b = 0
-    function genU789_MC_GeneralForm(){
+    /** 6) General form of y = (p/q)x + b  →  p x - q y + q b = 0 */
+    function genU6_MC_GeneralFormFromSlopeIntercept(){
       const p=rsign()*ri(1,6), q=ri(1,6), b=rsign()*ri(0,8);
-      const mLatex = q===1? `${p}` : `\\tfrac{${p}}{${q}}`;
+      const mLatex = q===1 ? `${p}` : `\\tfrac{${p}}{${q}}`;
       const A=p, B=-q, C=q*b;
       const correct = `$${A}x${B>=0?'+':''}${B}y${C>=0?'+':''}${C}=0$`;
       const wrongs = [
         `$${A}x${(-B)>=0?'+':''}${-B}y${C>=0?'+':''}${C}=0$`,
-        `$${q}x${-p>=0?'+':''}${-p}y${C>=0?'+':''}${C}=0$`,
+        `$${q}x${(-p)>=0?'+':''}${-p}y${C>=0?'+':''}${C}=0$`,
         `$${A}x${B>=0?'+':''}${B}y${(-C)>=0?'+':''}${-C}=0$`
       ];
-      const qText = `Which is the general form of $y=\\,${mLatex}x${b>=0?'+':''}${b}$?`;
+      const qText = `Which is the general form of $y=${mLatex}x${b>=0?'+':''}${b}$?`;
       const choices=[correct,...wrongs].sort(()=>Math.random()-0.5);
       return { q: qText, choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // 8) Symbolic slope equivalence (fixed, as in prompt)
-    function genU789_MC_SymbolicSlopeEquivalence(){
-      const q = `The slope of the line joining $(2a,3)$ and $(a+5,7)$ is`;
-      const A = `$\\tfrac{4}{a+5-2a}$`;
-      const B = `$\\tfrac{4}{-a+5}$`;
-      const C = `$\\tfrac{4}{5-a}$`;
-      const D = `All of the above are equivalent`;
-      const choices=[A,B,C,D].sort(()=>Math.random()-0.5);
-      return { q, choices, answerIndex: choices.indexOf(D) };
-    }
-    
-    // 9) System type — coincident (infinitely many)
-    function genU789_MC_SystemType_Coincident(){
-      const m = rsign()*ri(1,5), b = rsign()*ri(0,8), k = ri(2,5);
-      const q = `The system $\\begin{cases}y=${m}x${b>=0?'+':''}${b}\\\\ ${k}y=${k*m}x${(k*b)>=0?'+':''}${k*b}\\end{cases}$ has`;
-      const options = ['exactly one solution','infinitely many solutions','no solution','cannot be determined'];
-      const choices = options.sort(()=>Math.random()-0.5);
-      return { q, choices, answerIndex: choices.indexOf('infinitely many solutions') };
-    }
-    
-    // 10) System type — inconsistent (parallel distinct)
-    function genU789_MC_SystemType_Inconsistent(){
-      const A=rsign()*ri(1,5), B=rsign()*ri(1,5);
-      const C1=rsign()*ri(1,12);
-      const k=ri(2,6);
-      const C2=C1 + rsign()*ri(1,5); // different, so not a multiple
-      const q = `The system $\\begin{cases}${A}x+${B}y=${C1}\\\\ ${k*A}x+${k*B}y=${C2}\\end{cases}$ has`;
-      const options = ['exactly one solution','infinitely many solutions','no solution','two solutions'];
-      const choices = options.sort(()=>Math.random()-0.5);
-      return { q, choices, answerIndex: choices.indexOf('no solution') };
-    }
-    
-    // 11) Intersection point of two non-parallel lines (integer solution)
-    function genU789_MC_Intersection(){
-      const x0=rsign()*ri(0,4), y0=rsign()*ri(0,4);
-      let m1=rsign()*ri(1,4), m2=rsign()*ri(1,4);
-      while(m2===m1) m2=rsign()*ri(1,4);
-      const b1 = y0 - m1*x0;
-      const b2 = y0 - m2*x0;
-      const correct = `$(${x0},${y0})$`;
-      const wrongs = [`$(${x0+1},${y0})$`, `$(${x0},${y0+1})$`, `$(${x0-1},${y0-1})$`];
-      const q = `The intersection point of $y=${m1}x${b1>=0?'+':''}${b1}$ and $y=${m2}x${b2>=0?'+':''}${b2}$ is`;
-      const choices=[correct,...wrongs].sort(()=>Math.random()-0.5);
+    /** 7) Identify line by y-intercept b0 */
+    function genU6_MC_WhichHasYIntercept(){
+      const b0 = rsign()*ri(1,8);
+      const mA = rsign()*ri(1,5), mB = rsign()*ri(1,5);
+      const correct = `$y=${mA>=0?mA:''}${mA<0?mA:''}x${b0>=0?'+':''}${b0}$`.replace('+-','-');
+      const wrong1  = `$2y=${(2*mA)}x${(2*b0+rsign()*ri(1,4))>=0?'+':''}${2*b0+rsign()*ri(1,4)}$`; // intercept off
+      const wrong2  = `$y-${b0}=${mB}x$`;   // point–slope form (still has same intercept only if right side is mx)
+      const wrong3  = `$x=${b0}$`;          // vertical line (no y-intercept at b0)
+      const choices=[correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
+      const q = `Which line has $y$-intercept $${b0}$?`;
       return { q, choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // 12) Steepest slope (largest |m|)
-    function genU789_MC_SteepestSlope(){
-      const mags = shuffle([ri(1,3), ri(4,6), ri(7,9), ri(10,12)]);
-      const slopes = [-mags[0], mags[1], (ri(2,9)/ri(2,5)), -mags[2]];
-      const labels = slopes.map(m=>{
-        if(Number.isInteger(m)) return `$${m}$`;
-        // show as cleaned fraction
-        let a=ri(2,9), b=ri(2,5);
-        const rf=reduceFrac(a,b);
-        return `$\\tfrac{${rf.n}}{${rf.d}}$`;
-      });
-      const real = Math.max(...slopes.map(s=>Math.abs(s)));
-      const forceIdx = Math.abs(slopes[0])===real ? 0 : 3;
-      labels[forceIdx] = `$${slopes[forceIdx]}$`;
-      const q = 'Which slope represents the steepest line?';
-      const choices = labels.slice();
-      const answerIndex = choices.findIndex(s=>s===`$${slopes[forceIdx]}$`);
-      return { q, choices, answerIndex };
-    }
-    
-    // 13) Slope as rate of change (concept)
-    function genU789_MC_SlopeAsROC(){
-      const A = '$\\dfrac{\\text{change in }x}{\\text{change in }y}$';
-      const B = '$\\dfrac{\\text{change in }y}{\\text{change in }x}$';
-      const C = '$\\dfrac{y}{x}$';
-      const D = '$\\dfrac{x}{y}$';
-      const choices=[A,B,C,D].sort(()=>Math.random()-0.5);
+    /** 8) Concept: slope from Ax+By+C=0 is -A/B (fixed concept item) */
+    function genU6_MC_SlopeFromGeneralFormConcept(){
+      const choices = [
+        '$\\tfrac{A}{B}$',
+        '$-\\tfrac{A}{B}$',
+        '$-\\tfrac{B}{A}$',
+        '$\\tfrac{B}{A}$'
+      ].sort(()=>Math.random()-0.5);
       return {
-        q: 'The slope as a rate of change is best interpreted as',
+        q: 'In $Ax+By+C=0$ with $B\\ne0$, the slope is',
         choices,
-        answerIndex: choices.indexOf(B)
+        answerIndex: choices.indexOf('$-\\tfrac{A}{B}$')
       };
     }
     
-    // 14) Equation of line through two points (y = mx + b)
-    function genU789_MC_LineThroughTwoPoints(){
-      let x1=ri(-6,6), x2=ri(-6,6);
-      while(x2===x1) x2=ri(-6,6);
-      const y1=ri(-6,6), y2=ri(-6,6);
-      const {n:dy,d:dx} = reduceFrac(y2-y1, x2-x1);
-      const mLatex = dx===1 ? `${dy}` : `\\tfrac{${dy}}{${dx}}`;
-      const b = y1 - (dy/dx)*x1;
-      const bInt = Math.abs(b) < 1e-9 || Number.isInteger(b);
-      const bStr = bInt ? `${Math.round(b)}` : `\\tfrac{${dy*x1 - dx*y1}}{${-dx}}`;
-      const correct = `$y=${mLatex}x${b>=0?'+':''}${bStr}$`;
-      const wrongs = [
-        `$y=${mLatex}x${b>=0?'-':'+'}${bInt? Math.abs(Math.round(b)) : `\\Big|${bStr}\\Big|`}$`,
-        `$y=${mLatex}x$`,
-        `$y=${dx===1? `${-dy}`:`\\tfrac{${-dy}}{${dx}}`}x${b>=0?'+':''}${bStr}$`
+    /** 9) Steepest slope (largest |m|) */
+    function genU6_MC_SteepestSlope(){
+      // Build a diverse set: two integers, one reduced fraction, one more integer
+      const set = [
+        -ri(4,6),
+        ri(1,3),
+        (function(){
+          const r1 = reduceFrac(ri(3,9), ri(2,5));
+          return `\\tfrac{${r1.n}}{${r1.d}}`;
+        })(),
+        -ri(7,10)
       ];
-      const q = `The line through $(${x1},${y1})$ and $(${x2},${y2})$ has equation`;
+      const choices = set.map(v=> typeof v==='string' ? `$${v}$` : `$${v}$`).sort(()=>Math.random()-0.5);
+      // compute who is actually steepest
+      const mags = choices.map(s=>{
+        const raw = s.replace(/\$|\\tfrac{|}/g,'');
+        if (raw.includes('\\tfrac')) return 0; // (won't happen due to replace)
+        if (raw.includes('/')) {
+          const [n,d]=raw.split('/');
+          return Math.abs(Number(n)/Number(d));
+        }
+        return Math.abs(Number(raw));
+      });
+      // To be safe, recompute by parsing LaTeX properly:
+      const val = s=>{
+        const t = s.replace(/\$/g,'');
+        if (t.startsWith('\\tfrac')) {
+          const m = t.match(/\\tfrac\{(-?\d+)\}\{(\d+)\}/);
+          return Math.abs(Number(m[1])/Number(m[2]));
+        }
+        return Math.abs(Number(t));
+      };
+      const idx = choices
+        .map((s,i)=>({i,mag:val(s)}))
+        .reduce((best,cur)=> cur.mag>best.mag? cur : best, {i:0,mag:-1}).i;
+    
+      return { q: 'Which slope represents the steepest line?', choices, answerIndex: idx };
+    }
+    
+    /** 10) Perpendicular to given slope through origin (nice numbers) */
+    function genU6_MC_PerpThroughOrigin(){
+      const mNum = rsign()*ri(1,5), mDen = ri(1,5);     // given slope = mNum/mDen
+      const given = mDen===1 ? `${mNum}` : `\\tfrac{${mNum}}{${mDen}}`;
+      const {n:pn,d:pd} = reduceFrac(-mDen, mNum);      // perpendicular slope
+      const mPerp = pd===1 ? `${pn}` : `\\tfrac{${pn}}{${pd}}`;
+      const correct = `$y=${mPerp}x$`;
+      const wrongs = [
+        `$y=${given}x$`,
+        `$y=-${given}x$`,
+        `$y=\\tfrac{${mDen}}{${mNum}}x$`
+      ];
+      const q = `A line perpendicular to $y=${given}x-4$ and passing through the origin is`;
       const choices=[correct,...wrongs].sort(()=>Math.random()-0.5);
       return { q, choices, answerIndex: choices.indexOf(correct) };
     }
-    
-    // 15) Parallel system (no solution)
-    function genU789_MC_SystemParallel(){
-      let mNum=rsign()*ri(1,6), mDen=ri(1,6);
-      const {n:mn,d:md}=reduceFrac(mNum,mDen);
-      const b1=rsign()*ri(0,8), b2=b1 + rsign()*ri(1,6);
-      const mLatex = md===1? `${mn}` : `\\tfrac{${mn}}{${md}}`;
-      const q = `The system $\\begin{cases}y=${mLatex}x${b1>=0?'+':''}${b1}\\\\ y=${mLatex}x${b2>=0?'+':''}${b2}\\end{cases}$ has`;
-      const choices = ['one solution','no solution','infinitely many solutions','two solutions'].sort(()=>Math.random()-0.5);
-      return { q, choices, answerIndex: choices.indexOf('no solution') };
-    }
-    
-    // 16) Convert slope–intercept to standard form equivalence (quick check)
-    function genU789_MC_StandardFromSlopeIntercept(){
-      const m = rsign()*ri(1,5), b = rsign()*ri(0,8);
-      const A=m, B=-1, C=b; // y=mx+b → mx - y + b = 0
-      const k = sample([1, -1, ri(2,5)]);
-      const correct = `$${k*A}x${(k*B)>=0?'+':''}${k*B}y${(k*C)>=0?'+':''}${k*C}=0$`;
-      const wrongs = [
-        `$${A}x${(B)>=0?'+':''}${B}y${(-C)>=0?'+':''}${-C}=0$`,
-        `$${-A}x${(B)>=0?'+':''}${B}y${(C)>=0?'+':''}${C}=0$`,
-        `$${A}x${(-B)>=0?'+':''}${-B}y${(C)>=0?'+':''}${C}=0$`
-      ];
-      const q = `Which is an equivalent general form of $y=${m}x${b>=0?'+':''}${b}$?`;
-      const choices=[correct,...wrongs].sort(()=>Math.random()-0.5);
-      return { q, choices, answerIndex: choices.indexOf(correct) };
-    }
+
+
     
     // ================== Unit 7–9 (Linear) — Numeric Response Generators (numeric-only) ==================
     
