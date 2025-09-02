@@ -1683,31 +1683,63 @@
     }
 
 
+    // --- tiny helpers (add once) ---
+    function stripZeros(s){
+      return String(s).replace(/(\.\d*?[1-9])0+$/,'$1').replace(/\.0+$/,'');
+    }
+    function fixedClean(x, dp=2){
+      return stripZeros(Number(x).toFixed(dp));
+    }
+    function choose(arr){
+      return arr[Math.floor(Math.random()*arr.length)];
+    }
+    // format number as "mantissa × 10^{exp}" for KaTeX
+    function sciStr(val, sig=3){
+      if (!isFinite(val) || val === 0) return `0`;
+      const exp = Math.floor(Math.log10(Math.abs(val)));
+      const mant = Number((val / 10**exp).toPrecision(sig));
+      // keep mantissa tidy (no trailing zeros)
+      return `${stripZeros(mant.toString())}\\times 10^{${exp}}`;
+    }
+
+
     // ========== Unit 3: Multiple Choice Generators ==========
     // Assumes ri(a,b) and sample(arr) exist; if not, uncomment:
     // const ri = (a,b)=>Math.floor(Math.random()*(b-a+1))+a;
     // const sample = (arr)=>arr[ri(0,arr.length-1)];
     
-    // 1) Credit card thickness
+    // ========== Unit 3: Multiple Choice Generators (randomized) ==========
+    // Uses ri(a,b), fixedClean(x,dp), sciStr(val,sig). Make sure those helpers exist.
+    
+    /** 1) Credit card thickness (randomized distractors/units; correct ≈ 0.76 mm) */
     function genU3_MC_CreditCardThickness(){
+      // correct industry spec is ~0.76 mm (ISO/IEC 7810 ID-1)
       const correct = `$0.76\\ \\text{mm}$`;
-      const wrongs = [`$7.6\\ \\text{mm}$`, `$0.076\\ \\text{mm}$`, `$76\\ \\text{\\mu m}$`];
+      // randomized distractors: nearby-but-wrong scale errors
+      const microns = 76 + ri(-8,8);   // ~76 µm (off by ×10)
+      const mm_big  = (7.6 + ri(-10,10)/10).toFixed(1);  // ~7.6 mm (off by ×10)
+      const mm_tiny = (0.076 + ri(-15,15)/1000).toFixed(3); // ~0.076 mm (off by ×0.1)
+      const wrongs = [
+        `$${mm_big}\\ \\text{mm}$`,
+        `$${mm_tiny}\\ \\text{mm}$`,
+        `$${microns}\\ \\mu\\text{m}$`
+      ];
       const choices = [correct, ...wrongs].sort(()=>Math.random()-0.5);
-      return { q: 'Which is closest to the thickness of a standard credit card?', choices, answerIndex: choices.indexOf(correct) };
+      return { q:'Which is closest to the thickness of a standard credit card?', choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // 2) km → inches (1 in = 2.54 cm)
+    /** 2) km → inches (1 in = 2.54 cm) */
     function genU3_MC_KmToInches(){
-      // Pick tidy km values to keep the prompt neat
-      const km = choose([1.20, 1.50, 2.00, 2.50, 3.25, 4.00]);
+      // random km with 2 d.p. between 0.50 and 5.00
+      const km = Math.round((0.5 + Math.random()*4.5)*100)/100;
       const inches = km * 100000 / 2.54;
+    
       const correct = `$${sciStr(inches,3)}\\ \\text{in}$`;
-    
-      const wrong1 = `$${sciStr(km*100000/2.5,3)}\\ \\text{in}$`;  // used 2.5
-      const wrong2 = `$${sciStr(km*1000/2.54,3)}\\ \\text{in}$`;   // missed ×100
-      const wrong3 = `$${sciStr(km*1000,3)}\\ \\text{in}$`;        // forgot cm→in
-    
+      const wrong1  = `$${sciStr(km*100000/2.5,3)}\\ \\text{in}$`; // used 2.5 instead of 2.54
+      const wrong2  = `$${sciStr(km*1000/2.54,3)}\\ \\text{in}$`;  // missed ×100
+      const wrong3  = `$${sciStr(km*1000,3)}\\ \\text{in}$`;       // forgot cm→in
       const choices = [correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
+    
       return {
         q: `Convert $${km.toFixed(2)}\\ \\text{km}$ to inches ($1\\ \\text{in}=2.54\\ \\text{cm}$).`,
         choices,
@@ -1715,16 +1747,17 @@
       };
     }
     
-    // 3) Circle area (diameter in inches → cm^2)
+    /** 3) Circle area (diameter in inches → cm^2) */
     function genU3_MC_CircleAreaInCm2(){
-      const d_in = choose([1.50, 1.75, 2.00, 2.25, 2.50]); // tidy
+      // diameter 1.20–3.50 in (2 d.p.)
+      const d_in = Math.round((1.2 + Math.random()*2.3)*100)/100;
       const r_cm = (d_in * 2.54) / 2;
       const area = Math.PI * r_cm * r_cm;
       const correct = `$${fixedClean(area,1)}\\ \\text{cm}^2$`;
     
-      const wrong1 = `$${fixedClean(area*0.64,1)}\\ \\text{cm}^2$`;
-      const wrong2 = `$${fixedClean(area*1.36,1)}\\ \\text{cm}^2$`;
-      const wrong3 = `$${fixedClean(Math.PI * (d_in/2)**2,2)}\\ \\text{cm}^2$`; // forgot inch→cm
+      const wrong1 = `$${fixedClean(area*0.64,1)}\\ \\text{cm}^2$`;                        // spurious factor
+      const wrong2 = `$${fixedClean(area*1.36,1)}\\ \\text{cm}^2$`;                        // spurious factor
+      const wrong3 = `$${fixedClean(Math.PI * (d_in/2)**2,2)}\\ \\text{cm}^2$`;            // forgot inch→cm
     
       const choices = [correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
       return {
@@ -1734,46 +1767,47 @@
       };
     }
     
-    // 4) m^2 → cm^2 (×10^4)
+    /** 4) m^2 → cm^2 (×10^4) */
     function genU3_MC_m2_to_cm2(){
-      const m2 = choose([0.12, 0.25, 0.50, 1.20, 2.40, 3.50]);
+      // random m^2 0.10–5.00 (2 d.p.)
+      const m2 = Math.round((0.1 + Math.random()*4.9)*100)/100;
       const cm2 = m2 * 10000;
-      const correct = `$${cm2.toLocaleString('en-US')}\\ \\text{cm}^2$`;
-      const wrong1 = `$${(m2*100).toLocaleString('en-US')}\\ \\text{cm}^2$`;
-      const wrong2 = `$${(m2*1000).toLocaleString('en-US')}\\ \\text{cm}^2$`;
-      const wrong3 = `$${(m2*1e6).toLocaleString('en-US')}\\ \\text{cm}^2$`;
+      const correct = `$${Number(cm2.toFixed(0)).toLocaleString('en-US')}\\ \\text{cm}^2$`;
+      const wrong1 = `$${Number((m2*100).toFixed(0)).toLocaleString('en-US')}\\ \\text{cm}^2$`;
+      const wrong2 = `$${Number((m2*1000).toFixed(0)).toLocaleString('en-US')}\\ \\text{cm}^2$`;
+      const wrong3 = `$${Number((m2*1e6).toFixed(0)).toLocaleString('en-US')}\\ \\text{cm}^2$`;
     
       const choices = [correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
       return { q: `Convert $${m2.toFixed(2)}\\ \\text{m}^2$ into $\\text{cm}^2$.`, choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // 5) Box volume (in → L)
+    /** 5) Box volume (in → L) */
     function genU3_MC_BoxVolumeLitres(){
-      const dims = choose([[12,8,5],[10,6,4],[14,9,6],[16,10,8]]);
-      const [L,W,H] = dims;
+      // random integer inches: L 8–18, W 6–14, H 4–12
+      const L = ri(8,18), W = ri(6,14), H = ri(4,12);
       const vol_cm3 = (L*W*H) * (2.54**3);
       const litres = vol_cm3 / 1000;
       const correct = `$${fixedClean(litres,1)}\\ \\text{L}$`;
     
       const wrong1 = `$${fixedClean(L*W*H/1000,1)}\\ \\text{L}$`; // forgot 2.54^3
-      const wrong2 = `$${fixedClean(litres*0.8,1)}\\ \\text{L}$`;
-      const wrong3 = `$${fixedClean(litres*1.2,1)}\\ \\text{L}$`;
+      const wrong2 = `$${fixedClean(litres*(0.7 + Math.random()*0.2),1)}\\ \\text{L}$`;
+      const wrong3 = `$${fixedClean(litres*(1.1 + Math.random()*0.2),1)}\\ \\text{L}$`;
     
       const choices = [correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
       return { q: `A rectangular box measures ${L}\\,in $\\times$ ${W}\\,in $\\times$ ${H}\\,in. Its volume in litres is closest to`, choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // 6) Hair unit
+    /** 6) Hair unit (randomized order only) */
     function genU3_MC_HairUnit(){
       const correct = `Micrometre`;
       const choices = [correct, 'Millimetre', 'Nanometre', 'Centimetre'].sort(()=>Math.random()-0.5);
       return { q: 'Which metric unit is most reasonable to measure the thickness of a human hair?', choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // 7) mi^2 → km^2 (1 mi = 1.609 km)
+    /** 7) mi^2 → km^2 (1 mi = 1.609 km) */
     function genU3_MC_SqMiToSqKm(){
-      const mi2 = choose([1,2,3,4]);
-      // compute using exact square of 1609/1000 to avoid weird float drift, then round
+      // random square miles 1–9 (integer)
+      const mi2 = ri(1,9);
       const factor = (1609/1000)**2; // 1.609^2
       const km2 = mi2 * factor;
       const correct = `$${fixedClean(km2,2)}\\ \\text{km}^2$`;
@@ -1784,10 +1818,10 @@
       return { q: `Convert $${mi2}\\ \\text{mile}^2$ into $\\text{km}^2$ ($1\\ \\text{mi}=1.609\\ \\text{km}$).`, choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // 8) Cylinder lateral area (2πrh)
+    /** 8) Cylinder lateral area (2πrh) */
     function genU3_MC_CylLateralSA(){
-      const r = choose([3,4,5,6,7]);
-      const h = choose([8,10,12,14]);
+      // r 2–9, h 6–16
+      const r = ri(2,9), h = ri(6,16);
       const correct = `$${2*r*h}\\pi$`;
       const wrong1 = `$${r*h}\\pi$`;
       const wrong2 = `$${2*r*r}\\pi$`;
@@ -1796,10 +1830,20 @@
       return { q: `The lateral surface area of a cylinder of radius $r=${r}$ and height $h=${h}$ is`, choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // 9) Cone volume with h = k r
+    /** 9) Cone volume with h = k r */
     function genU3_MC_ConeVolume_k(){
-      const k = choose([2,3,4]);
-      const correct = k===1 ? `$\\tfrac{1}{3}\\pi r^{3}$` : `$${fixedClean(k/3,2)}\\pi r^{3}$`.replace('0.33','\\tfrac{1}{3}');
+      // random integer k = 1–6
+      const k = ri(1,6);
+    
+      // helper to render simplified fraction k/3
+      function fracKover3(n){
+        if (n % 3 === 0) return `${n/3}`;
+        if (n === 1) return `\\tfrac{1}{3}`;
+        if (n === 2) return `\\tfrac{2}{3}`;
+        return `\\tfrac{${n}}{3}`;
+      }
+    
+      const correct = `$${fracKover3(k)}\\pi r^{3}$`;
       const wrong1  = `$\\pi r^{3}$`;
       const wrong2  = `$${k}\\pi r^{3}$`;
       const wrong3  = `$\\tfrac{1}{3}\\pi r^{2}$`;
@@ -1807,16 +1851,22 @@
       return { q: `The volume of a cone of radius $r$ and height $${k}r$ is`, choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // 10) Sphere SA from volume (given as coef·π)
+    /** 10) Sphere SA from volume (given as coef·π) */
     function genU3_MC_SphereSAfromV(){
-      const r = choose([2,3,4,5,6]);
+      // choose integer radius 2–8
+      const r = ri(2,8);
       const Vcoef = (4/3)*r**3;
       const SAcoef = 4*r**2;
       const correct = `$${SAcoef}\\pi$`;
-      const wrongs = [`$${fixedClean(Vcoef,0)}\\pi$`, `$${3*r**2}\\pi$`, `$${2*SAcoef}\\pi$`];
+      const wrongs = [
+        `$${fixedClean(Vcoef,0)}\\pi$`,
+        `$${3*r**2}\\pi$`,
+        `$${2*SAcoef}\\pi$`
+      ];
       const choices = [correct, ...wrongs].sort(()=>Math.random()-0.5);
       return { q: `A sphere has volume $${fixedClean(Vcoef,0)}\\pi$. Its surface area is`, choices, answerIndex: choices.indexOf(correct) };
     }
+
     
     // ========== Unit 3: Numeric Response Generators ==========
     // Assumes ri(a,b) and sample(arr) (or choose) exist; add light helpers if missing:
