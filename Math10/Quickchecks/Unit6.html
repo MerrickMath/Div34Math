@@ -1425,7 +1425,6 @@
       };
     }
 
-    // ---------- Unit 2: Written Response Generators ----------
 
     // ---------- Unit 2: Written Response Generators ----------
 
@@ -2765,15 +2764,25 @@
 
     // ================== Unit 7–9 (Linear) — Multiple Choice Generators ==================
     // small helpers
-    function _gcd(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ [a,b]=[b,a%b]; } return a; }
-    function reduceFrac(n,d){
-      if(d===0) return {n:1,d:0};           // undefined slope
-      let s = (n<0)^(d<0) ? -1 : 1;
-      n=Math.abs(n); d=Math.abs(d);
-      const g=_gcd(n,d); n/=g; d/=g;
-      return { n: s*n, d };
+    // ================== Unit 7–9 (Linear) — Helpers (guarded) ==================
+    if (typeof _gcd !== 'function'){
+      var _gcd = function(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ var t=a%b; a=b; b=t; } return a; };
     }
-    const rsign = ()=> Math.random()<0.5? -1: 1;
+    if (typeof reduceFrac !== 'function'){
+      var reduceFrac = function(n,d){
+        if(d===0) return {n:1,d:0}; // undefined slope sentinel
+        var s = (n<0)^(d<0) ? -1 : 1;
+        n=Math.abs(n); d=Math.abs(d);
+        var g=_gcd(n,d); n/=g; d/=g;
+        return { n: s*n, d };
+      };
+    }
+    if (typeof rsign !== 'function'){
+      var rsign = function(){ return Math.random()<0.5 ? -1 : 1; };
+    }
+    function shuffle(arr){ return arr.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(p=>p[1]); }
+    
+    // ================== Unit 7–9 (Linear) — Multiple Choice Generators ==================
     
     // 1) Distance between two points (use a Pythagorean triple → integer distance)
     function genU789_MC_Distance(){
@@ -2798,8 +2807,9 @@
     function genU789_MC_Midpoint(){
       const x1=ri(-10,10), y1=ri(-10,10), x2=ri(-10,10), y2=ri(-10,10);
       const mx = (x1+x2)/2, my=(y1+y2)/2;
-      const fmt = (x)=> Number.isInteger(x)? `${x}` : `\\dfrac{${x1+x2}}{2}`;
-      const correct = `$\\Big(${fmt(mx)},\\,${Number.isInteger(my)? my : `\\dfrac{${y1+y2}}{2}`}\\Big)$`;
+      const fmtX = Number.isInteger(mx) ? `${mx}` : `\\dfrac{${x1+x2}}{2}`;
+      const fmtY = Number.isInteger(my) ? `${my}` : `\\dfrac{${y1+y2}}{2}`;
+      const correct = `$\\Big(${fmtX},\\,${fmtY}\\Big)$`;
       const wrongs = [
         `$\\big(${x2-x1},\\,${y2-y1}\\big)$`,
         `$\\big(${x1+x2},\\,${y1+y2}\\big)$`,
@@ -2820,8 +2830,8 @@
       const correct = d===1 ? `$${n}$` : `$\\tfrac{${n}}{${d}}$`;
       const wrongs = [
         d===1 ? `$${-n}$` : `$\\tfrac{${-n}}{${d}}$`,
-        d===1 ? `$\\tfrac{${dx}}{${dy}}$` : `$\\tfrac{${dx}}{${dy}}$`, // inverted
-        `$\\tfrac{${dy}}{${Math.abs(dx)}}$`                            // lost sign on dx
+        `$\\tfrac{${dx}}{${dy}}$`, // inverted
+        `$\\tfrac{${dy}}{${Math.abs(dx)}}$` // dropped sign
       ];
       const q = `The slope of the line through $(${x1},${y1})$ and $(${x2},${y2})$ is`;
       const choices=[correct,...wrongs].sort(()=>Math.random()-0.5);
@@ -2856,7 +2866,7 @@
         `$\\tfrac{${den}}{${num}}$`,
         pd===1? `$${-pn}$` : `$\\tfrac{${-pn}}{${pd}}$`
       ];
-      const q = `A line perpendicular to $y=\\,${den===1? `${num}`:`\\tfrac{${num}}{${den}}`}x+${rsign()*ri(0,6)}$ has slope`;
+      const q = `A line perpendicular to $y=\\,${mStr}x+${rsign()*ri(0,6)}$ has slope`;
       const choices=[correct,...wrongs].sort(()=>Math.random()-0.5);
       return { q, choices, answerIndex: choices.indexOf(correct) };
     }
@@ -2884,9 +2894,9 @@
       const A=p, B=-q, C=q*b;
       const correct = `$${A}x${B>=0?'+':''}${B}y${C>=0?'+':''}${C}=0$`;
       const wrongs = [
-        `$${A}x${(-B)>=0?'+':''}${-B}y${C>=0?'+':''}${C}=0$`,    // flipped sign on B
-        `$${q}x${-p>=0?'+':''}${-p}y${C>=0?'+':''}${C}=0$`,      // mixed A,B
-        `$${A}x${B>=0?'+':''}${B}y${(-C)>=0?'+':''}${-C}=0$`     // wrong C
+        `$${A}x${(-B)>=0?'+':''}${-B}y${C>=0?'+':''}${C}=0$`,
+        `$${q}x${-p>=0?'+':''}${-p}y${C>=0?'+':''}${C}=0$`,
+        `$${A}x${B>=0?'+':''}${B}y${(-C)>=0?'+':''}${-C}=0$`
       ];
       const qText = `Which is the general form of $y=\\,${mLatex}x${b>=0?'+':''}${b}$?`;
       const choices=[correct,...wrongs].sort(()=>Math.random()-0.5);
@@ -2908,10 +2918,9 @@
     function genU789_MC_SystemType_Coincident(){
       const m = rsign()*ri(1,5), b = rsign()*ri(0,8), k = ri(2,5);
       const q = `The system $\\begin{cases}y=${m}x${b>=0?'+':''}${b}\\\\ ${k}y=${k*m}x${(k*b)>=0?'+':''}${k*b}\\end{cases}$ has`;
-      const choices = ['exactly one solution','infinitely many solutions','no solution','cannot be determined'];
-      const correct = 'infinitely many solutions';
-      const shuffled = choices.sort(()=>Math.random()-0.5);
-      return { q, choices: shuffled, answerIndex: shuffled.indexOf(correct) };
+      const options = ['exactly one solution','infinitely many solutions','no solution','cannot be determined'];
+      const choices = options.sort(()=>Math.random()-0.5);
+      return { q, choices, answerIndex: choices.indexOf('infinitely many solutions') };
     }
     
     // 10) System type — inconsistent (parallel distinct)
@@ -2919,28 +2928,22 @@
       const A=rsign()*ri(1,5), B=rsign()*ri(1,5);
       const C1=rsign()*ri(1,12);
       const k=ri(2,6);
-      const C2=C1 + rsign()*ri(1,5); // make it different so not multiple
+      const C2=C1 + rsign()*ri(1,5); // different, so not a multiple
       const q = `The system $\\begin{cases}${A}x+${B}y=${C1}\\\\ ${k*A}x+${k*B}y=${C2}\\end{cases}$ has`;
-      const choices = ['exactly one solution','infinitely many solutions','no solution','two solutions'];
-      const correct = 'no solution';
-      const shuffled = choices.sort(()=>Math.random()-0.5);
-      return { q, choices: shuffled, answerIndex: shuffled.indexOf(correct) };
+      const options = ['exactly one solution','infinitely many solutions','no solution','two solutions'];
+      const choices = options.sort(()=>Math.random()-0.5);
+      return { q, choices, answerIndex: choices.indexOf('no solution') };
     }
     
     // 11) Intersection point of two non-parallel lines (integer solution)
     function genU789_MC_Intersection(){
-      // choose m1≠m2 and build b’s so intersection (x0,y0) are integers
       const x0=rsign()*ri(0,4), y0=rsign()*ri(0,4);
       let m1=rsign()*ri(1,4), m2=rsign()*ri(1,4);
       while(m2===m1) m2=rsign()*ri(1,4);
       const b1 = y0 - m1*x0;
       const b2 = y0 - m2*x0;
       const correct = `$(${x0},${y0})$`;
-      const wrongs = [
-        `$(${x0+1},${y0})$`,
-        `$(${x0},${y0+1})$`,
-        `$(${x0-1},${y0-1})$`
-      ];
+      const wrongs = [`$(${x0+1},${y0})$`, `$(${x0},${y0+1})$`, `$(${x0-1},${y0-1})$`];
       const q = `The intersection point of $y=${m1}x${b1>=0?'+':''}${b1}$ and $y=${m2}x${b2>=0?'+':''}${b2}$ is`;
       const choices=[correct,...wrongs].sort(()=>Math.random()-0.5);
       return { q, choices, answerIndex: choices.indexOf(correct) };
@@ -2948,30 +2951,21 @@
     
     // 12) Steepest slope (largest |m|)
     function genU789_MC_SteepestSlope(){
-      // build four slopes with distinct absolute values
       const mags = shuffle([ri(1,3), ri(4,6), ri(7,9), ri(10,12)]);
-      const slopes = [
-        -mags[0],
-        mags[1],
-        reduceFrac(ri(2,9),ri(2,5)).n / reduceFrac(ri(2,9),ri(2,5)).d, // some fraction (approx)
-        -mags[2]
-      ];
+      const slopes = [-mags[0], mags[1], (ri(2,9)/ri(2,5)), -mags[2]];
       const labels = slopes.map(m=>{
         if(Number.isInteger(m)) return `$${m}$`;
-        // display as fraction with small integers
+        // show as cleaned fraction
         let a=ri(2,9), b=ri(2,5);
         const rf=reduceFrac(a,b);
         return `$\\tfrac{${rf.n}}{${rf.d}}$`;
       });
-      // ensure we know the real “steepest” value
       const real = Math.max(...slopes.map(s=>Math.abs(s)));
-      // force one explicit option to be the max magnitude integer for correctness
-      const forceIdx = ri(0,1) ? 0 : 3;
-      const forced = Math.max(Math.abs(slopes[0]),Math.abs(slopes[3]))===real ? (slopes[0]===-real?0:3) : forceIdx;
-      labels[forced] = `$${slopes[forced]}$`;
+      const forceIdx = Math.abs(slopes[0])===real ? 0 : 3;
+      labels[forceIdx] = `$${slopes[forceIdx]}$`;
       const q = 'Which slope represents the steepest line?';
       const choices = labels.slice();
-      const answerIndex = choices.findIndex(s=>s===`$${slopes[forced]}$`);
+      const answerIndex = choices.findIndex(s=>s===`$${slopes[forceIdx]}$`);
       return { q, choices, answerIndex };
     }
     
@@ -2998,11 +2992,10 @@
       const mLatex = dx===1 ? `${dy}` : `\\tfrac{${dy}}{${dx}}`;
       const b = y1 - (dy/dx)*x1;
       const bInt = Math.abs(b) < 1e-9 || Number.isInteger(b);
-      const bStr = bInt ? `${Math.round(b)}`
-                        : `\\tfrac{${dy*x1 - dx*y1}}{${-dx}}`; // b = (y - m x)
+      const bStr = bInt ? `${Math.round(b)}` : `\\tfrac{${dy*x1 - dx*y1}}{${-dx}}`;
       const correct = `$y=${mLatex}x${b>=0?'+':''}${bStr}$`;
       const wrongs = [
-        `$y=${mLatex}x${b>=0?'-':'+'}${Math.abs(bStr)}$`,
+        `$y=${mLatex}x${b>=0?'-':'+'}${bInt? Math.abs(Math.round(b)) : `\\Big|${bStr}\\Big|`}$`,
         `$y=${mLatex}x$`,
         `$y=${dx===1? `${-dy}`:`\\tfrac{${-dy}}{${dx}}`}x${b>=0?'+':''}${bStr}$`
       ];
@@ -3025,8 +3018,7 @@
     // 16) Convert slope–intercept to standard form equivalence (quick check)
     function genU789_MC_StandardFromSlopeIntercept(){
       const m = rsign()*ri(1,5), b = rsign()*ri(0,8);
-      // y = m x + b  →  mx - y + b = 0  (or any equivalent multiple)
-      const A=m, B=-1, C=b;
+      const A=m, B=-1, C=b; // y=mx+b → mx - y + b = 0
       const k = sample([1, -1, ri(2,5)]);
       const correct = `$${k*A}x${(k*B)>=0?'+':''}${k*B}y${(k*C)>=0?'+':''}${k*C}=0$`;
       const wrongs = [
@@ -3038,22 +3030,10 @@
       const choices=[correct,...wrongs].sort(()=>Math.random()-0.5);
       return { q, choices, answerIndex: choices.indexOf(correct) };
     }
-    // ================== Unit 7–9 (Linear) — Numeric Response Generators ==================
-    // tiny helpers (guarded)
-    if (typeof _gcd !== 'function'){
-      var _gcd = function(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ [a,b]=[b,a%b]; } return a; };
-    }
-    if (typeof reduceFrac !== 'function'){
-      var reduceFrac = function(n,d){
-        if(d===0) return {n:1,d:0};
-        let s = (n<0)^(d<0) ? -1 : 1;
-        n=Math.abs(n); d=Math.abs(d);
-        const g=_gcd(n,d); n/=g; d/=g;
-        return { n: s*n, d };
-      };
-    }
     
-    // NR1: Distance between two points (exact, simplified; Pythagorean triple → integer)
+    // ================== Unit 7–9 (Linear) — Numeric Response Generators (numeric-only) ==================
+    
+    // NR1: Distance between two points (exact integer via triple)
     function genU789_NR_DistancePoints(){
       const triples = [[3,4,5],[5,12,13],[8,15,17],[7,24,25]];
       const [a,b,c] = triples[Math.floor(Math.random()*triples.length)];
@@ -3066,14 +3046,13 @@
       };
     }
     
-    // NR2: Midpoint (returns an ordered pair; both integers or halves)
+    // NR2: Midpoint — ask for the x-coordinate (numeric)
     function genU789_NR_Midpoint(){
       const x1=ri(-9,9), y1=ri(-9,9), x2=ri(-9,9), y2=ri(-9,9);
-      const mx = (x1+x2)/2, my=(y1+y2)/2;
-      const fmt = v => Number.isInteger(v) ? `${v}` : `\\dfrac{${v*2}}{2}`;
+      const mx = (x1+x2)/2;
       return {
-        q: `Find the midpoint of $(${x1},${y1})$ and $(${x2},${y2})$.`,
-        answer: `$\\Big(${fmt(mx)},\\,${fmt(my)}\\Big)$`
+        q: `Find the $x$-coordinate of the midpoint of $(${x1},${y1})$ and $(${x2},${y2})$.`,
+        answer: `$${Number.isInteger(mx) ? mx : ( (x1+x2)+"/2" )}$`
       };
     }
     
@@ -3094,7 +3073,7 @@
     function genU789_NR_SlopeOnlyFromTwoPoints(){
       const m = rsign()*ri(1,6);
       const x1=ri(-6,6), y1=ri(-6,6);
-      const x2=x1+ri(1,6); // nonzero dx
+      const x2=x1+ri(1,6);
       const y2=y1+m*(x2-x1);
       return {
         q: `Find the slope of the line through $(${x1},${y1})$ and $(${x2},${y2})$.`,
@@ -3102,64 +3081,44 @@
       };
     }
     
-    // NR5: Solve a 2×2 system with integer solution (by design)
+    // NR5: Solve a 2×2 system — ask for x (numeric)
     function genU789_NR_SolveSystem(){
       const x0=rsign()*ri(0,6), y0=rsign()*ri(0,6);
-      // Build two independent equations: a1 x + b1 y = c1, a2 x + b2 y = c2
       let a1=rsign()*ri(1,6), b1=rsign()*ri(1,6);
       let a2=rsign()*ri(1,6), b2=rsign()*ri(1,6);
-      // ensure not proportional
-      while (a1*b2 === a2*b1){
-        a2=rsign()*ri(1,6); b2=rsign()*ri(1,6);
-      }
+      while (a1*b2 === a2*b1){ a2=rsign()*ri(1,6); b2=rsign()*ri(1,6); }
       const c1 = a1*x0 + b1*y0;
       const c2 = a2*x0 + b2*y0;
       return {
-        q: `Solve the system: $\\begin{cases}${a1}x${b1>=0?'+':''}${b1}y=${c1}\\\\ ${a2}x${b2>=0?'+':''}${b2}y=${c2}\\end{cases}$.`,
-        answer: `$(${x0},\\,${y0})$`
+        q: `Solve $\\begin{cases}${a1}x${b1>=0?'+':''}${b1}y=${c1}\\\\ ${a2}x${b2>=0?'+':''}${b2}y=${c2}\\end{cases}$. Enter the value of $x$.`,
+        answer: `$${x0}$`
       };
     }
     
-    // NR6: Average rate of change between two x-values for a linear function (clean)
+    // NR6: Average rate of change for a linear function (equals m)
     function genU789_NR_AvgRateChange(){
-      // linear f(x)=mx+b → average rate of change is m
       const m = rsign()*ri(1,8), b = rsign()*ri(0,10);
       let x1=ri(-6,2), x2=ri(3,9);
       if(x1===x2) x2+=1;
-      const y1 = m*x1 + b, y2 = m*x2 + b;
       return {
         q: `For $f(x)=${m}x${b>=0?'+':''}${b}$, compute the average rate of change from $x=${x1}$ to $x=${x2}$.`,
         answer: `$${m}$`
       };
     }
     
-    // NR7: Intersection of two lines (ordered pair, integer solution)
+    // NR7: Intersection of two lines — ask for x-coordinate (numeric)
     function genU789_NR_Intersection(){
-      // choose (x0,y0), pick two slopes m1≠m2 so both pass through (x0,y0)
       const x0=rsign()*ri(0,5), y0=rsign()*ri(0,5);
       let m1=rsign()*ri(1,5), m2=rsign()*ri(1,5);
       while(m2===m1) m2=rsign()*ri(1,5);
       const b1=y0 - m1*x0, b2=y0 - m2*x0;
       return {
-        q: `Find the intersection of $y=${m1}x${b1>=0?'+':''}${b1}$ and $y=${m2}x${b2>=0?'+':''}${b2}$.`,
-        answer: `$(${x0},\\,${y0})$`
+        q: `Find the intersection of $y=${m1}x${b1>=0?'+':''}${b1}$ and $y=${m2}x${b2>=0?'+':''}${b2}$. Enter the $x$-coordinate.`,
+        answer: `$${x0}$`
       };
     }
-
-    // ================== Unit 7–9 (Linear) — Written Response Generators ==================
-    // small guards (reuse if already declared earlier)
-    if (typeof _gcd !== 'function'){
-      var _gcd = function(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ [a,b]=[b,a%b]; } return a; };
-    }
-    if (typeof reduceFrac !== 'function'){
-      var reduceFrac = function(n,d){
-        if(d===0) return {n:1,d:0};
-        let s = (n<0)^(d<0) ? -1 : 1;
-        n=Math.abs(n); d=Math.abs(d);
-        const g=_gcd(n,d); n/=g; d/=g;
-        return { n: s*n, d };
-      };
-    }
+    
+    // ================== Unit 7–9 (Linear) — Written Response Generators (LaTeX-safe) ==================
     
     // WR1: Derive distance formula (prompted proof)
     function genU789_WR_DeriveDistanceFormula(){
@@ -3193,7 +3152,6 @@
       const numM=rsign()*ri(1,5), denM=ri(1,6);
       const {n:Mm, d:Md}=reduceFrac(numM,denM);
       const b=rsign()*ri(0,8);
-      // y = (Mm/Md)x + b -> Mm x - Md y + b Md = 0, normalize gcd>0
       const A=Mm, B=-Md, C=b*Md;
       const g = _gcd(_gcd(Math.abs(A),Math.abs(B)),Math.abs(C));
       const AA=A/g, BB=B/g, CC=C/g;
@@ -3208,24 +3166,18 @@
       const x1=ri(-6,4), y1=ri(-6,4), x2=x1+rsign()*ri(2,6), y2=y1+rsign()*ri(2,6);
       const mx=(x1+x2)/2, my=(y1+y2)/2;
       const dy=y2-y1, dx=x2-x1;
-      const m = dy/dx;
-      const mPerp = -dx/dy; // negative reciprocal
-      // point-slope: y - my = mPerp (x - mx)
+      const mPerp = -dx/dy;
       return {
         q: `Find the equation of the perpendicular bisector of the segment joining $(${x1},${y1})$ and $(${x2},${y2})$.`,
         answer:
-    `Midpoint $M\\big(\\frac{${x1}+${x2}}{2},\\frac{${y1}+${y2}}{2}\\big)=(${mx},${my})$.
-    Original slope $m=\\dfrac{${y2}-${y1}}{${x2}-${x1}}=\\dfrac{${dy}}{${dx}}$, so perpendicular slope $m_{\\perp}=-\\dfrac{1}{m}=\\dfrac{-${dx}}{${dy}}=${mPerp}$.
-    Point–slope form through $M$:
-    \\[
-    y-${my}=${mPerp}\\,(x-${mx}).
-    \\]`
+    `Midpoint $M\\Big(\\dfrac{${x1}+${x2}}{2},\\dfrac{${y1}+${y2}}{2}\\Big)=(${mx},${my})$.
+    Original slope $m=\\dfrac{${dy}}{${dx}}$, so perpendicular slope $m_{\\perp}=-\\dfrac{1}{m}=\\dfrac{-${dx}}{${dy}}=${mPerp}$.
+    Point–slope through $M$: \\[ y-${my}=${mPerp}\\,(x-${mx}). \\]`
       };
     }
     
     // WR5: Dependent system (infinitely many solutions) — explain
     function genU789_WR_DependentSystemExplain(){
-      // Make eq2 = k * eq1
       const a=rsign()*ri(1,5), b=rsign()*ri(1,5), c=rsign()*ri(0,10);
       const k = rsign()*ri(2,6);
       return {
@@ -3246,7 +3198,6 @@
     // WR6: Solve same system by substitution and by elimination
     function genU789_WR_SolveByTwoMethods(){
       const x0=rsign()*ri(0,5), y0=rsign()*ri(0,5);
-      // Build two distinct lines through (x0,y0)
       let m1=rsign()*ri(1,5), m2=rsign()*ri(1,5); while(m2===m1) m2=rsign()*ri(1,5);
       const b1=y0-m1*x0, b2=y0-m2*x0;
       return {
@@ -3267,27 +3218,24 @@
     
     // WR7: Break-even (revenue vs cost)
     function genU789_WR_BreakEven(){
-      const p = ri(10,20);       // price
-      const F = ri(200,600);     // fixed cost
-      const v = ri(3,9);         // variable cost
-      const q = Math.ceil(F/(p-v));  // first integer ≥ exact BE quantity
+      const p = ri(10,20);
+      const F = ri(200,600);
+      const v = ri(3,9);
+      const q = Math.ceil(F/(p-v));
       const exactQ = F/(p-v);
       return {
-        q: `A product sells for $\\$${p}$ each. Fixed costs are $\\$${F}$ and variable cost is $\\$${v}$ per item.
+        q: `A product sells for \\$${p} each. Fixed costs are \\$${F} and variable cost is \\$${v} per item.
     Write revenue $R(q)$ and cost $C(q)$, then find the break-even quantity (nearest whole item).`,
         answer:
-    `$R(q)=${p}q$, $C(q)=${F}+${v}q$.\\; Break-even solves ${p}q=${F}+${v}q\\Rightarrow ( ${p-v})q=${F}\\Rightarrow q=\\dfrac{${F}}{${p-v}}\\approx ${exactQ.toFixed(2)}\\Rightarrow ${q}$ items.`
+    `$R(q)=${p}q$, $C(q)=${F}+${v}q$.\\; Break-even solves ${p}q=${F}+${v}q\\Rightarrow (${p-v})q=${F}\\Rightarrow q=\\dfrac{${F}}{${p-v}}\\approx ${exactQ.toFixed(2)}\\Rightarrow ${q}$ items.`
       };
     }
     
     // WR8: Mixture problem (two concentrations to target)
     function genU789_WR_Mixture(){
-      // percentages that sum to produce middle target
-      const p1 = ri(10,30), p2 = ri(40,70); // %
+      const p1 = ri(10,30), p2 = ri(40,70);
       const T = ri(p1+5, p2-5);
-      const V = ri(6,16);                   // total L
-      // Solve: x + y = V, p1 x + p2 y = T V  (percents)
-      // x = V - y -> p1(V - y) + p2 y = T V -> y(p2 - p1) = V(T - p1)
+      const V = ri(6,16);
       const y = (V*(T - p1))/(p2 - p1);
       const x = V - y;
       return {
@@ -3301,7 +3249,6 @@
     
     // WR9: Parametric system — classify by k (unique / none / infinite)
     function genU789_WR_ParametricSystem(){
-      // Build x + k y = A  and  2x + 8y = B
       const A = ri(2,12), B = ri(4,20);
       return {
         q: `Solve in terms of $k$: 
@@ -3314,17 +3261,16 @@
     Classify values of $k$ giving (i) a unique solution, (ii) no solution, (iii) infinitely many solutions.`,
         answer:
     `From the first: $x=${A}-ky$. Substitute into the second:
-    $2(${A}-ky)+8y=${B}\\Rightarrow -2ky+8y=${B}-2${A}\\Rightarrow y(8-2k)=${B-2*A}$.
+    $2(${A}-ky)+8y=${B}\\Rightarrow -2ky+8y=${B}-2\\cdot ${A}\\Rightarrow y(8-2k)=${B-2*A}$.
     If $k\\ne4$, then $y=\\dfrac{${B-2*A}}{8-2k}$ and $x=${A}-k y$ (unique solution).
     If $k=4$, the second becomes $8y=${B-2*A}$:
-    • If $${B-2*A}=0$, both equations are multiples \\;$\\Rightarrow$ infinitely many solutions. 
-    • If $${B-2*A}\\ne0$, inconsistent \\;$\\Rightarrow$ no solution.`
+    • If $${B-2*A}=0$, both equations are multiples \\;\\Rightarrow\\; infinitely many solutions. 
+    • If $${B-2*A}\\ne0$, inconsistent \\;\\Rightarrow\\; no solution.`
       };
     }
     
     // WR10: Perpendicular diagonals check
     function genU789_WR_PerpendicularDiagonals(){
-      // Build a convex quad with integer coords; just supply fixed nice one but randomized shift
       const sx=ri(-2,2), sy=ri(-2,2);
       const A=[0+sx,0+sy], B=[4+sx,2+sy], C=[2+sx,6+sy], D=[-2+sx,4+sy];
       const mAC = (C[1]-A[1])/(C[0]-A[0]);
@@ -3339,17 +3285,14 @@
     
     // WR11: Lines parallel to a given line through lattice points in a box
     function genU789_WR_LatticeLinesParallel(){
-      // Given 3x - 4y + c = 0; collect integer points (x,y) with |x|,|y|<=N and form c
       const N = 3;
       const pts=[];
       for(let x=-N;x<=N;x++){
         for(let y=-N;y<=N;y++){
-          // line through (x,y) parallel to 3x-4y+7=0 is 3X-4Y+c=0 with c=-(3x-4y)
           const c = -(3*x - 4*y);
           pts.push({x,y,c});
         }
       }
-      // unique c values and a few examples
       const cs = Array.from(new Set(pts.map(p=>p.c))).sort((a,b)=>a-b);
       const examples = pts.slice(0,6).map(p=>`through (${p.x},${p.y}):\\; 3x-4y${p.c>=0?'+':''}${p.c}=0`).join(';\\ ');
       return {
@@ -3362,12 +3305,10 @@
     
     // WR12: Consistency of three lines
     function genU789_WR_ThreeLinesConsistency(){
-      // Construct either consistent (all meet at one point) or inconsistent
       const consistent = Math.random()<0.6;
       if (consistent){
         const x0=rsign()*ri(0,4), y0=rsign()*ri(0,4);
         let m1=rsign()*ri(1,4), m2=rsign()*ri(1,4), m3=rsign()*ri(1,4);
-        // allow duplicates? better ensure distinct
         while(new Set([m1,m2,m3]).size<3){ m2=rsign()*ri(1,4); m3=rsign()*ri(1,4); }
         const b1=y0-m1*x0, b2=y0-m2*x0, b3=y0-m3*x0;
         return {
@@ -3378,9 +3319,9 @@
           answer: `All three lines intersect at $(${x0},${y0})$, so the system is consistent with unique common solution.`
         };
       } else {
-        // two parallel distinct + a third intersecting one of them → no common point
         const m=rsign()*ri(1,4);
-        const b1=rsign()*ri(0,6), b2=b1+rsign()*ri(1,4), m3=rsign()*ri(1,4); if(m3===m) { m3*=-1; }
+        const b1=rsign()*ri(0,6), b2=b1+rsign()*ri(1,4);
+        let m3=rsign()*ri(1,4); if(m3===m) m3*=-1;
         const b3=rsign()*ri(0,6);
         return {
           q: `Determine whether the system is consistent:
@@ -3394,20 +3335,21 @@
     
     // WR13: Two cellphone plans — break-even usage
     function genU789_WR_TwoPlanBreakEven(){
-      const A0 = ri(20,40), a = ri(5,15);   // Plan A: base A0 + a cents
-      const B0 = ri(10,30), b = a + ri(5,20); // Plan B: base B0 + higher per-minute
-      const A0d=(A0).toFixed(2), B0d=(B0).toFixed(2);
-      const m = Math.ceil((A0 - B0) / ((b - a)/100)); // minutes to nearest whole
+      const A0 = ri(20,40), a = ri(5,15);   // base plus cents/min
+      const B0 = ri(10,30), b = a + ri(5,20);
+      const A0d=A0.toFixed(2), B0d=B0.toFixed(2);
       const exact = (A0 - B0) / ((b - a)/100);
+      const m = Math.ceil(exact);
       return {
-        q: `Plan A costs $\\$${A0d}$ plus $\\$${(a/100).toFixed(2)}$ per minute. 
-    Plan B costs $\\$${B0d}$ plus $\\$${(b/100).toFixed(2)}$ per minute.
+        q: `Plan A costs \\$${A0d} plus \\$${(a/100).toFixed(2)} per minute. 
+    Plan B costs \\$${B0d} plus \\$${(b/100).toFixed(2)} per minute.
     Write linear cost models in minutes $t$ and find the break-even usage (nearest minute).`,
         answer:
-    `$C_A(t)=${A0d}+${(a/100).toFixed(2)}t$, $\\; C_B(t)=${B0d}+${(b/100).toFixed(2)}t$.
-    Solve $C_A=C_B:\\; (( ${(b/100).toFixed(2)} - ${(a/100).toFixed(2)}))t=${(A0-B0).toFixed(2)}\\Rightarrow t\\approx ${exact.toFixed(2)}\\Rightarrow ${m}$ minutes.`
+    `$C_A(t)=${A0d}+${(a/100).toFixed(2)}t$, \\; $C_B(t)=${B0d}+${(b/100).toFixed(2)}t$.
+    Solve $C_A=C_B:\\;\\big(${(b/100).toFixed(2)}-${(a/100).toFixed(2)}\\big)t=${(A0-B0).toFixed(2)}\\Rightarrow t\\approx ${exact.toFixed(2)}\\Rightarrow ${m}$ minutes.`
       };
     }
+
 
 
 
