@@ -2451,11 +2451,12 @@
       const correct = `$( ${m}x-${n}y )( ${m}x+${n}y )$`;
       const wrong1  = `$( x-${n}y )( x+${n}y )$`;
       const wrong2  = `$( ${m}x-${n}y )^{2}$`;
-      thewrong3  = `$( ${m+n}x-${n}y )( ${m}x+${m+n}y )$`;
+      const wrong3  = `$( ${m+n}x-${n}y )( ${m}x+${m+n}y )$`;
       const q = `Factor completely: $${(m*m)}x^{2}-${(n*n)}y^{2}$.`;
-      const choices = [correct, wrong1, wrong2, thewrong3].sort(()=>Math.random()-0.5);
+      const choices = [correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
       return { q, choices, answerIndex: choices.indexOf(correct) };
     }
+
     
     // 8) Factor ax^2+bx+c with integer roots (ac method)
     function genU56_MC_QuadraticFactorable(){
