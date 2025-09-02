@@ -1591,24 +1591,22 @@
     
     // WR11: Power model y = a x^r via two points (randomized nice r)
     function genWR_U2_PowerModel(){
-      // Choose r from a tidy set; choose step t so (x2/x1)=2^t
-      const rChoices = [1/2, 1, 3/2, 2];
-      const r = rChoices[ri(0, rChoices.length-1)];
-      const t = (r===1/2) ? sample([2,4]) : sample([1,2,3]); // keep numbers small
-    
-      const x1 = 2 ** ri(1,3);
-      const x2 = x1 * (2 ** t);
-    
-      // Choose a so y's are tidy integers
+      // pick an integer exponent r between 1 and 3
+      const r = ri(1,3);
+      // choose integer base points for x
+      const x1 = ri(2,4), x2 = ri(5,9);
+      // pick a nice integer coefficient a
       const a = ri(1,4);
-      const y1 = a * (x1 ** r);
-      const y2 = a * (x2 ** r); // = a * (x1*2^t)^r = y1 * 2^{t r}
+      // compute y values exactly
+      const y1 = a * x1**r;
+      const y2 = a * x2**r;
     
       const q = `The power model $y=ax^{r}$ passes through $(${x1},${y1})$ and $(${x2},${y2})$. Find $r$.`;
-      const ans = `$\\dfrac{${y2}}{${y1}}=(\\dfrac{${x2}}{${x1}})^{r}=2^{${t}r}\\Rightarrow ${ (y2/y1) }=2^{${t}r}
-    \\Rightarrow r=\\dfrac{\\log_2(${(y2/y1)})}{${t}}=${r}.`;
-      return { q, answer: ans };
+      const answer = `$r=${r}$ (since $\\dfrac{y_2/y_1}{(x_2/x_1)^r}=1$ confirms it)`;
+    
+      return { q, answer };
     }
+
     
     // WR12: Solve 2^{x+a}+2^{x} = 3^{y+b}-3^{y} (randomized pairs with integer solution)
     function genWR_U2_Diophantine1(){
