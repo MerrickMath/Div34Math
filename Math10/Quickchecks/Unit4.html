@@ -156,13 +156,13 @@
 
       {
         title: 'B. Numeric Response',
-        note: 'Write your final answer clearly in the box.',
+        note: 'Round to the nearest tenth of a degree or 2 decimals unless exact values are requested.',
         items: [
-          { type: 'gen', gen: genU3_NR_KmhToMs },
-          { type: 'gen', gen: genU3_NR_CylinderTSA },
-          { type: 'gen', gen: genU3_NR_SphereRadiusFromV },
-          { type: 'gen', gen: genU3_NR_Ft3ToLitres },
-          { type: 'gen', gen: genU3_NR_PyramidVolume }
+          { type: 'gen', gen: genU4_NR_OppFromHypAngle },
+          { type: 'gen', gen: genU4_NR_MissingAngleFromLegs },
+          { type: 'gen', gen: genU4_NR_SinPlusCosSpecial },
+          { type: 'gen', gen: genU4_NR_AngleFromCos },
+          { type: 'gen', gen: genU4_NR_RampInclination }
         ]},
 
       {
@@ -2159,6 +2159,75 @@
       const choices = [correct, ...wrongs].sort(()=>Math.random()-0.5);
       return { q: `Solve for $\\theta$: $\\tan\\theta=${k}$. (Degrees, nearest tenth.)`, choices, answerIndex: choices.indexOf(correct) };
     }
+
+    // ========== Unit 4: Numeric Response Generators ==========
+
+    // NR1) Opposite from hypotenuse & angle: opp = H*sin(A)
+    function genU4_NR_OppFromHypAngle(){
+      const H = ri(12, 30);                // hypotenuse (m)
+      const A = ri(20, 70);                // angle in degrees
+      const opp = H * Math.sin(A * Math.PI/180);
+      return {
+        q: `A right triangle has hypotenuse $${H}$ and angle $${A}^{\\circ}$. Find the length of the side opposite $${A}^{\\circ}$.`,
+        answer: `$${H}\\sin(${A}^{\\circ})\\approx ${opp.toFixed(1)}$`
+      };
+    }
+    
+    // NR2) Missing acute angle from two legs (label which leg it’s opposite)
+    function genU4_NR_MissingAngleFromLegs(){
+      // random integer legs (ensure not equal & moderate size)
+      let a = ri(6, 20), b = ri(7, 24);
+      if (a === b) b += 1;
+      // choose which leg the angle is opposite (smaller leg more typical)
+      const opposite = (a < b ? a : b);
+      const adjacent = (a < b ? b : a);
+      const theta = Math.atan(opposite/adjacent) * 180/Math.PI;
+      return {
+        q: `A right triangle has legs ${a} and ${b}. Find the measure of the acute angle opposite the side of length ${opposite}. (Degrees, nearest tenth.)`,
+        answer: `$\\theta=\\tan^{-1}\\!\\left(\\dfrac{${opposite}}{${adjacent}}\\right)\\approx ${theta.toFixed(1)}^{\\circ}$`
+      };
+    }
+    
+    // NR3) Evaluate sin α + cos α for a special angle (exact)
+    function genU4_NR_SinPlusCosSpecial(){
+      const ang = sample([30,45,60]);
+      let exact;
+      if (ang === 30) exact = `\\tfrac{1}{2}+\\tfrac{\\sqrt{3}}{2}=\\tfrac{1+\\sqrt{3}}{2}`;
+      if (ang === 45) exact = `\\tfrac{\\sqrt{2}}{2}+\\tfrac{\\sqrt{2}}{2}=\\sqrt{2}`;
+      if (ang === 60) exact = `\\tfrac{\\sqrt{3}}{2}+\\tfrac{1}{2}=\\tfrac{\\sqrt{3}+1}{2}`;
+      return {
+        q: `Evaluate $\\sin(${ang}^{\\circ})+\\cos(${ang}^{\\circ})$.`,
+        answer: `$${exact}$`
+      };
+    }
+    
+    // NR4) Angle from cos θ = k (acute, to nearest tenth)
+    function genU4_NR_AngleFromCos(){
+      // choose a clean decimal k in (0,1)
+      const numerators = [2,3,4,5,6,7,8,9];
+      const denominators = [10, 12, 13, 15, 16, 17, 20];
+      const n = sample(numerators), d = sample(denominators);
+      let k = n/d;
+      if (k >= 0.98) k = 0.98; // keep safely < 1
+      const theta = Math.acos(k) * 180/Math.PI;
+      return {
+        q: `A triangle has an acute angle $\\theta$ with $\\cos\\theta=${k.toFixed(2)}$. Find $\\theta$ in degrees (nearest tenth).`,
+        answer: `$\\theta\\approx ${theta.toFixed(1)}^{\\circ}$`
+      };
+    }
+    
+    // NR5) Ramp inclination from rise/run: θ = arctan(rise/run)
+    function genU4_NR_RampInclination(){
+      // pick rise & run so ratio is tame
+      const rise = ri(8, 30) / 10;  // 0.8–3.0 m
+      const run  = ri(30, 90) / 10; // 3.0–9.0 m
+      const theta = Math.atan(rise/run) * 180/Math.PI;
+      return {
+        q: `A ramp rises $${rise.toFixed(1)}\\ \\text{m}$ over a horizontal distance of $${run.toFixed(1)}\\ \\text{m}$. Find the angle of inclination (degrees, nearest tenth).`,
+        answer: `$\\theta=\\tan^{-1}\\!\\left(\\dfrac{${rise.toFixed(1)}}{${run.toFixed(1)}}\\right)\\approx ${theta.toFixed(1)}^{\\circ}$`
+      };
+    }
+
 
 
     document.getElementById('generate').addEventListener('click', renderQuiz);
