@@ -1537,50 +1537,119 @@
       };
     }
     
-    // WR10: Prime-power solve for x,y
-    function genWR_U2_PrimePowerSystem(){
-      const q = `If $x^3y^5=2^{11}3^{13}$ and $\\dfrac{x}{y^{2}}=\\dfrac{1}{27}$, find $x$ and $y$ in prime-power form.`;
-      return {
-        q,
-        answer: `Let $x=2^{a}3^{b},\\ y=2^{c}3^{d}$. From $x/y^2=3^{-3}$, $a=2c$, $b-2d=-3$. From $x^3y^5$, $3a+5c=11\\Rightarrow c=1,a=2$ and $3b+5d=13\\Rightarrow d=2,b=1$. Hence $x=2^{2}3^{1}=12,\\ y=2^{1}3^{2}=18$.`
-      };
+    // If you don't already have these helpers in scope, uncomment:
+    // const ri = (a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+    // const sample = (arr)=>arr[ri(0,arr.length-1)];
+    
+    // Q25 — Scientific notation (multiplication), normalized
+    function genMC_Q25_SciMultiplyVar(){
+      const A = (ri(12,95)/10), B = (ri(12,95)/10);
+      const m = ri(-5,6), n = ri(-5,6);
+      let M = A*B, E = m+n;
+      while(M>=10){ M/=10; E++; }
+      while(M<1){ M*=10; E--; }
+      const correct = `$${M.toFixed(2)}\\times 10^{${E}}$`;
+      const wrong1  = `$${(A*B).toFixed(2)}\\times 10^{${m+n}}$`;      // unnormalized
+      const wrong2  = `$${(M*10).toFixed(2)}\\times 10^{${E-1}}$`;     // place shift error
+      const wrong3  = `$${(M/10).toFixed(2)}\\times 10^{${E+1}}$`;     // opposite shift
+      const q = `Compute $(${A.toFixed(2)}\\times 10^{${m}})(${B.toFixed(2)}\\times 10^{${n}})$ in scientific notation.`;
+      const choices=[correct,wrong1,wrong2,wrong3].sort(()=>Math.random()-0.5);
+      return { q, choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // WR11: Power model y=a x^r via two points
-    function genWR_U2_PowerModel(){
-      const q = `The power model $y=ax^{r}$ passes through $(2,1)$ and $(32,4)$. Find $r$.`;
-      return {
-        q,
-        answer: `$\\dfrac{4}{1}=\\dfrac{a\\,32^{r}}{a\\,2^{r}}=2^{4r}\\Rightarrow 4=2^{4r}\\Rightarrow r=\\tfrac{1}{2}$.`
-      };
+    // Q26 — Scientific notation (division), normalized
+    function genMC_Q26_SciDivideVar(){
+      const A = (ri(11,99)/10), B = (ri(12,95)/10);
+      const m = ri(-8,5), n = ri(-5,8);
+      let M = A/B, E = m-n;
+      while(M>=10){ M/=10; E++; }
+      while(M<1){ M*=10; E--; }
+      const correct = `$${M.toFixed(2)}\\times 10^{${E}}$`;
+      const wrong1  = `$${(A/B).toFixed(2)}\\times 10^{${m-n}}$`;
+      const wrong2  = `$${(M*10).toFixed(2)}\\times 10^{${E-1}}$`;
+      const wrong3  = `$${(M/10).toFixed(2)}\\times 10^{${E+1}}$`;
+      const q = `Compute $\\dfrac{${A.toFixed(1)}\\times 10^{${m}}}{${B.toFixed(1)}\\times 10^{${n}}}$ in scientific notation.`;
+      const choices=[correct,wrong1,wrong2,wrong3].sort(()=>Math.random()-0.5);
+      return { q, choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // WR12: Solve 2^{x+3}+2^x=3^{y+2}-3^y
-    function genWR_U2_Diophantine1(){
-      const q = `Solve for integers $x,y$: $2^{x+3}+2^{x}=3^{y+2}-3^{y}$.`;
-      return {
-        q,
-        answer: `Factor: $2^{x}(8+1)=9\\cdot 2^{x}$ and $3^{y}(9-1)=8\\cdot 3^{y}$. So $9\\cdot 2^{x}=8\\cdot 3^{y}\\Rightarrow 3^{2-y}=2^{3-x}$. Integers occur when both exponents are $0$: $y=2,\\ x=3$.`
-      };
+    // Q27 — Evaluate rational exponent like (perfect power)^{p/q}
+    function genMC_Q27_RationalExpEvaluateVar(){
+      const baseRoot = sample([2,3,4,5]);            // small clean root
+      const q = sample([2,3,4,5]);                    // index
+      const base = baseRoot ** q;                     // perfect q-th power
+      const p = ri(1,3);                              // numerator
+      const trueVal = baseRoot ** p;
+      const correct = `$${trueVal}$`;
+      const wrong1  = `$${base}^{${q}/${p}}$`;        // inverted fraction
+      const wrong2  = `$${(baseRoot**(p-1))}$`;       // off-by-one power
+      const wrong3  = `$${Math.round(baseRoot*p)}$`;  // multiplied instead of power
+      const qText = `$(${base})^{${p}/${q}}$ equals`;
+      const choices=[correct,wrong1,wrong2,wrong3].sort(()=>Math.random()-0.5);
+      return { q: qText, choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // WR13: f(x)=2^{4x-2}, find f(x)f(1-x)
-    function genWR_U2_CompositionIdentity(){
-      const q = `If $f(x)=2^{4x-2}$, find $f(x)\\cdot f(1-x)$ in simplest form.`;
-      return {
-        q,
-        answer: `$2^{4x-2}\\cdot 2^{2-4x}=2^{0}=1$.`
-      };
+    // Q28 — Simplify √(K x^a y^b) (x,y ≥ 0)
+    function genMC_Q28_SimplifyRadicalXYVar(){
+      const K = ri(18,150);
+      const ax = ri(2,9), ay = ri(2,9);
+      // factor K = s^2 * m
+      let s=1, m=K, d=2;
+      while(d*d<=m){ while(m%(d*d)===0){ s*=d; m/=d*d; } d++; }
+      const xo = Math.floor(ax/2), xr = ax%2;
+      const yo = Math.floor(ay/2), yr = ay%2;
+      const outside = [s>1?`${s}`:'', xo?`x^{${xo}}`:'', yo?`y^{${yo}}`:''].filter(Boolean).join('');
+      const inside = [m>1?`${m}`:'', xr?'x':'', yr?'y':''].filter(Boolean).join('\\,');
+      const correct = `$${outside}${inside?`\\sqrt{${inside}}`:''}$`.replace('^1','');
+    
+      const wrong1 = `$${outside}\\sqrt{${K}}$`;
+      const wrong2 = `$\\sqrt{${K}\\,x^{${ax}}y^{${ay}}}$`;
+      const wrong3 = `$${outside}\\sqrt{${m}${yr?'\\,y':''}}$`;
+      const q = `Simplify $\\sqrt{${K}\\,x^{${ax}}y^{${ay}}}$ for $x,y\\ge 0$.`;
+      const choices=[correct,wrong1,wrong2,wrong3].sort(()=>Math.random()-0.5);
+      return { q, choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // WR14: Mixed-base equation
-    function genWR_U2_MixedBaseSolve(){
-      const q = `Solve: $3^{x+2}+2^{x+2}+2^{x}=2^{x+5}+3^{x}$.`;
-      return {
-        q,
-        answer: `$3^{x}(9-1)+2^{x}(4+1-32)=0\\Rightarrow 8\\cdot 3^{x}=27\\cdot 2^{x}\\Rightarrow (\\tfrac{3}{2})^{x}=(\\tfrac{3}{2})^{3}\\Rightarrow x=3$.`
-      };
+    // Q29 — Combine fractional powers into one radical
+    function genMC_Q29_SingleRadicalCombineVar(){
+      const den = sample([2,3,4,5]);
+      const aNum = ri(2,5), bNum = ri(1,4);
+      const q = `Write $a^{${aNum}/${den}}\\,b^{${bNum}/${den}}$ as a single radical ($a,b\\ge 0$).`;
+      const correct = `$\\sqrt[${den}]{a^{${aNum}}b^{${bNum}}}$`;
+      const wrong1  = `$\\sqrt{a^{${aNum}}b^{${bNum}}}$`;
+      const wrong2  = `$\\sqrt[${aNum}]{a^{${den}}}\\,\\sqrt[${bNum}]{b^{${den}}}$`;
+      const wrong3  = `$\\sqrt[${den}]{ab}$`;
+      const choices=[correct,wrong1,wrong2,wrong3].sort(()=>Math.random()-0.5);
+      return { q, choices, answerIndex: choices.indexOf(correct) };
     }
+    
+    // Q30 — Power of a power (fractional); robust extraction
+    function genMC_Q30_PowerOfPowerVar(){
+      const q = sample([3,4,5]);
+      const p = sample([1,2,3]);
+      const k = sample([2,3]);                  // numeric base
+      const coef = k ** q;                       // perfect q-th power
+      const aTot = q*ri(2,5) + ri(0,q-1);
+      const bTot = q*ri(2,4) + ri(0,q-1);
+    
+      const outCoef = k ** p;
+      const aOut = Math.floor((p*aTot)/q), bOut = Math.floor((p*bTot)/q);
+      const aRem = (p*aTot) % q,           bRem = (p*bTot) % q;
+    
+      const outside = [outCoef>1?`${outCoef}`:'', aOut?`a^{${aOut}}`:'', bOut?`b^{${bOut}}`:''].filter(Boolean).join('');
+      const insideParts = []; if(aRem) insideParts.push(`a^{${aRem}}`); if(bRem) insideParts.push(`b^{${bRem}}`);
+      const rad = insideParts.length? `\\sqrt[${q}]{${insideParts.join('\\,')}}` : '';
+      const correct = `$${outside}${rad}$`.replace('^1','');
+    
+      const wrong1 = `$${outCoef}\\,a^{${p*aTot}}b^{${p*bTot}}$`;                      // forgot /q
+      const wrong2 = `$\\sqrt[${q}]{${(coef**p)}\\,a^{${p*aTot}}b^{${p*bTot}}}$`;      // kept all inside
+      const wrong3 = `$${outCoef}${aOut?`a^{${aOut}}`:''}${bOut?`b^{${bOut}}`:''}$`;   // dropped leftovers
+    
+      const qText = `Simplify $(${coef}\\,a^{${aTot}}b^{${bTot}})^{${p}/${q}}$ (assume $a,b>0$).`;
+      const choices=[correct,wrong1,wrong2,wrong3].sort(()=>Math.random()-0.5);
+      return { q: qText, choices, answerIndex: choices.indexOf(correct) };
+    }
+
 
 
 
