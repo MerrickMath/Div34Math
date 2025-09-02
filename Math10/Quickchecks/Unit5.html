@@ -2622,7 +2622,119 @@
     Difference $=${4*a*b}x=4\\cdot ${a}\\cdot ${b}\\cdot x$.`;
       return { q:qText, answer:ans };
     }
+    /* ===================== SIGN-SAFE FORMATTING & SANITIZER ===================== */
+
+    /** Safe sign for inline coefficients (no spaces). First-term option omits '+' */
+    function fmtSigned(n, { first=false } = {}){
+      if (n === 0) return first ? '0' : '+0';
+      const s = n > 0 ? '+' : '';
+      return first ? (n >= 0 ? String(n) : String(n)) : (s + String(n));
+    }
     
+    /** Formats a linear expression a x + b compactly with correct signs (e.g., "3x-5") */
+    function fmtLin(a, b, x='x'){
+      // coef 1/−1 gets suppressed to just +/- in front of the variable
+      const aAbs = Math.abs(a);
+      const aStr = (a === 1) ? '' : (a === -1 ? '-' : String(a));
+      const first = `${aStr}${x}`;
+      if (b === 0) return first;
+      const bStr = (b > 0 ? `+${b}` : `${b}`);  // b already carries sign
+      return `${first}${bStr}`;
+    }
+    
+    /** Formats ax^2 + bx + c with clean signs (e.g., "x^{2}-5x+6") */
+    function fmtQuad(a, b, c, x='x'){
+      // a term
+      const aTerm =
+        (a === 1) ? `${x}^{2}` :
+        (a === -1) ? `-${x}^{2}` :
+        `${a}${x}^{2}`;
+    
+      // b term
+      let bTerm = '';
+      if (b !== 0){
+        const bAbs = Math.abs(b);
+        const bCoef = (bAbs === 1) ? '' : String(bAbs);
+        bTerm = (b > 0 ? `+${bCoef}${x}` : `-${bCoef}${x}`);
+      }
+    
+      // c term
+      const cTerm = (c === 0) ? '' : (c > 0 ? `+${c}` : `${c}`);
+    
+      return `${aTerm}${bTerm}${cTerm}`;
+    }
+    
+    /** Replace ugly sign pairs globally while protecting \pm */
+    function cleanSigns(tex){
+      if (!tex) return tex;
+    
+      // Protect \pm so we don't mangle it
+      const PM_TOKEN = '__PM__';
+      tex = tex.replace(/\\pm/g, PM_TOKEN);
+    
+      // Normalize common double-sign issues
+      tex = tex
+        // "+ -k" / "- +k" with optional spaces → " -k"
+        .replace(/\+\s*-/g, ' - ')
+        .replace(/-\s*\+/g, ' - ')
+        // "--" → "+" (e.g., x--3 → x+3)
+        .replace(/--/g, '+')
+        // "+-" → "-" (e.g., x+-3 → x-3)
+        .replace(/\+-/g, '-')
+        // tidy "+ +k" → "+k" and "- -k" (already handled by --→+)
+        .replace(/\+\s+\+/g, '+')
+        .replace(/-\s+-/g, '+');
+    
+      // Unprotect \pm
+      tex = tex.replace(new RegExp(PM_TOKEN, 'g'), '\\\\pm');
+    
+      // Compact spaces around binary signs inside math (keeps nice display)
+      tex = tex.replace(/\s+\+/g, '+').replace(/\s+-/g, '-');
+    
+      return tex;
+    }
+    
+    /** Convenience: sanitize all math-bearing strings inside a generated object */
+    function sanitizeGenerated(obj){
+      if (!obj || typeof obj !== 'object') return obj;
+      const out = { ...obj };
+      if (typeof out.q === 'string') out.q = cleanSigns(out.q);
+      if (typeof out.answer === 'string') out.answer = cleanSigns(out.answer);
+      if (Array.isArray(out.choices)) out.choices = out.choices.map(cleanSigns);
+      if (typeof out.section === 'string') out.section = cleanSigns(out.section);
+      if (typeof out.title === 'string') out.title = cleanSigns(out.title);
+      return out;
+    }
+    
+    /* ===================== USE THE SANITIZER DURING RENDER ===================== */
+    /* In your renderQuiz() where you call item.gen(), sanitize its outputs before
+       inserting into the DOM. Replace the two spots that call item.gen() like this:
+       (1) for MC generators (type === 'mcgen')
+       (2) for free-response generators (type === 'gen')
+    */
+    function genU56_WR_QuadraticFormulaSolve(){
+      const r1 = sample([-5,-4,-3,-2,-1,1,2,3,4,5]);
+      let   r2 = sample([-5,-4,-3,-2,-1,1,2,3,4,5]);
+      while (r2 === r1) r2 = sample([-5,-4,-3,-2,-1,1,2,3,4,5]);
+      const a  = sample([1,2,3]);
+      const b  = -a*(r1 + r2);
+      const c  =  a*r1*r2;
+    
+      const disc = b*b - 4*a*c;           // perfect square
+      const sqrtDisc = Math.sqrt(disc);
+    
+      const q = `Solve using the quadratic formula: $${fmtQuad(a,b,c)}=0$.`;
+    
+      // Build with absolute values where helpful to avoid "-(-k)"
+      const steps =
+        `Quadratic formula: $x=\\dfrac{-b\\pm\\sqrt{b^{2}-4ac}}{2a}$.\\\\
+         Here $a=${a},\\ b=${b},\\ c=${c}$ so $\\Delta=b^{2}-4ac=${b}^{2}-4(${a})(${c})=${disc}$ and $\\sqrt{\\Delta}=${sqrtDisc}.\\\\
+         $x=\\dfrac{${-b}\\pm ${sqrtDisc}}{${2*a}}=\\boxed{${r1}\\,,\\ ${r2}}$.`;
+    
+      return sanitizeGenerated({ q, answer: steps });
+    }
+     
+
     
   // Buttons
   document.getElementById('generate').addEventListener('click', renderQuiz);
