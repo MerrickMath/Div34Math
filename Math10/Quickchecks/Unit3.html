@@ -1689,41 +1689,24 @@
     // const ri = (a,b)=>Math.floor(Math.random()*(b-a+1))+a;
     // const sample = (arr)=>arr[ri(0,arr.length-1)];
     
-    function sci(x, s=3){
-      // simple scientific-notation formatter (mantissa×10^exp) with s sig figs
-      if (x === 0) return '0';
-      const e = Math.floor(Math.log10(Math.abs(x)));
-      const m = x / 10**e;
-      return `${m.toFixed(Math.max(0, s-1))}\\times 10^{${e}}`;
-    }
-    
-    // 1) “Closest thickness of a credit card”
+    // 1) Credit card thickness
     function genU3_MC_CreditCardThickness(){
-      // canonical ~0.76 mm
       const correct = `$0.76\\ \\text{mm}$`;
-      const wrongs = [
-        `$7.6\\ \\text{mm}$`,
-        `$0.076\\ \\text{mm}$`,
-        `$76\\ \\text{\\mu m}$` // 76 μm is too small (true is ~760 μm)
-      ];
+      const wrongs = [`$7.6\\ \\text{mm}$`, `$0.076\\ \\text{mm}$`, `$76\\ \\text{\\mu m}$`];
       const choices = [correct, ...wrongs].sort(()=>Math.random()-0.5);
-      return {
-        q: 'Which is closest to the thickness of a standard credit card?',
-        choices,
-        answerIndex: choices.indexOf(correct)
-      };
+      return { q: 'Which is closest to the thickness of a standard credit card?', choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // 2) Convert km → inches (1 in = 2.54 cm)
+    // 2) km → inches (1 in = 2.54 cm)
     function genU3_MC_KmToInches(){
-      const km = (ri(120, 425) / 100); // 1.20–4.25 km
+      // Pick tidy km values to keep the prompt neat
+      const km = choose([1.20, 1.50, 2.00, 2.50, 3.25, 4.00]);
       const inches = km * 100000 / 2.54;
-      const correct = `$${sci(inches,3)}\\ \\text{in}$`;
+      const correct = `$${sciStr(inches,3)}\\ \\text{in}$`;
     
-      // common mistakes: use 2.5 instead of 2.54; forget ×100000 (use ×1000); or km→m only
-      const wrong1 = `$${sci(km*100000/2.5,3)}\\ \\text{in}$`;           // uses 2.5
-      const wrong2 = `$${sci(km*1000/2.54,3)}\\ \\text{in}$`;            // missed ×100
-      const wrong3 = `$${sci(km*1000,3)}\\ \\text{in}$`;                 // forgot cm→in
+      const wrong1 = `$${sciStr(km*100000/2.5,3)}\\ \\text{in}$`;  // used 2.5
+      const wrong2 = `$${sciStr(km*1000/2.54,3)}\\ \\text{in}$`;   // missed ×100
+      const wrong3 = `$${sciStr(km*1000,3)}\\ \\text{in}$`;        // forgot cm→in
     
       const choices = [correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
       return {
@@ -1733,143 +1716,109 @@
       };
     }
     
-    // 3) Area of a circle with diameter d inches → cm^2
+    // 3) Circle area (diameter in inches → cm^2)
     function genU3_MC_CircleAreaInCm2(){
-      const d_in = (ri(150, 300)/100).toFixed(2); // 1.50–3.00 in
-      const r_cm = (parseFloat(d_in) * 2.54) / 2;
-      const area = Math.PI * r_cm * r_cm;         // in cm^2
-      const correct = `$${(area).toFixed(1)}\\ \\text{cm}^2$`;
+      const d_in = choose([1.50, 1.75, 2.00, 2.25, 2.50]); // tidy
+      const r_cm = (d_in * 2.54) / 2;
+      const area = Math.PI * r_cm * r_cm;
+      const correct = `$${fixedClean(area,1)}\\ \\text{cm}^2$`;
     
-      // plausible alternatives: ± ~20–40%; or using radius in inches w/o converting
-      const wrong1 = `$${(area*0.64).toFixed(1)}\\ \\text{cm}^2$`;
-      const wrong2 = `$${(area*1.36).toFixed(1)}\\ \\text{cm}^2$`;
-      const wrong3 = `$${(Math.PI * (parseFloat(d_in)/2)**2).toFixed(2)}\\ \\text{cm}^2$`; // forgot inch→cm
+      const wrong1 = `$${fixedClean(area*0.64,1)}\\ \\text{cm}^2$`;
+      const wrong2 = `$${fixedClean(area*1.36,1)}\\ \\text{cm}^2$`;
+      const wrong3 = `$${fixedClean(Math.PI * (d_in/2)**2,2)}\\ \\text{cm}^2$`; // forgot inch→cm
     
       const choices = [correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
       return {
-        q: `The area of a circle with diameter $${d_in}\\ \\text{in}$ expressed in $\\text{cm}^2$ is closest to`,
+        q: `The area of a circle with diameter $${d_in.toFixed(2)}\\ \\text{in}$ expressed in $\\text{cm}^2$ is closest to`,
         choices,
         answerIndex: choices.indexOf(correct)
       };
     }
     
-    // 4) Convert m^2 → cm^2 (×10^4)
+    // 4) m^2 → cm^2 (×10^4)
     function genU3_MC_m2_to_cm2(){
-      const m2 = (ri(12, 350)/100).toFixed(2); // 0.12–3.50 m^2
-      const cm2 = parseFloat(m2) * 10000;
+      const m2 = choose([0.12, 0.25, 0.50, 1.20, 2.40, 3.50]);
+      const cm2 = m2 * 10000;
       const correct = `$${cm2.toLocaleString('en-US')}\\ \\text{cm}^2$`;
-      const wrong1 = `$${(parseFloat(m2)*100).toLocaleString('en-US')}\\ \\text{cm}^2$`;    // ×100
-      const wrong2 = `$${(parseFloat(m2)*1000).toLocaleString('en-US')}\\ \\text{cm}^2$`;   // ×1000
-      const wrong3 = `$${(parseFloat(m2)*1e6).toLocaleString('en-US')}\\ \\text{cm}^2$`;    // ×10^6
+      const wrong1 = `$${(m2*100).toLocaleString('en-US')}\\ \\text{cm}^2$`;
+      const wrong2 = `$${(m2*1000).toLocaleString('en-US')}\\ \\text{cm}^2$`;
+      const wrong3 = `$${(m2*1e6).toLocaleString('en-US')}\\ \\text{cm}^2$`;
     
       const choices = [correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
-      return {
-        q: `Convert $${m2}\\ \\text{m}^2$ into $\\text{cm}^2$.`,
-        choices,
-        answerIndex: choices.indexOf(correct)
-      };
+      return { q: `Convert $${m2.toFixed(2)}\\ \\text{m}^2$ into $\\text{cm}^2$.`, choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // 5) Rectangular box: inches → litres
+    // 5) Box volume (in → L)
     function genU3_MC_BoxVolumeLitres(){
-      const dims = sample([
-        [12,8,5],[10,6,4],[14,9,6],[16,10,8]
-      ]);
-      const [L,W,H] = dims; // inches
-      const vol_cm3 = (L*W*H) * Math.pow(2.54,3);
+      const dims = choose([[12,8,5],[10,6,4],[14,9,6],[16,10,8]]);
+      const [L,W,H] = dims;
+      const vol_cm3 = (L*W*H) * (2.54**3);
       const litres = vol_cm3 / 1000;
-      const correct = `$${(litres).toFixed(1)}\\ \\text{L}$`;
+      const correct = `$${fixedClean(litres,1)}\\ \\text{L}$`;
     
-      const wrong1 = `$${(L*W*H/1000).toFixed(1)}\\ \\text{L}$`;         // forgot 2.54^3
-      const wrong2 = `$${(litres*0.8).toFixed(1)}\\ \\text{L}$`;          // under by ~20%
-      const wrong3 = `$${(litres*1.2).toFixed(1)}\\ \\text{L}$`;          // over by ~20%
+      const wrong1 = `$${fixedClean(L*W*H/1000,1)}\\ \\text{L}$`; // forgot 2.54^3
+      const wrong2 = `$${fixedClean(litres*0.8,1)}\\ \\text{L}$`;
+      const wrong3 = `$${fixedClean(litres*1.2,1)}\\ \\text{L}$`;
     
       const choices = [correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
-      return {
-        q: `A rectangular box measures ${L}\\,in $\\times$ ${W}\\,in $\\times$ ${H}\\,in. Its volume in litres is closest to`,
-        choices,
-        answerIndex: choices.indexOf(correct)
-      };
+      return { q: `A rectangular box measures ${L}\\,in $\\times$ ${W}\\,in $\\times$ ${H}\\,in. Its volume in litres is closest to`, choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // 6) Most reasonable unit for a human hair thickness
+    // 6) Hair unit
     function genU3_MC_HairUnit(){
       const correct = `Micrometre`;
       const choices = [correct, 'Millimetre', 'Nanometre', 'Centimetre'].sort(()=>Math.random()-0.5);
-      return {
-        q: 'Which metric unit is most reasonable to measure the thickness of a human hair?',
-        choices: choices.map(c=> (c==='Micrometre' ? c : c)),
-        answerIndex: choices.indexOf(correct)
-      };
+      return { q: 'Which metric unit is most reasonable to measure the thickness of a human hair?', choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // 7) Convert square miles → square kilometres (1 mi = 1.609 km)
+    // 7) mi^2 → km^2 (1 mi = 1.609 km)
     function genU3_MC_SqMiToSqKm(){
-      const mi2 = ri(1,4);
-      const km2 = mi2 * (1.609**2);
-      const correct = `$${km2.toFixed(2)}\\ \\text{km}^2$`;
-      const wrong1  = `$${(mi2*1.609).toFixed(2)}\\ \\text{km}^2$`;  // linear factor only
-      const wrong2  = `$${(mi2*1.61).toFixed(2)}\\ \\text{km}^2$`;   // rounded, still linear
-      const wrong3  = `$${mi2.toFixed(2)}\\ \\text{km}^2$`;          // unchanged
+      const mi2 = choose([1,2,3,4]);
+      // compute using exact square of 1609/1000 to avoid weird float drift, then round
+      const factor = (1609/1000)**2; // 1.609^2
+      const km2 = mi2 * factor;
+      const correct = `$${fixedClean(km2,2)}\\ \\text{km}^2$`;
+      const wrong1  = `$${fixedClean(mi2*1.609,2)}\\ \\text{km}^2$`;  // linear only
+      const wrong2  = `$${fixedClean(mi2*1.61,2)}\\ \\text{km}^2$`;   // rounded, still linear
+      const wrong3  = `$${fixedClean(mi2,2)}\\ \\text{km}^2$`;        // unchanged
       const choices = [correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
-      return {
-        q: `Convert $${mi2}\\ \\text{mile}^2$ into $\\text{km}^2$ ($1\\ \\text{mi}=1.609\\ \\text{km}$).`,
-        choices,
-        answerIndex: choices.indexOf(correct)
-      };
+      return { q: `Convert $${mi2}\\ \\text{mile}^2$ into $\\text{km}^2$ ($1\\ \\text{mi}=1.609\\ \\text{km}$).`, choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // 8) Lateral surface area of a cylinder (2π r h)
+    // 8) Cylinder lateral area (2πrh)
     function genU3_MC_CylLateralSA(){
-      const r = ri(2,7), h = ri(6,14);
-      const LSA = 2*Math.PI*r*h; // numeric multiple of π below
+      const r = choose([3,4,5,6,7]);
+      const h = choose([8,10,12,14]);
       const correct = `$${2*r*h}\\pi$`;
-      const wrong1 = `$${r*h}\\pi$`;          // missing factor 2
-      const wrong2 = `$${2*r*r}\\pi$`;        // 2πr^2
-      const wrong3 = `$${2*(r+h)}\\pi$`;      // summed radii+height
+      const wrong1 = `$${r*h}\\pi$`;
+      const wrong2 = `$${2*r*r}\\pi$`;
+      const wrong3 = `$${2*(r+h)}\\pi$`;
       const choices = [correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
-      return {
-        q: `The lateral surface area of a cylinder of radius $r=${r}$ and height $h=${h}$ is`,
-        choices,
-        answerIndex: choices.indexOf(correct)
-      };
+      return { q: `The lateral surface area of a cylinder of radius $r=${r}$ and height $h=${h}$ is`, choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // 9) Volume of a cone with height k r
+    // 9) Cone volume with h = k r
     function genU3_MC_ConeVolume_k(){
-      const k = sample([2,3,4]);
-      const correct = `$${(k/3)}\\pi r^{3}$`.replace('1\\pi','\\pi').replace('0.3333333333','\\tfrac{1}{3}');
-      const wrong1  = `$\\pi r^{3}$`;               // common
-      const wrong2  = `$${k}\\pi r^{3}$`;           // forgot ÷3
-      const wrong3  = `$\\tfrac{1}{3}\\pi r^{2}$`;  // dropped r
+      const k = choose([2,3,4]);
+      const correct = k===1 ? `$\\tfrac{1}{3}\\pi r^{3}$` : `$${fixedClean(k/3,2)}\\pi r^{3}$`.replace('0.33','\\tfrac{1}{3}');
+      const wrong1  = `$\\pi r^{3}$`;
+      const wrong2  = `$${k}\\pi r^{3}$`;
+      const wrong3  = `$\\tfrac{1}{3}\\pi r^{2}$`;
       const choices = [correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
-      return {
-        q: `The volume of a cone of radius $r$ and height $${k}r$ is`,
-        choices,
-        answerIndex: choices.indexOf(correct)
-      };
+      return { q: `The volume of a cone of radius $r$ and height $${k}r$ is`, choices, answerIndex: choices.indexOf(correct) };
     }
     
-    // 10) Sphere surface area from volume
+    // 10) Sphere SA from volume (given as coef·π)
     function genU3_MC_SphereSAfromV(){
-      // Choose r integer → V = 4/3 π r^3 (present as numeric×π)
-      const r = ri(2,6);
-      const Vcoef = (4/3)*r**3;             // volume given as (Vcoef)π
-      const SAcoef = 4*r**2;                 // surface area = (SAcoef)π
+      const r = choose([2,3,4,5,6]);
+      const Vcoef = (4/3)*r**3;
+      const SAcoef = 4*r**2;
       const correct = `$${SAcoef}\\pi$`;
-    
-      const wrongs = [
-        `$${Vcoef}\\pi$`,                     // equal to given volume coefficient
-        `$${(3*r**2)}\\pi$`,                  // 3r^2 π (off)
-        `$${(2*SAcoef)}\\pi$`                 // doubled
-      ];
+      const wrongs = [`$${fixedClean(Vcoef,0)}\\pi$`, `$${3*r**2}\\pi$`, `$${2*SAcoef}\\pi$`];
       const choices = [correct, ...wrongs].sort(()=>Math.random()-0.5);
-      return {
-        q: `A sphere has volume $${Vcoef}\\pi$. Its surface area is`,
-        choices,
-        answerIndex: choices.indexOf(correct)
-      };
+      return { q: `A sphere has volume $${fixedClean(Vcoef,0)}\\pi$. Its surface area is`, choices, answerIndex: choices.indexOf(correct) };
     }
+    
 
 
 
