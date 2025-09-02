@@ -142,16 +142,16 @@
         title: 'A. Multiple Choice',
         note: 'Select one option.',
         items: [
-          { type: 'mcgen', gen: genU3_MC_CreditCardThickness },
-          { type: 'mcgen', gen: genU3_MC_KmToInches },
-          { type: 'mcgen', gen: genU3_MC_CircleAreaInCm2 },
-          { type: 'mcgen', gen: genU3_MC_m2_to_cm2 },
-          { type: 'mcgen', gen: genU3_MC_BoxVolumeLitres },
-          { type: 'mcgen', gen: genU3_MC_HairUnit },
-          { type: 'mcgen', gen: genU3_MC_SqMiToSqKm },
-          { type: 'mcgen', gen: genU3_MC_CylLateralSA },
-          { type: 'mcgen', gen: genU3_MC_ConeVolume_k },
-          { type: 'mcgen', gen: genU3_MC_SphereSAfromV }
+          { type: 'mcgen', gen: genU4_MC_SinSpecial },
+          { type: 'mcgen', gen: genU4_MC_TanSpecial },
+          { type: 'mcgen', gen: genU4_MC_CosRatioFindHyp },
+          { type: 'mcgen', gen: genU4_MC_SinFromTan },
+          { type: 'mcgen', gen: genU4_MC_BuildingHeight },
+          { type: 'mcgen', gen: genU4_MC_CosOppShortLeg },
+          { type: 'mcgen', gen: genU4_MC_LadderHeight },
+          { type: 'mcgen', gen: genU4_MC_PythagoreanIdentity },
+          { type: 'mcgen', gen: genU4_MC_CosFromSin },
+          { type: 'mcgen', gen: genU4_MC_SolveTan }
         ]},
 
       {
@@ -2018,6 +2018,148 @@
     = \\boxed{${litres}\\ \\text{L}}.$`;
       return { q, answer };
     }
+
+    // ========== Unit 4: Multiple Choice Generators (Trig & Right Triangles) ==========
+
+    // 1) Special-angle sine (random 30°, 45°, 60°)
+    function genU4_MC_SinSpecial(){
+      const angle = sample([30,45,60]);
+      const ansMap = {30:'\\tfrac{1}{2}', 45:'\\tfrac{\\sqrt{2}}{2}', 60:'\\tfrac{\\sqrt{3}}{2}'};
+      const correct = `$${ansMap[angle]}$`;
+      const pool = [
+        '$\\tfrac{1}{2}$','$\\tfrac{\\sqrt{3}}{2}$','$\\tfrac{\\sqrt{2}}{2}$','$1$'
+      ];
+      const choices = [correct, ...pool.filter(s=>s!==correct)].sort(()=>Math.random()-0.5);
+      return { q: `$\\sin ${angle}^{\\circ}$ equals`, choices, answerIndex: choices.indexOf(correct) };
+    }
+    
+    // 2) Special-angle tangent (random 30°, 45°, 60°)
+    function genU4_MC_TanSpecial(){
+      const angle = sample([30,45,60]);
+      const ansMap = {30:'\\tfrac{1}{\\sqrt{3}}', 45:'1', 60:'\\sqrt{3}'};
+      const correct = `$${ansMap[angle]}$`;
+      const pool = ['$1$','$\\sqrt{3}$','$\\tfrac{1}{\\sqrt{3}}$','$\\tfrac{\\sqrt{2}}{2}$'];
+      const choices = [correct, ...pool.filter(s=>s!==correct)].sort(()=>Math.random()-0.5);
+      return { q: `$\\tan ${angle}^{\\circ}$ equals`, choices, answerIndex: choices.indexOf(correct) };
+    }
+    
+    // 3) Given cos A = p/q and adjacent length, find hypotenuse
+    function genU4_MC_CosRatioFindHyp(){
+      // Use Pythagorean triples so p/q is nice
+      const triples = [{p:3,q:5},{p:4,q:5},{p:5,q:13},{p:12,q:13},{p:8,q:17},{p:15,q:17}];
+      const {p,q} = sample(triples);
+      const k = ri(2,4)*3; // scale factor for lengths
+      const adj = k*p, hyp = k*q;
+      const correct = `$${hyp}$`;
+      const wrongs  = [`$${adj}$`, `$${k*(q-p)}$`, `$${k*(p+q)}$`];
+      const choices = [correct, ...wrongs].sort(()=>Math.random()-0.5);
+      return {
+        q: `In a right triangle, $\\cos A=\\tfrac{${p}}{${q}}$. The length of the adjacent side to $A$ is ${adj}. What is the hypotenuse?`,
+        choices, answerIndex: choices.indexOf(correct)
+      };
+    }
+    
+    // 4) Given tan θ = a/b, find sin θ
+    function genU4_MC_SinFromTan(){
+      const triples = [{a:3,b:4,c:5},{a:5,b:12,c:13},{a:7,b:24,c:25},{a:8,b:15,c:17}];
+      const {a,b,c} = sample(triples);
+      const correct = `$\\tfrac{${a}}{${c}}$`;
+      const wrongs = [`$\\tfrac{${b}}{${c}}$`, `$\\tfrac{${a}}{${b}}$`, `$\\tfrac{${c}}{${a}}$`];
+      const choices = [correct, ...wrongs].sort(()=>Math.random()-0.5);
+      return { q: `If $\\tan\\theta=\\dfrac{${a}}{${b}}$, then $\\sin\\theta=$`, choices, answerIndex: choices.indexOf(correct) };
+    }
+    
+    // 5) Height from angle of elevation (nearest tenth)
+    function genU4_MC_BuildingHeight(){
+      const d = ri(30,80);                // metres
+      const ang = ri(25, 55);             // degrees
+      const h = d * Math.tan(ang*Math.PI/180);
+      const correct = `$${(h).toFixed(1)}\\ \\text{m}$`;
+      const wrongs = [
+        `$${(d*Math.sin(ang*Math.PI/180)).toFixed(1)}\\ \\text{m}$`,
+        `$${(d/Math.tan(ang*Math.PI/180)).toFixed(1)}\\ \\text{m}$`,
+        `$${(d*Math.cos(ang*Math.PI/180)).toFixed(1)}\\ \\text{m}$`
+      ];
+      const choices = [correct, ...wrongs].sort(()=>Math.random()-0.5);
+      return {
+        q: `The angle of elevation to the top of a building is $${ang}^{\\circ}$ at $${d}\\ \\text{m}$ away. The building’s height is approximately`,
+        choices, answerIndex: choices.indexOf(correct)
+      };
+    }
+    
+    // 6) cos θ for angle opposite the shorter leg (random Pythagorean triple)
+    function genU4_MC_CosOppShortLeg(){
+      const T = sample([{a:5,b:12,c:13},{a:7,b:24,c:25},{a:8,b:15,c:17},{a:9,b:40,c:41}]); // a<b<c
+      const short = T.a, long = T.b, hyp = T.c;
+      const correct = `$\\tfrac{${long}}{${hyp}}$`;
+      const wrongs = [
+        `$\\tfrac{${short}}{${hyp}}$`, `$\\tfrac{${hyp}}{${long}}$`, `$\\tfrac{${long}}{${short}}$`
+      ];
+      const choices = [correct, ...wrongs].sort(()=>Math.random()-0.5);
+      return {
+        q: `A right triangle has legs ${T.a} and ${T.b}. What is $\\cos\\theta$ for the angle opposite the shorter leg?`,
+        choices, answerIndex: choices.indexOf(correct)
+      };
+    }
+    
+    // 7) Ladder height reached (L·sinθ)
+    function genU4_MC_LadderHeight(){
+      const L = ri(8,14);              // metres
+      const ang = ri(55,80);           // degrees
+      const h = L * Math.sin(ang*Math.PI/180);
+      const correct = `$${h.toFixed(1)}\\ \\text{m}$`;
+      const wrongs = [
+        `$${(L*Math.cos(ang*Math.PI/180)).toFixed(1)}\\ \\text{m}$`,
+        `$${(L*Math.tan(ang*Math.PI/180)).toFixed(1)}\\ \\text{m}$`,
+        `$${(L/Math.cos(ang*Math.PI/180)).toFixed(1)}\\ \\text{m}$`
+      ];
+      const choices = [correct, ...wrongs].sort(()=>Math.random()-0.5);
+      return {
+        q: `A ladder $${L}\\ \\text{m}$ long leans against a wall at angle $${ang}^{\\circ}$. The vertical height reached is`,
+        choices, answerIndex: choices.indexOf(correct)
+      };
+    }
+    
+    // 8) Identity that always holds
+    function genU4_MC_PythagoreanIdentity(){
+      const correct = '$\\sin^{2}\\theta+\\cos^{2}\\theta=1$';
+      const wrongs = [
+        '$\\tan\\theta=\\cos\\theta/\\sin\\theta$',
+        '$\\cos\\theta=1/\\sin\\theta$',
+        '$\\sin\\theta+\\cos\\theta=1$'
+      ];
+      const choices = [`$${correct}$`, ...wrongs.map(s=>`$${s}$`)].sort(()=>Math.random()-0.5);
+      return { q: 'Which identity always holds?', choices, answerIndex: choices.indexOf(`$${correct}$`) };
+    }
+    
+    // 9) Given sinθ decimal, find cosθ (acute)
+    function genU4_MC_CosFromSin(){
+      // Use nice ratios so cos is clean (3-4-5, 5-12-13, 7-24-25, 8-15-17)
+      const triples = [{s:3,c:4,h:5},{s:5,c:12,h:13},{s:7,c:24,h:25},{s:8,c:15,h:17}];
+      const {s,c,h} = sample(triples);
+      const sinDec = (s/h).toFixed(1);     // e.g., 0.6
+      const cosDec = (c/h).toFixed(1);     // e.g., 0.8
+      const correct = `$${cosDec}$`;
+      const wrongs = [`$${(1-(s/h)).toFixed(1)}$`, `$${(s/h).toFixed(1)}$`, `$${(c/h).toFixed(2)}$`];
+      const choices = [correct, ...wrongs].sort(()=>Math.random()-0.5);
+      return { q: `If $\\sin\\theta=${sinDec}$, then $\\cos\\theta=$`, choices, answerIndex: choices.indexOf(correct) };
+    }
+    
+    // 10) Solve tanθ = k (degrees, nearest tenth)
+    function genU4_MC_SolveTan(){
+      const k = sample([0.5, 1, 2, 3]);
+      const theta = (Math.atan(k)*180/Math.PI);
+      const correct = `$${theta.toFixed(1)}^{\\circ}$`;
+      // common distractors: 90-θ, arctan(1/k), and swapped rounding
+      const wrongs = [
+        `$${(90 - theta).toFixed(1)}^{\\circ}$`,
+        `$${(Math.atan(1/k)*180/Math.PI).toFixed(1)}^{\\circ}$`,
+        `$${(theta+ri(-3,3)*0.5).toFixed(1)}^{\\circ}$`
+      ];
+      const choices = [correct, ...wrongs].sort(()=>Math.random()-0.5);
+      return { q: `Solve for $\\theta$: $\\tan\\theta=${k}$. (Degrees, nearest tenth.)`, choices, answerIndex: choices.indexOf(correct) };
+    }
+
 
     document.getElementById('generate').addEventListener('click', renderQuiz);
     document.getElementById('toggleKey').addEventListener('click', (e)=>{
