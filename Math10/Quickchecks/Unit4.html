@@ -2347,25 +2347,36 @@
       };
     }
 
+    
+  // Buttons
+  document.getElementById('generate').addEventListener('click', renderQuiz);
 
+  document.getElementById('toggleKey').addEventListener('click', (e)=>{
+    const pressed = e.currentTarget.getAttribute('aria-pressed') === 'true';
+    e.currentTarget.setAttribute('aria-pressed', String(!pressed));
+    e.currentTarget.textContent = pressed ? '🧠 Show Answers' : '🙈 Hide Answers';
 
+    // toggle visibility
+    document.querySelectorAll('.ans').forEach(el => el.toggleAttribute('hidden'));
 
+    // if KaTeX is available, (re)typeset any answers that are now visible
+    if (window.renderMathInElement) {
+      document.querySelectorAll('.ans:not([hidden])').forEach(el => typeset(el));
+    }
+  });
 
+  document.getElementById('printBtn').addEventListener('click', () => window.print());
 
+  // Render only after all deferred scripts (KaTeX) have loaded
+  window.addEventListener('load', () => {
+    renderQuiz(); // render + typeset (renderQuiz already calls typeset)
+  });
+</script>
 
-    document.getElementById('generate').addEventListener('click', renderQuiz);
-    document.getElementById('toggleKey').addEventListener('click', (e)=>{
-      const pressed=e.currentTarget.getAttribute('aria-pressed')==='true';
-      e.currentTarget.setAttribute('aria-pressed', String(!pressed));
-      e.currentTarget.textContent=pressed?'🧠 Show Answers':'🙈 Hide Answers';
-      document.querySelectorAll('.ans').forEach(el=>{ el.toggleAttribute('hidden'); if(!el.hasAttribute('hidden')) typeset(el); });
-    });
-    document.getElementById('printBtn').addEventListener('click',()=>window.print());
+<!-- KaTeX (deferred) -->
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
 
-    document.addEventListener('DOMContentLoaded', renderQuiz);
-  </script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});"></script>
 </body>
 </html>
 
