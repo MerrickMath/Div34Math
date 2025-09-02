@@ -3341,35 +3341,39 @@
       };
     }
     
-    // WR12: Consistency of three lines
+    // WR12: Consistency of three lines (inline-math only; no \[ \])
     function genU789_WR_ThreeLinesConsistency(){
-      const consistent = Math.random()<0.6;
+      const consistent = Math.random() < 0.6;
+    
       if (consistent){
-        const x0=rsign()*ri(0,4), y0=rsign()*ri(0,4);
-        let m1=rsign()*ri(1,4), m2=rsign()*ri(1,4), m3=rsign()*ri(1,4);
-        while(new Set([m1,m2,m3]).size<3){ m2=rsign()*ri(1,4); m3=rsign()*ri(1,4); }
-        const b1=y0-m1*x0, b2=y0-m2*x0, b3=y0-m3*x0;
+        const x0 = rsign()*ri(0,4), y0 = rsign()*ri(0,4);
+        let m1 = rsign()*ri(1,4), m2 = rsign()*ri(1,4), m3 = rsign()*ri(1,4);
+        while (new Set([m1,m2,m3]).size < 3) { m2 = rsign()*ri(1,4); m3 = rsign()*ri(1,4); }
+        const b1 = y0 - m1*x0, b2 = y0 - m2*x0, b3 = y0 - m3*x0;
+    
         return {
-          q: `Determine whether the system below is consistent. If so, find the common solution:
-    \\[
-    y=${m1}x${b1>=0?'+':''}${b1},\\quad y=${m2}x${b2>=0?'+':''}${b2},\\quad y=${m3}x${b3>=0?'+':''}${b3}.
-    \\]`,
+          q: `Determine whether the system below is consistent. If so, find the common solution: ` +
+             `$y=${m1}x${b1>=0?'+':''}${b1}$, ` +
+             `$y=${m2}x${b2>=0?'+':''}${b2}$, ` +
+             `$y=${m3}x${b3>=0?'+':''}${b3}$.`,
           answer: `All three lines intersect at $(${x0},${y0})$, so the system is consistent with a unique common solution.`
         };
       } else {
-        const m=rsign()*ri(1,4);
-        const b1=rsign()*ri(0,6), b2=b1+rsign()*ri(1,4);
-        let m3=rsign()*ri(1,4); if(m3===m) m3*=-1;
-        const b3=rsign()*ri(0,6);
+        const m = rsign()*ri(1,4);
+        const b1 = rsign()*ri(0,6), b2 = b1 + rsign()*ri(1,4);
+        let m3 = rsign()*ri(1,4); if (m3 === m) m3 *= -1;
+        const b3 = rsign()*ri(0,6);
+    
         return {
-          q: `Determine whether the system is consistent:
-    \\[
-    y=${m}x${b1>=0?'+':''}${b1},\\quad y=${m}x${b2>=0?'+':''}${b2},\\quad y=${m3}x${b3>=0?'+':''}${b3}.
-    \\]`,
+          q: `Determine whether the system is consistent: ` +
+             `$y=${m}x${b1>=0?'+':''}${b1}$, ` +
+             `$y=${m}x${b2>=0?'+':''}${b2}$, ` +
+             `$y=${m3}x${b3>=0?'+':''}${b3}$.`,
           answer: `The first two lines are parallel and distinct (same slope, different intercepts), so no single point lies on all three lines. The system is inconsistent.`
         };
       }
     }
+
     
     // WR13: Two cellphone plans — break-even usage (fixed)
     function genU789_WR_TwoPlanBreakEven(){
