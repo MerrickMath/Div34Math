@@ -167,24 +167,16 @@
 
       {
         title: 'C. Written Response',
-        note: 'Show full reasoning; write answers with positive exponents and/or radicals.',
+        note: 'Show full reasoning; use correct units.',
         items: [
-          { type: 'gen', gen: genWR_U2_SimplifyMonomialQuotient },
-          { type: 'gen', gen: genWR_U2_SciProductExplain },
-          { type: 'gen', gen: genWR_U2_FracPowersToRadicals },
-          { type: 'gen', gen: genWR_U2_RootOfPerfects },
-          { type: 'gen', gen: genWR_U2_OrderNumbers },
-          { type: 'gen', gen: genWR_U2_SolveRationalExponentEq },
-          { type: 'gen', gen: genWR_U2_MicroArea },
-          { type: 'gen', gen: genWR_U2_SimplifyFracPowers },
-          { type: 'gen', gen: genWR_U2_SolveSplitBases },
-          { type: 'gen', gen: genWR_U2_PrimePowerSystem },
-          { type: 'gen', gen: genWR_U2_PowerModel },
-          { type: 'gen', gen: genWR_U2_Diophantine1 },
-          { type: 'gen', gen: genWR_U2_CompositionIdentity },
-          { type: 'gen', gen: genWR_U2_MixedBaseSolve }
+          { type: 'gen', gen: genU3_WR_WaterTank80 },
+          { type: 'gen', gen: genU3_WR_SquarePrismFromDiagonal },
+          { type: 'gen', gen: genU3_WR_GreatPyramidVolume },
+          { type: 'gen', gen: genU3_WR_SteelSphereToRods },
+          { type: 'gen', gen: genU3_WR_CubeEqualsSphereArea },
+          { type: 'gen', gen: genU3_WR_ConeHemisphereEqualVol },
+          { type: 'gen', gen: genU3_WR_HorizontalCylinderHalf }
         ]}
-
     ];
 
     const quizEl = document.getElementById('quiz');
@@ -1934,6 +1926,99 @@
         answer: `$\\dfrac{1}{3}\\cdot ${s}^{2}\\cdot ${h}=\\ ${stripZeros(fixedClean(V,0))}\\ \\text{m}^3$`
       };
     }
+
+    // ========== Unit 3: Written Response Generators ==========
+    
+    // WR1: Cylindrical water tank, % filled → litres
+    function genU3_WR_WaterTank80(){
+      const D = ri(28, 42) / 10;   // diameter in m (2.8–4.2)
+      const H = ri(30, 60) / 10;   // height in m (3.0–6.0)
+      const pct = choose([60, 70, 75, 80, 85, 90]); // percent full
+      const r = D/2;
+      const Vfull_m3 = Math.PI * r * r * H;
+      const Vlitres = Math.round(Vfull_m3 * (pct/100) * 1000);
+      const q = `A cylindrical water tank of diameter $${D.toFixed(1)}\\,\\text{m}$ and height $${H.toFixed(1)}\\,\\text{m}$ is filled to $${pct}\\%$ of capacity. Find the volume of water in litres.`;
+      const answer = `$V=\\pi r^2h=\\pi(${(r).toFixed(2)})^{2}(${H.toFixed(1)})\\approx ${(Vfull_m3).toFixed(2)}\\,\\text{m}^3.\\\\
+    \\text{Water}=\\frac{${pct}}{100}\\cdot V\\approx ${(Vfull_m3*pct/100).toFixed(2)}\\,\\text{m}^3=${Vlitres}\\,\\text{L}.$`;
+      return { q, answer };
+    }
+    
+    // WR2: Square prism volume from diagonal of square cross-section
+    function genU3_WR_SquarePrismFromDiagonal(){
+      const L = ri(15, 30);                // length in cm
+      const diag = ri(8, 14) * 1.0;        // diagonal in cm
+      const side = diag/Math.SQRT2;
+      const V = Math.round(L * side * side); // cm^3 (nearest)
+      const q = `A wooden beam is cut into a square prism $${L}\\,\\text{cm}$ long with diagonal cross-section $${diag}\\,\\text{cm}$. Find its volume.`;
+      const answer = `For a square, $s=\\dfrac{d}{\\sqrt2}=\\dfrac{${diag}}{\\sqrt2}\\approx ${fixedClean(side,2)}\\,\\text{cm}$.\\\\
+    $V=Ls^{2}=${L}\\cdot (${fixedClean(side,2)})^{2}\\approx ${V}\\,\\text{cm}^3.$`;
+      return { q, answer };
+    }
+    
+    // WR3: Great pyramid volume → km^3 (scientific notation)
+    function genU3_WR_GreatPyramidVolume(){
+      const B = ri(200, 260);  // base length (m)
+      const H = ri(120, 160);  // height (m)
+      const V_m3 = (1/3) * B*B * H;
+      const V_km3 = V_m3 / 1e9;
+      const q = `A pyramid has base length $${B}\\,\\text{m}$ and height $${H}\\,\\text{m}$. Approximate its volume in cubic kilometres.`;
+      const answer = `$V=\\tfrac13B^{2}H=\\tfrac13(${B}^{2})(${H})=${fixedClean(V_m3,0)}\\,\\text{m}^3=\\ ${sciStr(V_km3,3)}\\ \\text{km}^3.$`;
+      return { q, answer };
+    }
+    
+    // WR4: Steel sphere melted into cylinders (how many rods)
+    function genU3_WR_SteelSphereToRods(){
+      const R = ri(4, 7);                      // sphere radius cm
+      const rRod = choose([0.5, 0.6, 0.75, 1]); // rod radius cm
+      const L = choose([15, 18, 20, 24, 25, 30]); // rod length cm
+      const Vsphere = (4/3)*Math.PI*R**3;
+      const Vrod = Math.PI*(rRod**2)*L;
+      const n = Math.floor(Vsphere / Vrod);
+      const q = `A steel sphere of radius $${R}\\,\\text{cm}$ is melted and recast into cylindrical rods of radius $${rRod}\\,\\text{cm}$ and length $${L}\\,\\text{cm}$. How many rods can be made?`;
+      const answer = `$V_{\\text{sphere}}=\\tfrac{4}{3}\\pi(${R})^{3}= ${fixedClean(Vsphere,1)}\\,\\text{cm}^3.\\quad
+    V_{\\text{rod}}=\\pi(${rRod})^{2}(${L})= ${fixedClean(Vrod,1)}\\,\\text{cm}^3.\\\\
+    \\text{Number}=\\left\\lfloor\\dfrac{${fixedClean(Vsphere,1)}}{${fixedClean(Vrod,1)}}\\right\\rfloor=\\boxed{${n}}.$`;
+      return { q, answer };
+    }
+    
+    // WR5: Cube surface area equals sphere surface area (solve x)
+    function genU3_WR_CubeEqualsSphereArea(){
+      const r = ri(4, 9);
+      const x = Math.sqrt((2/3)*Math.PI*r*r);
+      const q = `A cube of edge $x\\,\\text{cm}$ has the same surface area as a sphere of radius $r=${r}\\,\\text{cm}$. Find $x$.`;
+      const answer = `Set $6x^{2}=4\\pi r^{2}\\Rightarrow x=\\sqrt{\\dfrac{2\\pi}{3}}\\,r=\\sqrt{\\dfrac{2\\pi}{3}}\\,(${r})\\approx ${fixedClean(x,2)}\\,\\text{cm}.$`;
+      return { q, answer };
+    }
+    
+    // WR6: Cone vs hemisphere equal volumes (find h:r)
+    function genU3_WR_ConeHemisphereEqualVol(){
+      const r = ri(3, 10);
+      const q = `A cone and a hemisphere share the same base radius $r$ and have equal volumes. Find the ratio of the cone’s height $h$ to $r$. (Assume $r=${r}$ for concreteness.)`;
+      const answer = `Set $\\tfrac13\\pi r^{2}h=\\tfrac23\\pi r^{3}\\Rightarrow h=2r$. Hence $\\dfrac{h}{r}=\\boxed{2:1}.$`;
+      return { q, answer };
+    }
+    
+    // WR7: Horizontal cylinder half-filled — formula + numeric
+    function genU3_WR_HorizontalCylinderHalf(){
+      const r = ri(30, 60);             // radius in cm
+      const Lm = ri(10, 20) / 10;       // length in m (1.0–2.0)
+      const Lcm = Lm * 100;             // convert to cm
+      // Half depth ⇒ circular segment with central angle θ = π
+      const areaSeg = 0.5 * r * r * Math.PI;   // (r^2/2)(π - sinπ) = (π r^2)/2
+      const Vcm3 = areaSeg * Lcm;              // volume in cm^3
+      const litres = Math.round(Vcm3 / 1000);  // to L, nearest litre
+      const q = `A fuel tank is a right circular cylinder of radius $${r}\\,\\text{cm}$ and length $${Lm.toFixed(1)}\\,\\text{m}$. It lies on its side and is filled to half its depth. 
+    (i) Derive a formula (in terms of $r,L,\\theta$) for the liquid volume as a function of the central angle $\\theta$ (in radians) of the circular segment.
+    (ii) Then evaluate numerically for this tank at half depth.`;
+      const answer = `(i) For a circular segment with central angle $\\theta$ (radians), area $A=\\dfrac{r^{2}}{2}(\\theta-\\sin\\theta)$. Thus volume $V=L\\cdot A=\\dfrac{Lr^{2}}{2}(\\theta-\\sin\\theta)$.\\\\
+    (ii) Half depth corresponds to a half-circle cross-section: $\\theta=\\pi\\Rightarrow A=\\dfrac{r^{2}}{2}(\\pi-0)=\\dfrac{\\pi r^{2}}{2}$.\\\\
+    $V= L\\cdot \\dfrac{\\pi r^{2}}{2} = (${Lm.toFixed(1)}\\text{ m})\\cdot\\dfrac{\\pi(${r}\\text{ cm})^{2}}{2} 
+    = (${Lcm}\\text{ cm})\\cdot\\dfrac{\\pi(${r})^{2}}{2}\\ \\text{cm}^3
+    \\approx ${fixedClean(Vcm3,0)}\\ \\text{cm}^3
+    = \\boxed{${litres}\\ \\text{L}}.$`;
+      return { q, answer };
+    }
+
 
 
 
