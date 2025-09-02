@@ -1238,35 +1238,64 @@
     }
     
     // 10) Power of a power with radicals (e.g., (27 a^9 b^6)^{2/3})
+    // MC: Power of a power with fractional exponent (assume a,b>0)
     function genU2_PowerOfPower(){
-      const coef = sample([8,16,27,32,64,81]);
-      const ra = ri(6,10), rb = ri(4,8);
-      const p = sample([2,4]); const q = sample([3,5]); // exponent p/q
-      const qText = `$(${coef}\\,a^{${ra}}b^{${rb}})^{${p}/${q}}$`;
+      // Choose a clean q-th power coefficient so no numeric leftovers inside
+      const q = sample([3,4,5]);
+      const p = sample([1,2,3].filter(t => t < 2*q)); // reasonable numerators
+      const k = sample([2,3]);              // small base
+      const coef = k ** q;                   // perfect q-th power → (coef)^{p/q} = k^p
     
-      // simplify coefficient
-      const cRoot = Math.round(coef**(1/q));
-      let outCoef = cRoot**p; // (cRoot)^p
-      let aOut = Math.floor((ra*p)/q), bOut = Math.floor((rb*p)/q);
-      let aIn  = (ra*p)%q,         bIn  = (rb*p)%q;
+      // Variable exponents: q*n + r (so some leftovers may remain inside)
+      const nA = ri(2,5), rA = ri(0,q-1);
+      const nB = ri(2,4), rB = ri(0,q-1);
+      const aTot = q*nA + rA;
+      const bTot = q*nB + rB;
     
-      const outParts = [outCoef>1?`${outCoef}`:'', aOut?`a^{${aOut}}`:'', bOut?`b^{${bOut}}`:''].filter(Boolean).join('');
-      const inParts  = [];
-      if ((coef % (cRoot**q)) !== 0) inParts.push(`${coef/(cRoot**q)}`); // leftover inside if not perfect
-      if (aIn) inParts.push(`a^{${aIn}}`);
-      if (bIn) inParts.push(`b^{${bIn}}`);
-      const inside = inParts.length? `\\sqrt[${q}]{${inParts.join('\\,')}}` : '';
+      // Outside exponents after ( )^{p/q}
+      const outCoef = k ** p;
+      const aOut = Math.floor((p * aTot) / q);
+      const bOut = Math.floor((p * bTot) / q);
     
-      const correct = `$${outParts}${inside}$`.replace('^1','');
+      // Inside remainders
+      const aRem = (p * aTot) % q;
+      const bRem = (p * bTot) % q;
     
-      // plausible wrongs
-      const wrong1 = `$${outParts}\\,\\sqrt[${q}]{${coef}\\,a^{${ra}}b^{${rb}}}$`;
-      const wrong2 = `$\\sqrt[${q}]{${coef**p}\\,a^{${ra*p}}b^{${rb*p}}}$`;
-      const wrong3 = `$${outCoef}a^{${aOut}}b^{${bOut}}$`; // dropped inside leftovers
+      // Build LaTeX pieces
+      const qText = `$(${coef}\\,a^{${aTot}}b^{${bTot}})^{${p}/${q}}$`;
     
-      const choices=[correct,wrong1,wrong2,wrong3].sort(()=>Math.random()-0.5);
-      return { q:`Simplify ${qText} (assume $a,b>0$).`, choices, answerIndex: choices.indexOf(correct) };
+      const outsideParts = [
+        outCoef > 1 ? `${outCoef}` : '',
+        aOut ? `a^{${aOut}}` : '',
+        bOut ? `b^{${bOut}}` : ''
+      ].filter(Boolean).join('');
+    
+      const insideParts = [];
+      if (aRem) insideParts.push(`a^{${aRem}}`);
+      if (bRem) insideParts.push(`b^{${bRem}}`);
+    
+      const radical = insideParts.length ? `\\sqrt[${q}]{${insideParts.join('\\,')}}` : '';
+    
+      const correct = `$${outsideParts}${radical}$`.replace('^1','');
+    
+      // Plausible distractors:
+      // 1) Forgot to divide exponents by q (applied only ^p)
+      const wrong1 = `$${(k**p)}\\,a^{${p*aTot}}b^{${p*bTot}}$`;
+    
+      // 2) Kept everything under a q-th root (no extracting)
+      const wrong2 = `$\\sqrt[${q}]{${(coef**p)}\\,a^{${p*aTot}}b^{${p*bTot}}}$`;
+    
+      // 3) Dropped the inside remainders entirely
+      const wrong3 = `$${(k**p)}${aOut?`a^{${aOut}}`:''}${bOut?`b^{${bOut}}`:''}$`;
+    
+      const choices = [correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
+      return {
+        q: `Simplify ${qText} (assume $a,b>0$).`,
+        choices,
+        answerIndex: choices.indexOf(correct)
+      };
     }
+
 
         // ---------- Unit 2: Numeric Response Generators ----------
     // Uses your existing ri(a,b). If missing, uncomment:
