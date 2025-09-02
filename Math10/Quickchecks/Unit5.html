@@ -2683,23 +2683,35 @@
       return { q: qText, answer: ans };
     }
 
-
-    
-    
-
+    // Buttons
     document.getElementById('generate').addEventListener('click', renderQuiz);
+  
     document.getElementById('toggleKey').addEventListener('click', (e)=>{
-      const pressed=e.currentTarget.getAttribute('aria-pressed')==='true';
+      const pressed = e.currentTarget.getAttribute('aria-pressed') === 'true';
       e.currentTarget.setAttribute('aria-pressed', String(!pressed));
-      e.currentTarget.textContent=pressed?'🧠 Show Answers':'🙈 Hide Answers';
-      document.querySelectorAll('.ans').forEach(el=>{ el.toggleAttribute('hidden'); if(!el.hasAttribute('hidden')) typeset(el); });
+      e.currentTarget.textContent = pressed ? '🧠 Show Answers' : '🙈 Hide Answers';
+  
+      // toggle visibility
+      document.querySelectorAll('.ans').forEach(el => el.toggleAttribute('hidden'));
+  
+      // if KaTeX is available, (re)typeset any answers that are now visible
+      if (window.renderMathInElement) {
+        document.querySelectorAll('.ans:not([hidden])').forEach(el => typeset(el));
+      }
     });
-    document.getElementById('printBtn').addEventListener('click',()=>window.print());
-
-    document.addEventListener('DOMContentLoaded', renderQuiz);
+  
+    document.getElementById('printBtn').addEventListener('click', () => window.print());
+  
+    // Render only after all deferred scripts (KaTeX) have loaded
+    window.addEventListener('load', () => {
+      renderQuiz(); // render + typeset (renderQuiz already calls typeset)
+    });
   </script>
+  
+  <!-- KaTeX (deferred) -->
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
+
 </body>
 </html>
 
