@@ -158,12 +158,11 @@
         title: 'B. Numeric Response',
         note: 'Write your final answer clearly in the box.',
         items: [
-          { type: 'gen', gen: genNR_U2_RationalExp },
-          { type: 'gen', gen: genNR_U2_SciAdd },
-          { type: 'gen', gen: genNR_U2_SciDivide },
-          { type: 'gen', gen: genNR_U2_RationalExpNegative },
-          { type: 'gen', gen: genNR_U2_SolveExponentEquation },
-          { type: 'gen', gen: genNR_U2_SciCompound }
+          { type: 'gen', gen: genU3_NR_KmhToMs },
+          { type: 'gen', gen: genU3_NR_CylinderTSA },
+          { type: 'gen', gen: genU3_NR_SphereRadiusFromV },
+          { type: 'gen', gen: genU3_NR_Ft3ToLitres },
+          { type: 'gen', gen: genU3_NR_PyramidVolume }
         ]},
 
       {
@@ -1819,6 +1818,72 @@
       return { q: `A sphere has volume $${fixedClean(Vcoef,0)}\\pi$. Its surface area is`, choices, answerIndex: choices.indexOf(correct) };
     }
     
+    // ========== Unit 3: Numeric Response Generators ==========
+    // Assumes ri(a,b) and sample(arr) (or choose) exist; add light helpers if missing:
+    if (typeof stripZeros !== 'function') {
+      var stripZeros = s => s.replace(/(\.\d*?[1-9])0+$/,'$1').replace(/\.0+$/,'');
+    }
+    if (typeof fixedClean !== 'function') {
+      var fixedClean = (x, dp=2) => stripZeros(Number(x).toFixed(dp));
+    }
+    if (typeof choose !== 'function') {
+      var choose = arr => arr[Math.floor(Math.random()*arr.length)];
+    }
+    
+    // NR1: Convert km/h → m/s (pick values that divide cleanly by 3.6)
+    function genU3_NR_KmhToMs(){
+      // choose from set that makes exact 1-decimal or integer results
+      const kmh = choose([18, 27, 36, 45, 54, 72, 90, 108]); // → 5,7.5,10,12.5,15,20,25,30
+      const ms = kmh / 3.6;
+      return {
+        q: `Convert $${kmh}\\ \\text{km/h}$ to $\\text{m/s}$.`,
+        answer: `$${fixedClean(ms, 1)}\\ \\text{m/s}$`
+      };
+    }
+    
+    // NR2: Cylinder total surface area (2πr^2 + 2πrh) with tidy r,h
+    function genU3_NR_CylinderTSA(){
+      const r = choose([5, 6, 7.5, 8, 9, 10]); // cm
+      const h = choose([15, 18, 20, 24, 25, 30]); // cm
+      const tsa = 2*Math.PI*r*r + 2*Math.PI*r*h; // cm^2
+      const approx = Math.round(tsa); // nearest cm^2
+      return {
+        q: `A cylinder has radius $${stripZeros(String(r))}\\ \\text{cm}$ and height $${h}\\ \\text{cm}$. Find its total surface area.`,
+        answer: `$2\\pi r^{2}+2\\pi rh=\\ ${approx}\\ \\text{cm}^2$`
+      };
+    }
+    
+    // NR3: Radius from sphere volume V = (4/3)π r^3 (choose integer r)
+    function genU3_NR_SphereRadiusFromV(){
+      const r = choose([4,5,6,7,8,9]); // cm
+      const Vcoef = (4/3)*r**3;        // so volume = Vcoef·π
+      return {
+        q: `The volume of a sphere is $${stripZeros(fixedClean(Vcoef,0))}\\pi\\ \\text{cm}^3$. Find its radius.`,
+        answer: `$r=${r}\\ \\text{cm}$`
+      };
+    }
+    
+    // NR4: Convert ft^3 → litres (1 ft = 0.3048 m, 1 m^3=1000 L)
+    function genU3_NR_Ft3ToLitres(){
+      const ft3 = choose([5, 8, 10, 12, 15, 18, 20]);
+      const litres = ft3 * (0.3048**3) * 1000;      // exact formula
+      const ans = Math.round(litres);               // nearest litre
+      return {
+        q: `Convert $${ft3}\\ \\text{ft}^3$ into litres. ($1\\ \\text{ft}=0.3048\\ \\text{m}$, $1\\ \\text{m}^3=1000\\ \\text{L}$)`,
+        answer: `$${ans}\\ \\text{L}$`
+      };
+    }
+    
+    // NR5: Volume of a square pyramid (V = 1/3 s^2 h) with tidy integers
+    function genU3_NR_PyramidVolume(){
+      const s = choose([8, 10, 12, 14, 15]);  // m
+      const h = choose([12, 15, 18, 20]);     // m
+      const V = (s*s*h)/3;
+      return {
+        q: `A pyramid has square base $${s}\\ \\text{m}$ and height $${h}\\ \\text{m}$. Find its volume.`,
+        answer: `$\\dfrac{1}{3}\\cdot ${s}^{2}\\cdot ${h}=\\ ${stripZeros(fixedClean(V,0))}\\ \\text{m}^3$`
+      };
+    }
 
 
 
