@@ -142,16 +142,16 @@
         title: 'A. Multiple Choice',
         note: 'Select one option.',
         items: [
-          { type: 'mcgen', gen: genU4_MC_SinSpecial },
-          { type: 'mcgen', gen: genU4_MC_TanSpecial },
-          { type: 'mcgen', gen: genU4_MC_CosRatioFindHyp },
-          { type: 'mcgen', gen: genU4_MC_SinFromTan },
-          { type: 'mcgen', gen: genU4_MC_BuildingHeight },
-          { type: 'mcgen', gen: genU4_MC_CosOppShortLeg },
-          { type: 'mcgen', gen: genU4_MC_LadderHeight },
-          { type: 'mcgen', gen: genU4_MC_PythagoreanIdentity },
-          { type: 'mcgen', gen: genU4_MC_CosFromSin },
-          { type: 'mcgen', gen: genU4_MC_SolveTan }
+          { type: 'mcgen', gen: genU56_MC_ExpandBinomialPair },
+          { type: 'mcgen', gen: genU56_MC_DiffSquaresSubtract },
+          { type: 'mcgen', gen: genU56_MC_NotFactorable },
+          { type: 'mcgen', gen: genU56_MC_GCFxy },
+          { type: 'mcgen', gen: genU56_MC_DiffSumSquares },
+          { type: 'mcgen', gen: genU56_MC_ExpandLinearTimesQuadratic },
+          { type: 'mcgen', gen: genU56_MC_DiffSquaresFactor },
+          { type: 'mcgen', gen: genU56_MC_QuadraticFactorable },
+          { type: 'mcgen', gen: genU56_MC_PerfectSquareTrinomial },
+          { type: 'mcgen', gen: genU56_MC_FactorCubicCommon }
         ]},
 
       {
@@ -2346,6 +2346,171 @@
         answer: `Let the initial distance be d₁ = h / tan(${ang1}°), and the final distance d₂ = h / tan(${ang2}°). Since d₁ − d₂ ≈ ${move}, solving gives h ≈ ${h} m.`
       };
     }
+
+    // ========== Unit 5/6: Multiple Choice Generators ==========
+    // Assumes ri(a,b) and sample(arr) exist in your file.
+    // const ri = (a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+    // const sample = (arr)=>arr[ri(0,arr.length-1)];
+    
+    // 1) Expand (ax+b)(cx+d)
+    function genU56_MC_ExpandBinomialPair(){
+      const a = ri(2,5), b = ri(-6,6) || 1, c = ri(2,5), d = ri(-6,6) || -1;
+      const A = a*c;
+      const B = a*d + b*c;
+      const C = b*d;
+      const correct = `$${A}x^{2}+${B}x+${C}$`.replace(/\+\-/g,'-');
+      const wrong1  = `$${A}x^{2}+${(a*d - b*c)}x+${C}$`.replace(/\+\-/g,'-');         // FOIL sign slip
+      const wrong2  = `$${A}x^{2}+${(a*d + b*c + a + c)}x+${C}$`.replace(/\+\-/g,'-');   // extra terms
+      const wrong3  = `$${A}x^{2}+${(a+b+c+d)}x+${(b+d)}$`.replace(/\+\-/g,'-');         // add instead of multiply
+      const q = `Expand and simplify $(${a}x${b>=0?'+':''}${b})(${c}x${d>=0?'+':''}${d})$.`;
+      const choices = [correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
+      return { q, choices, answerIndex: choices.indexOf(correct) };
+    }
+    
+    // 2) (x+p)^2 - (x-q)^2  (difference of squares → 2(p+q)x + (p^2-q^2))
+    function genU56_MC_DiffSquaresSubtract(){
+      const p = ri(2,6), q = ri(2,6);
+      const correct = `$${2*(p+q)}x+${p*p - q*q}$`.replace(/\+\-/g,'-');
+      const wrong1  = `$${4}x+${p*p+q*q}$`;                         // treats as (a+b)^2
+      const wrong2  = `$${2*(p-q)}x+${p*p - q*q}$`.replace(/\+\-/g,'-'); // sign error on middle term
+      const wrong3  = `$${(p+q)}x+${(p-q)}$`;                       // linear-only mishmash
+      const qtext = `Simplify $(x+${p})^{2}-(x-${q})^{2}$.`;
+      const choices = [correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
+      return { q: qtext, choices, answerIndex: choices.indexOf(correct) };
+    }
+    
+    // 3) Not factorable over integers (discriminant < 0)
+    function genU56_MC_NotFactorable(){
+      // build a quadratic ax^2+bx+c with b^2-4ac < 0
+      const a = ri(1,3);
+      const m = ri(2,6); // let c = a*m^2 so 4ac = 4a^2 m^2
+      const b = ri(1,2*a*m - 1); // ensure b^2 < 4a^2 m^2
+      const c = a*m*m;
+      const polys = [
+        `$x^{2}+5x+6$`,
+        `$x^{2}+7x+10$`,
+        `$x^{2}+4x+3$`,
+        `$${a}x^{2}+${b}x+${c}$`
+      ];
+      const correct = polys[3];
+      const wrongs  = polys.slice(0,3);
+      const choices = [correct, ...wrongs].sort(()=>Math.random()-0.5);
+      return { q: 'Which of the following is \\emph{not} factorable over the integers?', choices, answerIndex: choices.indexOf(correct) };
+    }
+    
+    // 4) Factor GCF + binomial: kx^2y - mxy^2
+    function genU56_MC_GCFxy(){
+      const k0 = ri(6,18), m0 = ri(6,18);
+      // ensure both multiples of a common factor >1
+      const g = [6, 3, 2].find(d=>k0%d===0 && m0%d===0) || 2;
+      const a = k0, b = m0;
+      const A = a/g, B = b/g;
+      const correct = `$${g}xy(${A}x-${B}y)$`;
+      const wrong1  = `$${g}xy(${A}x+${B}y)$`;
+      const wrong2  = `$${g}x(${A}x-${B}y)$`;
+      const wrong3  = `$${a}x^{2}y-${b}xy^{2}$`;
+      const q = `Factor completely: $${a}x^{2}y-${b}xy^{2}$.`;
+      const choices = [correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
+      return { q, choices, answerIndex: choices.indexOf(correct) };
+    }
+    
+    // 5) (x^2 - a^2)(x^2 + a^2) = x^4 - a^4
+    function genU56_MC_DiffSumSquares(){
+      const a = ri(3,8);
+      const correct = `$x^{4}-${a**4}$`;
+      const wrong1  = `$x^{4}+${a**4}$`;
+      const wrong2  = `$x^{4}-${2*a*a}x^{2}+${a**4}$`;
+      const wrong3  = `$x^{4}-${a*a}x^{2}+${a**4}$`;
+      const q = `Which is equivalent to $(x^{2}-${a*a})(x^{2}+${a*a})$?`;
+      const choices = [correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
+      return { q, choices, answerIndex: choices.indexOf(correct) };
+    }
+    
+    // 6) Expand (ax+b)(x^2+cx+d) and simplify
+    function genU56_MC_ExpandLinearTimesQuadratic(){
+      const a = ri(2,4), b = ri(-6,6) || 3, c = ri(-4,5), d = ri(1,6);
+      const A3 = a;
+      const A2 = a*c + b;
+      const A1 = a*d + b*c;
+      const A0 = b*d;
+      const correct = `$${A3}x^{3}+${A2}x^{2}+${A1}x+${A0}$`.replace(/\+\-/g,'-');
+      const wrong1  = `$${A3}x^{3}+${(a*c)}x^{2}+${(a*d)}x+${A0}$`.replace(/\+\-/g,'-'); // missed b* terms
+      const wrong2  = `$${A3}x^{3}+${(A2+ri(1,3))}x^{2}+${(A1-ri(1,3))}x+${A0}$`.replace(/\+\-/g,'-');
+      const wrong3  = `$${A3}x^{3}+${A2}x^{2}+${(A1+a)}x+${(A0+b)}$`.replace(/\+\-/g,'-');
+      const q = `Expand $( ${a}x${b>=0?'+':''}${b} )( x^{2}${c>=0?'+':''}${c}x${d>=0?'+':''}${d} )$.`;
+      const choices = [correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
+      return { q, choices, answerIndex: choices.indexOf(correct) };
+    }
+    
+    // 7) Factor difference of squares: (mx)^2 - (ny)^2
+    function genU56_MC_DiffSquaresFactor(){
+      const m = ri(2,6), n = ri(2,6);
+      const correct = `$( ${m}x-${n}y )( ${m}x+${n}y )$`;
+      const wrong1  = `$( x-${n}y )( x+${n}y )$`;
+      const wrong2  = `$( ${m}x-${n}y )^{2}$`;
+      thewrong3  = `$( ${m+n}x-${n}y )( ${m}x+${m+n}y )$`;
+      const q = `Factor completely: $${(m*m)}x^{2}-${(n*n)}y^{2}$.`;
+      const choices = [correct, wrong1, wrong2, thewrong3].sort(()=>Math.random()-0.5);
+      return { q, choices, answerIndex: choices.indexOf(correct) };
+    }
+    
+    // 8) Factor ax^2+bx+c with integer roots (ac method)
+    function genU56_MC_QuadraticFactorable(){
+      // build from two integer roots r1,r2
+      const r1 = sample([-6,-5,-4,-3,-2,2,3,4,5,6]);
+      const r2 = sample([-6,-5,-4,-3,-2,2,3,4,5,6]);
+      const a = ri(1,3);
+      const b = -a*(r1+r2);
+      const c = a*r1*r2;
+      // one canonical factorization
+      const f1 = `(${a===1?'' : a}x${-a*r1>=0?'+':''}${-a*r1})`;
+      const f2 = `(x${-r2>=0?'+':''}${-r2})`;
+      const correct = `$${f1}${f2}$`.replace(/\(\)/g,'(1)').replace('1x','x');
+      const wrong1  = `$(${a===1?'':a}x${-a*r2>=0?'+':''}${-a*r2})(x${-r1>=0?'+':''}${-r1})$`.replace('1x','x'); // swapped mismatch
+      const wrong2  = `$(${a===1?'':a}x${r1>=0?'+':''}${r1})(x${r2>=0?'+':''}${r2})$`;
+      const wrong3  = `$(${a===1?'':a}x${-a*(r1+r2)>=0?'+':''}${-a*(r1+r2)}) (x${r1*r2>=0?'+':''}${r1*r2})$`;
+      const q = `Factor completely: $${a}x^{2}+${b}x+${c}$.`;
+      const choices = [correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
+      return { q, choices, answerIndex: choices.indexOf(correct) };
+    }
+    
+    // 9) Identify perfect square trinomial
+    function genU56_MC_PerfectSquareTrinomial(){
+      const u = ri(2,6), v = ri(2,6), sign = sample([1,-1]);
+      const correct = `$x^{2}${sign>0?'+':'-'}${2*u}x+${u*u}$`;
+      const wrong1  = `$x^{2}+${(u+v)}x+${u*v}$`;
+      const wrong2  = `$x^{2}${sign>0?'+':'-'}${2*u}x+${(u*u+ri(1,4))}$`;
+      const wrong3  = `$x^{2}${sign>0?'+':'-'}${(2*u+2)}x+${u*u}$`;
+      const q = 'Which polynomial is a perfect square trinomial?';
+      const choices = [correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
+      return { q, choices, answerIndex: choices.indexOf(correct) };
+    }
+    
+    // 10) Factor cubic with common factor x
+    function genU56_MC_FactorCubicCommon(){
+      const a = ri(-5,-2), b = ri(3,6), c = ri(-5,-2); // x^3 + (a+b+c)x^2 + ...
+      // Build x(x^2 + px + q) with nice integers
+      const p = a + b + c;
+      const q = a*b + a*c + b*c; // but we only need a simple recognizable pattern
+      // Instead, construct directly: x(x+u)(x+v)
+      const u = ri(-5,5) || 1, v = ri(-5,5) || -2;
+      const expand = (x,y)=>({
+        x3: 1,
+        x2: (x+y),
+        x1: x*y,
+      });
+      const e = expand(u,v);
+      const correct = `$x(x+${u})(x+${v})$`.replace(/\+\-/g,'-');
+      const wrong1  = `$x(x+${u})(x-${v})$`.replace(/\+\-/g,'-');
+      const wrong2  = `$x(x+${u+1})(x+${v-1})$`.replace(/\+\-/g,'-');
+      const wrong3  = `$x(x+${u+v})(x+1)$`.replace(/\+\-/g,'-');
+      const poly = `$x^{3}+${e.x2}x^{2}+${e.x1}x$`.replace(/\+\-/g,'-');
+      const q = `Factor completely: ${poly}.`;
+      const choices = [correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
+      return { q, choices, answerIndex: choices.indexOf(correct) };
+    }
+    
+
 
 
 
