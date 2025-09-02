@@ -753,50 +753,56 @@
       BANK.forEach(sec=>{
         const card = document.createElement('div');
         card.className = 'card';
-        // NOTE: BANK uses "title", not "section"
-        card.innerHTML = `<h2>${sec.title || sec.section || ''}</h2>` +
-                         `<div class="divider"></div>`;
+        card.innerHTML =
+          `<h2>${cleanSigns(sec.title || sec.section || '')}</h2>` +
+          `<div class="divider"></div>`;
     
-        sec.items.forEach(item=>{
+        (sec.items || []).forEach(item=>{
           // --- Legacy fixed MC (if any remain) ---
           if (item.type === 'mc') {
-            const shuffled = shuffle(item.choices.slice());
+            const q   = cleanSigns(item.q || '');                // sanitize
+            const ans = cleanSigns(item.answer || '');           // sanitize
+            const choicesRaw = Array.isArray(item.choices) ? item.choices.slice() : ['$A$','$B$','$C$','$D$'];
+            const shuffled = shuffle(choicesRaw.map(cleanSigns)); // sanitize each choice then shuffle
+    
             const opts = shuffled.map((c,i)=>{
               const letter = String.fromCharCode(65+i);
               return `<div class="choice">(${letter}) <span class="math">${c}</span></div>`;
             }).join('');
     
             card.innerHTML +=
-              `<div><strong>${qCounter}. </strong><span class="math">${item.q}</span></div>`+
+              `<div><strong>${qCounter}. </strong><span class="math">${q}</span></div>`+
               `<div class="mc-choices">${opts}</div>`+
-              `<div class="ans math" hidden>Answer: ${item.answer}</div>`;
+              `<div class="ans math" hidden>Answer: ${ans}</div>`;
     
-            ansItems.push(`<div class="ansItem"><strong>${qCounter}.</strong> <span class="math">${item.answer}</span></div>`);
+            ansItems.push(
+              `<div class="ansItem"><strong>${qCounter}.</strong> <span class="math">${ans}</span></div>`
+            );
             qCounter++;
           }
     
           // --- Generator-based Multiple Choice ---
           else if (item.type === 'mcgen') {
-            let q, choices, answerIndex;
-            try {
-              ({ q, choices, answerIndex } = item.gen());
-            } catch {
-              q = 'Problem unavailable.'; choices = ['$A$','$B$','$C$','$D$']; answerIndex = 0;
-            }
+            let generated = { q:'Problem unavailable.', choices: ['$A$','$B$','$C$','$D$'], answerIndex: 0 };
+            try { generated = item.gen(); } catch {}
+            generated = sanitizeGenerated(generated); // <<< ensure no double signs etc.
     
+            const { q, choices, answerIndex } = generated;
             const opts = choices.map((c,i)=>{
               const letter = String.fromCharCode(65+i);
               return `<div class="choice">(${letter}) <span class="math">${c}</span></div>`;
             }).join('');
     
-            const correct = choices[answerIndex];
+            const correct = choices[Math.max(0, Math.min(answerIndex ?? 0, choices.length-1))];
     
             card.innerHTML +=
               `<div><strong>${qCounter}. </strong><span class="math">${q}</span></div>`+
               `<div class="mc-choices">${opts}</div>`+
               `<div class="ans math" hidden>Answer: ${correct}</div>`;
     
-            ansItems.push(`<div class="ansItem"><strong>${qCounter}.</strong> <span class="math">${correct}</span></div>`);
+            ansItems.push(
+              `<div class="ansItem"><strong>${qCounter}.</strong> <span class="math">${correct}</span></div>`
+            );
             qCounter++;
           }
     
@@ -804,22 +810,32 @@
           else if (item.type === 'gen') {
             let generated = { q:'Problem unavailable.', answer:'' };
             try { generated = item.gen(); } catch {}
+            generated = sanitizeGenerated(generated); // <<< ensure clean signs
+    
             const { q, answer } = generated;
     
             card.innerHTML +=
               `<div><strong>${qCounter}. </strong><span class="math">${q}</span></div>`+
               `<div class="ans math" hidden>Answer: ${answer}</div>`;
     
-            ansItems.push(`<div class="ansItem"><strong>${qCounter}.</strong> <span class="math">${answer}</span></div>`);
+            ansItems.push(
+              `<div class="ansItem"><strong>${qCounter}.</strong> <span class="math">${answer}</span></div>`
+            );
             qCounter++;
           }
     
           // --- Fallback for fixed text items (numeric/written) if any remain ---
           else {
+            const q   = cleanSigns(item.q || '');
+            const ans = cleanSigns(item.answer || '');
+    
             card.innerHTML +=
-              `<div><strong>${qCounter}. </strong><span class="math">${item.q || ''}</span></div>`+
-              `<div class="ans math" hidden>Answer: ${item.answer || ''}</div>`;
-            ansItems.push(`<div class="ansItem"><strong>${qCounter}.</strong> <span class="math">${item.answer || ''}</span></div>`);
+              `<div><strong>${qCounter}. </strong><span class="math">${q}</span></div>`+
+              `<div class="ans math" hidden>Answer: ${ans}</div>`;
+    
+            ansItems.push(
+              `<div class="ansItem"><strong>${qCounter}.</strong> <span class="math">${ans}</span></div>`
+            );
             qCounter++;
           }
         });
@@ -836,6 +852,7 @@
       typeset(quizEl);
       if (keyEl) typeset(keyEl);
     }
+
 
 
 
