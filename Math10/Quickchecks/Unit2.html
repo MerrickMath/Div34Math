@@ -1530,58 +1530,131 @@
       };
     }
     
-    // WR9: Solve 12^{2x+1} = 2^{3x+7} 3^{3x-4}
+    // WR9: Solve split-base exponential equation (randomized)
     function genWR_U2_SolveSplitBases(){
-      const q = `$12^{2x+1}=2^{3x+7}\\cdot 3^{3x-4}$. Solve for $x$.`;
-      return {
-        q,
-        answer: `Write $12=2^{2}\\cdot 3$. Then $2^{4x+2}\\cdot 3^{2x+1}=2^{3x+7}\\cdot 3^{3x-4}$. Equate exponents: $4x+2=3x+7$ and $2x+1=3x-4$, both give $x=5$.`
-      };
+      // Build: (2^a2 * 3^a3)^(αx+β) = 2^(γx+δ) * 3^(ηx+θ)
+      // Choose a unique integer solution x*
+      const a2 = ri(1,3);          // exponent of 2 in composite base
+      const a3 = ri(1,3);          // exponent of 3 in composite base
+      const alpha = ri(1,3);       // coefficient of x inside parentheses
+      const beta  = ri(0,2);       // constant term inside parentheses
+      const xStar = ri(2,6);       // target solution
+    
+      // Pick γ,η slopes not equal to a2*alpha, a3*alpha to ensure a non-trivial solve
+      let gamma = ri(a2*alpha-3, a2*alpha+3);  while (gamma === a2*alpha) gamma = ri(a2*alpha-3, a2*alpha+3);
+      let eta   = ri(a3*alpha-3, a3*alpha+3);  while (eta   === a3*alpha) eta   = ri(a3*alpha-3, a3*alpha+3);
+    
+      // Choose δ,θ so that x = xStar satisfies both exponent equalities
+      const delta = a2*(alpha*xStar + beta) - gamma*xStar;
+      const theta = a3*(alpha*xStar + beta) - eta*xStar;
+    
+      const baseCoef = `(2^{${a2}}\\cdot 3^{${a3}})`;
+      const lhs = `${baseCoef}^{\\,${alpha}x+${beta}}`;
+      const rhs = `2^{${gamma}x+${delta}}\\cdot 3^{${eta}x+${theta}}`;
+    
+      const q = `$${lhs} = ${rhs}$. Solve for $x$.`;
+      const ansWork =
+        `Write ${baseCoef} as $2^{${a2}}3^{${a3}}$. Then
+    $2^{${a2}(${alpha}x+${beta})}3^{${a3}(${alpha}x+${beta})} = 2^{${gamma}x+${delta}}3^{${eta}x+${theta}}$.
+    Equate exponents by base:
+    $${a2}(${alpha}x+${beta}) = ${gamma}x+${delta}$ and $${a3}(${alpha}x+${beta}) = ${eta}x+${theta}$,
+    both giving $x=${xStar}$.`;
+      return { q, answer: ansWork };
     }
     
-    // WR10: Prime-power solve for x,y
+    // WR10: Prime-power system for x,y (randomized but consistent)
     function genWR_U2_PrimePowerSystem(){
-      const q = `If $x^3y^5=2^{11}3^{13}$ and $\\dfrac{x}{y^{2}}=\\dfrac{1}{27}$, find $x$ and $y$ in prime-power form.`;
-      return {
-        q,
-        answer: `Let $x=2^{a}3^{b},\\ y=2^{c}3^{d}$. From $x/y^2=3^{-3}$, $a=2c$, $b-2d=-3$. From $x^3y^5$, $3a+5c=11\\Rightarrow c=1,a=2$ and $3b+5d=13\\Rightarrow d=2,b=1$. Hence $x=2^{2}3^{1}=12,\\ y=2^{1}3^{2}=18$.`
-      };
+      // Choose prime-power exponents for x=2^a 3^b and y=2^c 3^d
+      const a = ri(0,2), b = ri(0,2), c = ri(0,2), d = ri(0,2);
+      // Avoid trivial x=y=1
+      if (a+b+c+d === 0) return genWR_U2_PrimePowerSystem();
+    
+      const P = ri(2,4), Q = ri(2,4);   // exponents in first relation
+      const R = ri(1,3);                // power of y in the second relation
+    
+      // Build target exponents for 2 and 3
+      const A2 = P*a + Q*c, A3 = P*b + Q*d;     // x^P y^Q = 2^{A2} 3^{A3}
+      const U2 = a - R*c,   U3 = b - R*d;       // x / y^R = 2^{U2} 3^{U3}
+    
+      const xVal = 2**a * 3**b;
+      const yVal = 2**c * 3**d;
+    
+      const q =
+    `If $x^{${P}}y^{${Q}}=2^{${A2}}3^{${A3}}$ and $\\dfrac{x}{y^{${R}}}=2^{${U2}}3^{${U3}}$, find $x$ and $y$ in prime-power form.`;
+      const ans =
+    `Let $x=2^{a}3^{b}$ and $y=2^{c}3^{d}$. Then
+    $${P}a+${Q}c=${A2},\\ \\ ${P}b+${Q}d=${A3}$ and $a-${R}c=${U2},\\ \\ b-${R}d=${U3}$.
+    Solving gives $a=${a},\\ b=${b},\\ c=${c},\\ d=${d}$.
+    Thus $x=2^{${a}}3^{${b}}=${xVal}$ and $y=2^{${c}}3^{${d}}=${yVal}$.`;
+      return { q, answer: ans };
     }
     
-    // WR11: Power model y=a x^r via two points
+    // WR11: Power model y = a x^r via two points (randomized nice r)
     function genWR_U2_PowerModel(){
-      const q = `The power model $y=ax^{r}$ passes through $(2,1)$ and $(32,4)$. Find $r$.`;
-      return {
-        q,
-        answer: `$\\dfrac{4}{1}=\\dfrac{a\\,32^{r}}{a\\,2^{r}}=2^{4r}\\Rightarrow 4=2^{4r}\\Rightarrow r=\\tfrac{1}{2}$.`
-      };
+      // Choose r from a tidy set; choose step t so (x2/x1)=2^t
+      const rChoices = [1/2, 1, 3/2, 2];
+      const r = rChoices[ri(0, rChoices.length-1)];
+      const t = (r===1/2) ? sample([2,4]) : sample([1,2,3]); // keep numbers small
+    
+      const x1 = 2 ** ri(1,3);
+      const x2 = x1 * (2 ** t);
+    
+      // Choose a so y's are tidy integers
+      const a = ri(1,4);
+      const y1 = a * (x1 ** r);
+      const y2 = a * (x2 ** r); // = a * (x1*2^t)^r = y1 * 2^{t r}
+    
+      const q = `The power model $y=ax^{r}$ passes through $(${x1},${y1})$ and $(${x2},${y2})$. Find $r$.`;
+      const ans = `$\\dfrac{${y2}}{${y1}}=(\\dfrac{${x2}}{${x1}})^{r}=2^{${t}r}\\Rightarrow ${ (y2/y1) }=2^{${t}r}
+    \\Rightarrow r=\\dfrac{\\log_2(${(y2/y1)})}{${t}}=${r}.`;
+      return { q, answer: ans };
     }
     
-    // WR12: Solve 2^{x+3}+2^x=3^{y+2}-3^y
+    // WR12: Solve 2^{x+a}+2^{x} = 3^{y+b}-3^{y} (randomized pairs with integer solution)
     function genWR_U2_Diophantine1(){
-      const q = `Solve for integers $x,y$: $2^{x+3}+2^{x}=3^{y+2}-3^{y}$.`;
-      return {
-        q,
-        answer: `Factor: $2^{x}(8+1)=9\\cdot 2^{x}$ and $3^{y}(9-1)=8\\cdot 3^{y}$. So $9\\cdot 2^{x}=8\\cdot 3^{y}\\Rightarrow 3^{2-y}=2^{3-x}$. Integers occur when both exponents are $0$: $y=2,\\ x=3$.`
-      };
+      // Valid pairs so that 2^a+1 is a power of 3 and 3^b-1 is a power of 2:
+      // (a,b) in {(1,1), (3,2)}
+      const pair = sample([{a:1,b:1},{a:3,b:2}]);
+      const a = pair.a, b = pair.b;
+    
+      // Then 2^x(2^a+1) = 3^y(3^b-1) => 3^{(log_3(2^a+1) - y)} = 2^{(log_2(3^b-1) - x)}
+      // Integer solution occurs at x = log2(3^b - 1), y = log3(2^a + 1).
+      const xSol = (b===1?1:3); // 3^1-1=2 -> x=1; 3^2-1=8 -> x=3
+      const ySol = (a===1?1:2); // 2^1+1=3 -> y=1; 2^3+1=9 -> y=2
+    
+      const q = `Solve for integers $x,y$: $2^{x+${a}}+2^{x}=3^{y+${b}}-3^{y}$.`;
+      const ans =
+    `Factor: $2^{x}(2^{${a}}+1)$ and $3^{y}(3^{${b}}-1)$. Since $2^{${a}}+1=3^{${ySol}}$ and $3^{${b}}-1=2^{${xSol}}$,
+    we have $3^{${ySol}}\\cdot 2^{x}=2^{${xSol}}\\cdot 3^{y}$, so $3^{${ySol}-y}=2^{${xSol}-x}$.
+    Thus both exponents must be $0$: $x=${xSol}, $y=${ySol}.`;
+      return { q, answer: ans };
     }
     
-    // WR13: f(x)=2^{4x-2}, find f(x)f(1-x)
+    // WR13: Composition identity f(x)=2^{kx+c} so f(x)f(m-x) is constant (randomized)
     function genWR_U2_CompositionIdentity(){
-      const q = `If $f(x)=2^{4x-2}$, find $f(x)\\cdot f(1-x)$ in simplest form.`;
-      return {
-        q,
-        answer: `$2^{4x-2}\\cdot 2^{2-4x}=2^{0}=1$.`
-      };
+      const k = 2 * ri(2,5);           // even so c integer
+      const m = ri(1,4);
+      const c = -(k*m)/2;              // ensures kx+c + k(m-x)+c = 0
+      const q = `If $f(x)=2^{${k}x${c>=0?'+':''}${c}}$, find $f(x)\\cdot f(${m}-x)$ in simplest form.`;
+      const ans = `$2^{${k}x${c>=0?'+':''}${c}}\\cdot 2^{${k}(${m}-x)${c>=0?'+':''}${c}}=2^{${k}x+${c}+${k}m-${k}x+${c}}=2^{0}=1$.`;
+      return { q, answer: ans };
     }
     
-    // WR14: Mixed-base equation
+    // WR14: Mixed-base equation 3^{x+α}+2^{x+β}+2^{x}=2^{x+γ}+3^{x} with solution x=t (randomized)
     function genWR_U2_MixedBaseSolve(){
-      const q = `Solve: $3^{x+2}+2^{x+2}+2^{x}=2^{x+5}+3^{x}$.`;
-      return {
-        q,
-        answer: `$3^{x}(9-1)+2^{x}(4+1-32)=0\\Rightarrow 8\\cdot 3^{x}=27\\cdot 2^{x}\\Rightarrow (\\tfrac{3}{2})^{x}=(\\tfrac{3}{2})^{3}\\Rightarrow x=3$.`
-      };
+      // Two valid randomized families:
+      // (t, α, β, γ) = (1,1,2,3)  -> A=3^α-1=2^1, B=2^β+1-2^γ = -3^1
+      // (t, α, β, γ) = (3,2,2,5)  -> A=3^α-1=2^3, B=2^β+1-2^γ = -3^3
+      const opt = sample([{t:1, alpha:1, beta:2, gamma:3}, {t:3, alpha:2, beta:2, gamma:5}]);
+      const { t, alpha, beta, gamma } = opt;
+    
+      const q = `Solve: $3^{x+${alpha}}+2^{x+${beta}}+2^{x}=2^{x+${gamma}}+3^{x}$.`;
+      const A = 3**alpha - 1;         // = 2^t
+      const B = (2**beta) + 1 - (2**gamma); // = -3^t
+      const check = `\\Rightarrow 3^{x}(${A}) + 2^{x}(${B})=0 \\Rightarrow \\left(\\tfrac{3}{2}\\right)^{x}=\\tfrac{-B}{A}=\\left(\\tfrac{3}{2}\\right)^{${t}}`;
+    
+      const ans = `${check} \\Rightarrow x=${t}.`;
+      return { q, answer: ans };
     }
 
 
