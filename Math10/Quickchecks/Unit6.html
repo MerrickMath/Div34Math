@@ -3119,13 +3119,9 @@
     }
     
     // ================== Unit 7–9 (Linear) — Written Response Generators (LaTeX-safe) ==================
-    
-    // ================== Unit 7–9 (Linear) — Written Response Generators (stable inline math via \( … \)) ==================
-    // Assumes ri(min,max) and rsign() exist in your environment.
-    
-    /* ================== Unit 7–9 (Linear) — Written Response Generators (Clean) ================== */
+    /* ================== Unit 7–9 (Linear) — Written Response Generators (All Inline Math, No $ currency) ================== */
 
-    /* WR1: Derive distance formula (inline, no blocks) */
+    /* WR1 */
     function genU789_WR_DeriveDistanceFormula(){
       const x1=ri(-4,4), y1=ri(-4,4), x2=ri(-4,4), y2=ri(-4,4);
       const dx = x2 - x1, dy = y2 - y1;
@@ -3133,98 +3129,93 @@
       return {
         q: `Using the Pythagorean Theorem, derive the distance formula and then apply it to find the distance between (${x1}, ${y1}) and (${x2}, ${y2}).`,
         answer:
-          `Right triangle legs are $\\Delta x = x_2 - x_1$ and $\\Delta y = y_2 - y_1$. ` +
-          `By Pythagoras: $d^2 = (\\Delta x)^2 + (\\Delta y)^2$, so $d=\\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}$. ` +
-          `Here, $\\Delta x=${dx}$ and $\\Delta y=${dy}$, so $d=\\sqrt{${d2}}$.`
+          `Let $\\Delta x = x_2 - x_1$ and $\\Delta y = y_2 - y_1$. Then $d^2 = (\\Delta x)^2 + (\\Delta y)^2$, so $d=\\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}$. ` +
+          `Here $\\Delta x=${dx}$, $\\Delta y=${dy}$, so $d=\\sqrt{${d2}}$.`
       };
     }
     
-    /* WR2: Parallel/Perpendicular slope relationships */
+    /* WR2 */
     function genU789_WR_ParallelPerpSlopesProof(){
       const m = rsign()*ri(1,4);
       const mperp = -1/m;
       return {
-        q: `Explain why parallel lines have equal slopes and why perpendicular non-vertical lines satisfy $m_1m_2=-1$. Then verify with a line of slope ${m}.`,
+        q: `Explain why parallel lines have equal slopes and why perpendicular non-vertical lines satisfy $m_1 m_2 = -1$. Then verify with a line of slope ${m}.`,
         answer:
-          `In slope–intercept form $y=mx+b$, two non-vertical lines are parallel iff their directions match, i.e., $m_1=m_2$. ` +
-          `Perpendicular non-vertical lines have direction vectors $(1,m_1)$ and $(1,m_2)$ with zero dot product: $1\\cdot1+m_1m_2=0\\Rightarrow m_1m_2=-1$. ` +
-          `Example: $m_1=${m}$, so a perpendicular slope is $m_2=-\\dfrac{1}{${m}}=${mperp}$. Indeed $m_1m_2=${m*mperp}=-1$.`
+          `Parallel non-vertical lines have the same direction, hence the same slope: $m_1=m_2$. ` +
+          `Perpendicular non-vertical lines satisfy $m_1 m_2 = -1$. ` +
+          `Example: take $m_1=${m}$, then a perpendicular slope is $m_2=-1/${m}=${mperp}$, and indeed $m_1 m_2 = ${m*mperp} = -1$.`
       };
     }
     
-    /* WR3: Convert y=mx+b to general form (A,B,C integers, gcd=1) */
+    /* WR3 */
     function genU789_WR_ConvertToGeneralForm(){
       const numM=rsign()*ri(1,5), denM=ri(1,6);
       const rf = reduceFrac(numM, denM);
       const Mm = rf.n, Md = rf.d;
       const b=rsign()*ri(0,8);
-      // y = (Mm/Md)x + b -> Mm x - Md y + b Md = 0, then reduce
       const A=Mm, B=-Md, C=b*Md;
       const g = _gcd(_gcd(Math.abs(A),Math.abs(B)),Math.abs(C));
       const AA=A/g, BB=B/g, CC=C/g;
       return {
-        q: `Convert $y=\\dfrac{${Mm}}{${Md}}x${b>=0?'+':''}${b}$ to general form $Ax+By+C=0$ using integer $A,B,C$ with no common factor.`,
-        answer: `Multiply by ${Md}: $${Mm}x - ${Md}y + ${b*Md} = 0$. Reduce by gcd to get $${AA}x${BB>=0?'+':''}${BB}y${CC>=0?'+':''}${CC}=0$.`
+        q: `Convert $y=(${Mm}/${Md})x${b>=0?'+':''}${b}$ to general form $Ax+By+C=0$ with integer coefficients and no common factor.`,
+        answer: `Multiply by ${Md}: $${Mm}x - ${Md}y + ${b*Md} = 0$. Divide by gcd to get $${AA}x${BB>=0?'+':''}${BB}y${CC>=0?'+':''}${CC}=0$.`
       };
     }
     
-    /* WR4: Perpendicular bisector (no blocks) */
+    /* WR4 */
     function genU789_WR_PerpendicularBisector(){
       const x1=ri(-6,4), y1=ri(-6,4), x2=x1+rsign()*ri(2,6), y2=y1+rsign()*ri(2,6);
       const mx=(x1+x2)/2, my=(y1+y2)/2;
       const dy=y2-y1, dx=x2-x1;
-      const m = dy/dx;
-      const mPerp = -dx/dy; // negative reciprocal
+      const m = dy/dx, mPerp = -dx/dy;
       return {
         q: `Find the equation of the perpendicular bisector of the segment from (${x1}, ${y1}) to (${x2}, ${y2}).`,
         answer:
-          `Midpoint is $M\\big(\\tfrac{${x1}+${x2}}{2},\\tfrac{${y1}+${y2}}{2}\\big)=(${mx}, ${my})$. ` +
-          `Original slope $m=\\dfrac{${dy}}{${dx}}$ so perpendicular slope $m_{\\perp}=-\\dfrac{1}{m}=\\dfrac{-${dx}}{${dy}}=${mPerp}$. ` +
-          `Point–slope through $M$: $y-${my}=${mPerp}(x-${mx})$.`
+          `Midpoint $M\\big(( ${x1}+${x2} )/2,( ${y1}+${y2} )/2\\big)=(${mx}, ${my})$. ` +
+          `Original slope $m=(${dy})/(${dx})$, so perpendicular slope $m_\\perp = -1/m = (${ -dx })/(${ dy }) = ${mPerp}$. ` +
+          `Point–slope through $M$: $y - ${my} = ${mPerp}(x - ${mx})$.`
       };
     }
     
-    /* WR5: Dependent system (infinitely many) — explain */
+    /* WR5 */
     function genU789_WR_DependentSystemExplain(){
       const a=rsign()*ri(1,5), b=rsign()*ri(1,5), c=rsign()*ri(0,10);
       const k = rsign()*ri(2,6);
       return {
-        q: `Solve and interpret the system: ${a}x${b>=0?'+':''}${b}y=${c} and ${k*a}x${(k*b)>=0?'+':''}${k*b}y=${k*c}. Are the lines parallel, coincident, or intersecting once?`,
+        q: `Solve and interpret: $${a}x${b>=0?'+':''}${b}y=${c}$ and $${k*a}x${(k*b)>=0?'+':''}${k*b}y=${k*c}$. Are the lines parallel, coincident, or intersecting once?`,
         answer:
-          `The second equation is ${k} times the first, so they represent the same line. ` +
+          `The second equation is ${k} times the first, so both represent the same line. ` +
           `Therefore there are infinitely many solutions (coincident lines).`
       };
     }
     
-    /* WR6: Solve same system by substitution and by elimination */
+    /* WR6 */
     function genU789_WR_SolveByTwoMethods(){
       const x0=rsign()*ri(0,5), y0=rsign()*ri(0,5);
       let m1=rsign()*ri(1,5), m2=rsign()*ri(1,5);
       while(m2===m1) m2=rsign()*ri(1,5);
       const b1=y0-m1*x0, b2=y0-m2*x0;
       return {
-        q: `Solve by (i) substitution and (ii) elimination: y=${m1}x${b1>=0?'+':''}${b1} and y=${m2}x${b2>=0?'+':''}${b2}. Compare the methods.`,
+        q: `Solve by (i) substitution and (ii) elimination: $y=${m1}x${b1>=0?'+':''}${b1}$ and $y=${m2}x${b2>=0?'+':''}${b2}$. Compare the methods.`,
         answer:
-          `Substitution: set ${m1}x${b1>=0?'+':''}${b1}=${m2}x${b2>=0?'+':''}${b2} \\Rightarrow ${(m1-m2)}x=${b2-b1} \\Rightarrow x=${x0}, then y=${y0}. ` +
-          `Elimination: subtract the equations to eliminate $y$, solve for $x$, then back-substitute. Both methods give (${x0}, ${y0}).`
+          `Substitution: set $${m1}x${b1>=0?'+':''}${b1}=${m2}x${b2>=0?'+':''}${b2}$, so $${(m1-m2)}x=${b2-b1}$, hence $x=${x0}$ and $y=${y0}$. ` +
+          `Elimination: subtract the equations to remove $y$, solve for $x$, then back-substitute. Both give $(${x0}, ${y0})$.`
       };
     }
     
-    /* WR7: Break-even (no currency symbols) */
+    /* WR7 */
     function genU789_WR_BreakEven(){
-      const p = ri(10,20);      // price
-      const F = ri(200,600);    // fixed cost
-      const v = ri(3,9);        // variable
+      const p = ri(10,20), F = ri(200,600), v = ri(3,9);
       const exactQ = F/(p - v);
       const qItems = Math.ceil(exactQ);
       return {
-        q: `A product sells for ${p} dollars each. Fixed costs are ${F} dollars, and variable cost is ${v} dollars per item. Write revenue R(q) and cost C(q), then find the break-even quantity (nearest whole item).`,
+        q: `A product sells for ${p} dollars each. Fixed costs are ${F} dollars, and variable cost is ${v} dollars per item. Write revenue $R(q)$ and cost $C(q)$, then find the break-even quantity (nearest whole item).`,
         answer:
-          `Revenue $R(q)=${p}q$. Cost $C(q)=${F}+${v}q$. Set $R=C$: ${p}q=${F}+${v}q \\Rightarrow (${p - v})q=${F} \\Rightarrow q=\\dfrac{${F}}{${p - v}}\\approx ${exactQ.toFixed(2)}$. Nearest whole item: ${qItems}.`
+          `Revenue $R(q)=${p}q$. Cost $C(q)=${F}+${v}q$. Set $R=C$: $${p}q=${F}+${v}q$, so $(${p - v})q=${F}$ and $q=${F}/(${p - v})\\approx ${exactQ.toFixed(2)}$. Nearest whole item: ${qItems}.`
       };
     }
     
-    /* WR8: Mixture (percent signs plain text, math only for equations) */
+    /* WR8 */
     function genU789_WR_Mixture(){
       const p1 = ri(10,30), p2 = ri(40,70);
       const T = ri(p1+5, p2-5);
@@ -3234,25 +3225,25 @@
       return {
         q: `A solution at ${p1}% is mixed with one at ${p2}% to make ${V} L of a ${T}% solution. How many litres of each solution are needed?`,
         answer:
-          `Let $x$ be litres of ${p1}% and $y$ litres of ${p2}% with $x+y=${V}$ and ${p1}x+${p2}y=${T}\\cdot${V} (percent–litre units). ` +
-          `Solving: $y=\\dfrac{${V}(${T}-${p1})}{${p2}-${p1}}\\approx ${y.toFixed(2)}$ L, so $x=${V}-y\\approx ${x.toFixed(2)}$ L.`
+          `Let $x$ be litres of ${p1}% and $y$ litres of ${p2}% with $x+y=${V}$ and $${p1}x+${p2}y=${T}\\cdot${V}$. ` +
+          `Then $y = ${V}(${T}-${p1})/(${p2}-${p1}) \\approx ${y.toFixed(2)}$ L, and $x=${V}-y \\approx ${x.toFixed(2)}$ L.`
       };
     }
     
-    /* WR9: Parametric system — classify by k (inline, no cases) */
+    /* WR9 */
     function genU789_WR_ParametricSystem(){
       const A = ri(2,12), B = ri(4,20);
       const rhs = B - 2*A;
       return {
-        q: `Solve in terms of k: x + k y = ${A}, and 2x + 8y = ${B}. Classify k values with a unique solution, no solution, or infinitely many solutions.`,
+        q: `Solve in terms of $k$: $x + k y = ${A}$ and $2x + 8y = ${B}$. Classify $k$ giving a unique solution, no solution, or infinitely many solutions.`,
         answer:
-          `From the first: $x=${A}-ky$. Substitute into the second: $2(${A}-ky)+8y=${B}$, so $-2ky+8y=${B}-2\\cdot${A}$, i.e. $y(8-2k)=${rhs}$. ` +
-          `If $k\\ne4$ then $y=\\dfrac{${rhs}}{8-2k}$ and $x=${A}-ky$ (unique solution). If $k=4$, the second becomes $8y=${rhs}$. ` +
-          `If ${rhs}=0 \\Rightarrow infinitely many solutions; if ${rhs}\\ne0 \\Rightarrow no solution.`
+          `From $x + ky = ${A}$, we have $x=${A}-ky$. Substitute: $2(${A}-ky)+8y=${B}$, so $y(8-2k)=${rhs}$. ` +
+          `If $k\\ne4$, then $y=${rhs}/(8-2k)$ and $x=${A}-ky$ (unique solution). If $k=4$, the second becomes $8y=${rhs}$. ` +
+          `If ${rhs}=0$ then infinitely many solutions; if ${rhs}\\ne0$ then no solution.`
       };
     }
     
-    /* WR10: Perpendicular diagonals (inline) */
+    /* WR10 */
     function genU789_WR_PerpendicularDiagonals(){
       const sx=ri(-2,2), sy=ri(-2,2);
       const A=[0+sx,0+sy], B=[4+sx,2+sy], C=[2+sx,6+sy], D=[-2+sx,4+sy];
@@ -3261,12 +3252,12 @@
       return {
         q: `Show that the diagonals of the quadrilateral with vertices (${A[0]}, ${A[1]}), (${B[0]}, ${B[1]}), (${C[0]}, ${C[1]}), (${D[0]}, ${D[1]}) are perpendicular.`,
         answer:
-          `Slopes: $m_{AC}=\\dfrac{${C[1]}-${A[1]}}{${C[0]}-${A[0]}}=${mAC}$ and $m_{BD}=\\dfrac{${D[1]}-${B[1]}}{${D[0]}-${B[0]}}=${mBD}$. ` +
+          `Diagonal slopes: $m_{AC}=(${C[1]}-${A[1]})/(${C[0]}-${A[0]})=${mAC}$ and $m_{BD}=(${D[1]}-${B[1]})/(${D[0]}-${B[0]})=${mBD}$. ` +
           `Since $m_{AC}\\cdot m_{BD}=-1$, the diagonals are perpendicular.`
       };
     }
     
-    /* WR11: Lines parallel to 3x−4y+7=0 through lattice points */
+    /* WR11 */
     function genU789_WR_LatticeLinesParallel(){
       const N = 3;
       const cs = new Set();
@@ -3279,14 +3270,13 @@
       const sorted = Array.from(cs).sort((a,b)=>a-b);
       const sampleShow = sorted.slice(0,10).join(', ');
       return {
-        q: `Find equations of lines parallel to 3x−4y+7=0 that pass through integer lattice points with −3 ≤ x,y ≤ 3. Express each as 3x−4y+c=0.`,
+        q: `Find equations of lines parallel to $3x-4y+7=0$ that pass through integer lattice points with $-3\\le x,y\\le 3$. Express each as $3x-4y+c=0$.`,
         answer:
-          `All such lines have the form $3x-4y+c=0$ with $c=-(3x_0-4y_0)$ for any lattice point $(x_0,y_0)$ in the box. ` +
-          `Example $c$ values: ${sampleShow}, …`
+          `All such lines have the form $3x-4y+c=0$ with $c=-(3x_0-4y_0)$ for any lattice point $(x_0,y_0)$ in the box. Example $c$ values: ${sampleShow}, …`
       };
     }
     
-    /* WR12: Consistency of three lines (no blocks) */
+    /* WR12 */
     function genU789_WR_ThreeLinesConsistency(){
       const consistent = Math.random()<0.6;
       if (consistent){
@@ -3295,8 +3285,8 @@
         while(new Set([m1,m2,m3]).size<3){ m2=rsign()*ri(1,4); m3=rsign()*ri(1,4); }
         const b1=y0-m1*x0, b2=y0-m2*x0, b3=y0-m3*x0;
         return {
-          q: `Determine whether the system is consistent. If so, find the common solution: y=${m1}x${b1>=0?'+':''}${b1}, y=${m2}x${b2>=0?'+':''}${b2}, y=${m3}x${b3>=0?'+':''}${b3}.`,
-          answer: `All three lines intersect at (${x0}, ${y0}); the system is consistent with a unique common solution.`
+          q: `Determine whether the system is consistent. If so, find the common solution: $y=${m1}x${b1>=0?'+':''}${b1}$, $y=${m2}x${b2>=0?'+':''}${b2}$, $y=${m3}x${b3>=0?'+':''}${b3}$.`,
+          answer: `All three lines intersect at $(${x0}, ${y0})$, so the system is consistent with a unique common solution.`
         };
       } else {
         const m=rsign()*ri(1,4);
@@ -3304,26 +3294,27 @@
         let m3=rsign()*ri(1,4); if(m3===m) m3*=-1;
         const b3=rsign()*ri(0,6);
         return {
-          q: `Determine whether the system is consistent: y=${m}x${b1>=0?'+':''}${b1}, y=${m}x${b2>=0?'+':''}${b2}, y=${m3}x${b3>=0?'+':''}${b3}.`,
-          answer: `The first two are parallel and distinct (same slope, different intercepts), so no single point lies on all three lines. The system is inconsistent.`
+          q: `Determine whether the system is consistent: $y=${m}x${b1>=0?'+':''}${b1}$, $y=${m}x${b2>=0?'+':''}${b2}$, $y=${m3}x${b3>=0?'+':''}${b3}$.`,
+          answer: `The first two are parallel and distinct (same slope, different intercepts), so there is no single point lying on all three lines. The system is inconsistent.`
         };
       }
     }
     
-    /* WR13: Two cellphone plans — break-even usage (no currency symbols) */
+    /* WR13 */
     function genU789_WR_TwoPlanBreakEven(){
-      const A0 = ri(20,40), a = ri(5,15);             // base + cents/min
-      const B0 = ri(10,30), b = a + ri(5,20);         // base + higher cents/min
+      const A0 = ri(20,40), a = ri(5,15);
+      const B0 = ri(10,30), b = a + ri(5,20);
       const pa = (a/100).toFixed(2), pb = (b/100).toFixed(2);
       const exact = (A0 - B0) / ((b - a)/100);
       const minutes = Math.ceil(exact);
       return {
-        q: `Plan A costs ${A0.toFixed(2)} dollars plus ${pa} dollars per minute. Plan B costs ${B0.toFixed(2)} dollars plus ${pb} dollars per minute. Write linear cost models in minutes t, and find the break-even usage (nearest minute).`,
+        q: `Plan A costs ${A0.toFixed(2)} dollars plus ${pa} dollars per minute. Plan B costs ${B0.toFixed(2)} dollars plus ${pb} dollars per minute. Write linear cost models in minutes $t$, and find the break-even usage (nearest minute).`,
         answer:
           `Models: $C_A(t)=${A0.toFixed(2)}+${pa}t$ and $C_B(t)=${B0.toFixed(2)}+${pb}t$. ` +
-          `Set $C_A=C_B$: $(${pb}-${pa})t=${(A0 - B0).toFixed(2)} \\Rightarrow t\\approx ${exact.toFixed(2)}$. Nearest minute: ${minutes}.`
+          `Set $C_A=C_B$: $( ${pb}-${pa} )t = ${(A0 - B0).toFixed(2)}$, so $t \\approx ${exact.toFixed(2)}$ and the nearest minute is ${minutes}.`
       };
     }
+
 
   // Buttons
   document.getElementById('generate').addEventListener('click', renderQuiz);
