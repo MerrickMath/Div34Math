@@ -3201,15 +3201,21 @@
       };
     }
     
-    /* WR7: Break-even (revenue vs cost) */
+    /* WR7: Break-even (revenue vs cost) — safe currency + inline math */
     function genU789_WR_BreakEven(){
-      const p = ri(10,20), F = ri(200,600), v = ri(3,9);
-      const exactQ = F/(p-v), qItems = Math.ceil(exactQ);
+      const p = ri(10,20);      // price
+      const F = ri(200,600);    // fixed cost
+      const v = ri(3,9);        // variable cost
+      const exactQ = F/(p - v);
+      const qItems = Math.ceil(exactQ);
+    
       return {
-        q: `A product sells for \$${p} each. Fixed costs are \$${F}, and variable cost is \$${v} per item. Write revenue \(R(q)\) and cost \(C(q)\), then find the break-even quantity (nearest whole item).`,
+        q: `A product sells for \\$${p} each. Fixed costs are \\$${F}, and variable cost is \\$${v} per item. ` +
+           `Write revenue R(q) and cost C(q), then find the break-even quantity (nearest whole item).`,
         answer:
-          `\\(R(q)=${p}q\\), \\(C(q)=${F}+${v}q\\). Break-even: \\(${p}q=${F}+${v}q\\Rightarrow (${p-v})q=${F}\\Rightarrow q=${F}/(${p-v})\\approx ${exactQ.toFixed(2)}\\). ` +
-          `Therefore, approximately ${qItems} items.`
+          `Revenue: \\(R(q) = ${p}q\\). Cost: \\(C(q) = ${F} + ${v}q\\). ` +
+          `Break-even when \\(R=C\\): \\(${p}q = ${F} + ${v}q\\Rightarrow (${p - v})q = ${F}\\Rightarrow q = \\dfrac{${F}}{${p - v}}\\approx ${exactQ.toFixed(2)}\\). ` +
+          `Nearest whole item: ${qItems}.`
       };
     }
     
@@ -3300,19 +3306,23 @@
       }
     }
     
-    /* WR13: Two cellphone plans — break-even usage */
+    /* WR13: Two cellphone plans — break-even usage — safe currency + inline math */
     function genU789_WR_TwoPlanBreakEven(){
-      const A0 = ri(20,40), a = ri(5,15);           // base + cents/min
-      const B0 = ri(10,30), b = a + ri(5,20);       // base + higher cents/min
+      const A0 = ri(20,40), a = ri(5,15);                 // Plan A: base + cents/min
+      const B0 = ri(10,30), b = a + ri(5,20);             // Plan B: base + higher cents/min
       const A0d = A0.toFixed(2), B0d = B0.toFixed(2);
       const pa = (a/100).toFixed(2), pb = (b/100).toFixed(2);
       const exact = (A0 - B0) / ((b - a)/100);
-      const m = Math.ceil(exact);
+      const minutes = Math.ceil(exact);
+    
       return {
-        q: `Plan A costs \$${A0d} plus \$${pa} per minute. Plan B costs \$${B0d} plus \$${pb} per minute. Write linear cost models in minutes \(t\) and find the break-even usage (nearest minute).`,
+        q: `Plan A costs \\$${A0d} plus \\$${pa} per minute. ` +
+           `Plan B costs \\$${B0d} plus \\$${pb} per minute. ` +
+           `Write linear cost models in minutes t, and find the break-even usage (nearest minute).`,
         answer:
-          `\\(C_A(t)=${A0d}+${pa}t\\), \\(C_B(t)=${B0d}+${pb}t\\). Setting \\(C_A=C_B\\) gives \\((${pb}-${pa})t=${(A0-B0).toFixed(2)}\\), ` +
-          `so \\(t\\approx ${exact.toFixed(2)}\\), hence about ${m} minutes.`
+          `Models: \\(C_A(t) = ${A0d} + ${pa}t\\), \\(C_B(t) = ${B0d} + ${pb}t\\). ` +
+          `Set \\(C_A = C_B\\): \\((${pb} - ${pa})t = ${(A0 - B0).toFixed(2)}\\Rightarrow t \\approx ${exact.toFixed(2)}\\). ` +
+          `Nearest minute: ${minutes}.`
       };
     }
 
