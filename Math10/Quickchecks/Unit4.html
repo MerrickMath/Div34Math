@@ -2328,8 +2328,8 @@
       const angle = ri(30,120); // angle between
       const side = Math.sqrt(d1**2 + d2**2 - 2*d1*d2*Math.cos(angle*Math.PI/180));
       return {
-        q: `A ship sails ${d1}\\,km east, then turns ${angle}^{\\circ} north of east and sails ${d2}\\,km. How far is it from its starting point?`,
-        answer: `By cosine rule: $d=\\sqrt{${d1}^2+${d2}^2-2(${d1})(${d2})\\cos(${angle}^{\\circ})}\\approx ${side.toFixed(1)}\\,\\text{km}$.`
+        q: `A ship sails ${d1} km east, then turns ${angle}° north of east and sails ${d2} km. How far is it from its starting point?`,
+        answer: `By the cosine rule: d = √(${d1}² + ${d2}² − 2·${d1}·${d2}·cos ${angle}°) ≈ ${side.toFixed(1)} km.`
       };
     }
     
@@ -2342,10 +2342,11 @@
       const d2 = h/Math.tan(ang2*Math.PI/180);
       const move = (d1-d2).toFixed(1);
       return {
-        q: `An observer measures the angle of elevation to a balloon as ${ang1}^{\\circ}. After walking ${move}\\,m closer, the angle is ${ang2}^{\\circ}. Estimate the balloon’s height.`,
-        answer: `Let initial distance be $d_1=\\tfrac{h}{\\tan(${ang1}^{\\circ})}$, final distance $d_2=\\tfrac{h}{\\tan(${ang2}^{\\circ})}$. Since $d_1-d_2\\approx ${move}$, solving gives $h\\approx ${h}\\,\\text{m}$.`
+        q: `An observer measures the angle of elevation to a balloon as ${ang1}°. After walking ${move} m closer, the angle is ${ang2}°. Estimate the balloon’s height.`,
+        answer: `Let the initial distance be d₁ = h / tan(${ang1}°), and the final distance d₂ = h / tan(${ang2}°). Since d₁ − d₂ ≈ ${move}, solving gives h ≈ ${h} m.`
       };
     }
+
 
 
 
