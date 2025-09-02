@@ -3123,18 +3123,18 @@
     // WR1: Derive distance formula (prompted proof)
     // ================== Unit 7–9 (Linear) — Written Response Generators (clean LaTeX) ==================
 
-    // ================== Unit 7–9 (Linear) — Written Response Generators (inline-math safe) ==================
-    // Assumes ri(min,max) and rsign() exist.
+    // ================== Unit 7–9 (Linear) — Written Response Generators (robust inline math) ==================
+    // Assumes ri(min,max) and rsign() exist in your environment.
     
     function genU789_WR_DeriveDistanceFormula(){
       const x1=ri(-4,4), y1=ri(-4,4), x2=ri(-4,4), y2=ri(-4,4);
       const dx = x2 - x1, dy = y2 - y1;
       const d2 = dx*dx + dy*dy;
       return {
-        q: `Using the Pythagorean Theorem, derive the distance formula and then apply it to find the distance between (${x1},${y1}) and (${x2},${y2}).`,
+        q: `Using the Pythagorean Theorem, derive the distance formula and then apply it to find the distance between (${x1}, ${y1}) and (${x2}, ${y2}).`,
         answer:
-          `From right triangle legs $\\Delta x=x_2-x_1$ and $\\Delta y=y_2-y_1$, we get $d=\\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}$. ` +
-          `Here $\\Delta x=${dx}$ and $\\Delta y=${dy}$, so $d=\\sqrt{${d2}}$.`
+          `From right triangle legs $\\Delta x = x_2 - x_1$ and $\\Delta y = y_2 - y_1$, we have $d = \\sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2}$. ` +
+          `Here $\\Delta x = ${dx}$ and $\\Delta y = ${dy}$, so $d = \\sqrt{${d2}}$.`
       };
     }
     
@@ -3142,28 +3142,26 @@
       const m = rsign()*ri(1,4);
       const mperp = -1/m;
       return {
-        q: `Explain why parallel lines have equal slopes and why perpendicular lines satisfy $m_1m_2=-1$ (non-vertical). Then verify with an example using slope $${m}$.`,
+        q: `Explain why parallel lines have equal slopes and why perpendicular lines satisfy $m_1 m_2 = -1$ (non-vertical). Then verify with an example using slope $${m}$.`,
         answer:
-          `Parallel non-vertical lines never meet, so they must have the same direction; hence slopes are equal, $m_1=m_2$. ` +
-          `For perpendicular non-vertical lines, direction vectors $(1,m_1)$ and $(1,m_2)$ have dot product $1\\cdot1+m_1m_2=0$, so $m_1m_2=-1$. ` +
-          `Example: a line with slope $${m}$ has a perpendicular slope $-${1}/${m} = ${mperp}. Indeed $${m}\\cdot ${mperp}=-1$.`
+          `Parallel non-vertical lines do not intersect, so they must have the same direction; thus $m_1 = m_2$. ` +
+          `For perpendicular non-vertical lines, direction vectors $(1, m_1)$ and $(1, m_2)$ satisfy $1\\cdot1 + m_1 m_2 = 0$, hence $m_1 m_2 = -1$. ` +
+          `Example: a line with slope $${m}$ has a perpendicular slope $-${1}/${m} = ${mperp}$. Indeed $${m}\\cdot ${mperp} = -1$.`
       };
     }
     
     function genU789_WR_ConvertToGeneralForm(){
-      const numM=rsign()*ri(1,5), denM=ri(1,6);
-      const b=rsign()*ri(0,8);
-      // reduce m
+      const numM=rsign()*ri(1,5), denM=ri(1,6), b=rsign()*ri(0,8);
       function _gcd(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ [a,b]=[b,a%b]; } return a; }
       const g=_gcd(numM,denM);
       const Mm=numM/g, Md=denM/g;
-      // y=(Mm/Md)x + b  ->  Mm x - Md y + b Md = 0, then normalize sign
+      // y=(Mm/Md)x + b  ->  Mm x - Md y + b Md = 0, then simplify
       let A=Mm, B=-Md, C=b*Md;
       const g2=_gcd(_gcd(Math.abs(A),Math.abs(B)),Math.abs(C) || 1);
       A/=g2; B/=g2; C/=g2;
       return {
-        q: `Convert $y=\\dfrac{${Mm}}{${Md}}x${b>=0?'+':''}${b}$ to general form $Ax+By+C=0$ with integers $A,B,C$ having no common factor.`,
-        answer: `$${A}x${B>=0?'+':''}${B}y${C>=0?'+':''}${C}=0$.`
+        q: `Convert $y = \\dfrac{${Mm}}{${Md}} x ${b>=0?'+':''}${b}$ to general form $Ax + By + C = 0$ with integers $A, B, C$ having no common factor.`,
+        answer: `$${A}x ${B>=0?'+':''}${B}y ${C>=0?'+':''}${C} = 0$.`
       };
     }
     
@@ -3173,10 +3171,10 @@
       const dy=y2-y1, dx=x2-x1;
       const mPerp = -(dx)/(dy);
       return {
-        q: `Find the equation of the perpendicular bisector of the segment joining (${x1},${y1}) and (${x2},${y2}).`,
+        q: `Find the equation of the perpendicular bisector of the segment joining (${x1}, ${y1}) and (${x2}, ${y2}).`,
         answer:
-          `Midpoint $M\\,(${mx},${my})$. Original slope $m=\\dfrac{${dy}}{${dx}}$. Perpendicular slope $m_\\perp=-\\dfrac{1}{m}=\\dfrac{-${dx}}{${dy}}=${mPerp}$. ` +
-          `Using point–slope through $M$: $y-${my}=${mPerp}(x-${mx})$.`
+          `Midpoint $M = (${mx}, ${my})$. Original slope $m = \\dfrac{${dy}}{${dx}}$. Perpendicular slope $m_{\\perp} = -\\dfrac{1}{m} = \\dfrac{-${dx}}{${dy}} = ${mPerp}$. ` +
+          `Using point–slope through $M$: $y - ${my} = ${mPerp}(x - ${mx})$.`
       };
     }
     
@@ -3184,7 +3182,7 @@
       const a=rsign()*ri(1,5), b=rsign()*ri(1,5), c=rsign()*ri(0,10);
       const k = rsign()*ri(2,6);
       return {
-        q: `Solve and interpret the system: ${a}x${b>=0?'+':''}${b}y=${c},  ${k*a}x${(k*b)>=0?'+':''}${k*b}y=${k*c}. Are the lines parallel, coincident, or intersecting once?`,
+        q: `Solve and interpret the system $${a}x ${b>=0?'+':''}${b}y = ${c}$ and $${k*a}x ${(k*b)>=0?'+':''}${k*b}y = ${k*c}$. Are the lines parallel, coincident, or intersecting once?`,
         answer:
           `The second equation is ${k} times the first, so both represent the same line. Therefore there are infinitely many solutions (coincident lines).`
       };
@@ -3196,37 +3194,35 @@
       while(m2===m1) m2=rsign()*ri(1,5);
       const b1=y0-m1*x0, b2=y0-m2*x0;
       return {
-        q: `Solve the system by substitution and by elimination: $y=${m1}x${b1>=0?'+':''}${b1}$ and $y=${m2}x${b2>=0?'+':''}${b2}$. Compare the methods.`,
+        q: `Solve the system by substitution and by elimination: $y = ${m1}x ${b1>=0?'+':''}${b1}$ and $y = ${m2}x ${b2>=0?'+':''}${b2}$. Compare the methods.`,
         answer:
-          `Substitution: set ${m1}x${b1>=0?'+':''}${b1} = ${m2}x${b2>=0?'+':''}${b2}. This gives ${(m1-m2)}x=${b2-b1}, so $x=${x0}$ and $y=${y0}$. ` +
-          `Elimination: subtract the equations to eliminate $y$, yielding the same $x$; then back-substitute for $y$. Solution $(${x0},${y0})$.`
+          `Substitution: set ${m1}x ${b1>=0?'+':''}${b1} = ${m2}x ${b2>=0?'+':''}${b2}. This gives ${(m1-m2)}x = ${b2-b1}, so $x = ${x0}$ and $y = ${y0}$. ` +
+          `Elimination: subtract the equations to eliminate $y$, yielding the same $x$; then back-substitute for $y$. Solution $(${x0}, ${y0})$.`
       };
     }
     
     function genU789_WR_BreakEven(){
-      const p = ri(10,20);
-      const F = ri(200,600);
-      const v = ri(3,9);
+      const p = ri(10,20), F = ri(200,600), v = ri(3,9);
       const exactQ = F/(p-v);
       const qItems = Math.ceil(exactQ);
       return {
-        q: `A product sells for \\$${p} each. Fixed costs are \\$${F} and variable cost is \\$${v} per item. Write revenue $R(q)$ and cost $C(q)$, then find the break-even quantity (nearest whole item).`,
+        q: `A product sells for \$${p} each. Fixed costs are \$${F} and variable cost is \$${v} per item. Write revenue $R(q)$ and cost $C(q)$, then find the break-even quantity (nearest whole item).`,
         answer:
-          `$R(q)=${p}q$, $C(q)=${F}+${v}q$. Break-even: ${p}q=${F}+${v}q \\Rightarrow (${p-v})q=${F} \\Rightarrow q=${F}/(${p-v})\\approx ${exactQ.toFixed(2)}$, so ${qItems} items.`
+          `$R(q) = ${p}q$, $C(q) = ${F} + ${v}q$. Break-even: ${p}q = ${F} + ${v}q \\Rightarrow (${p-v})q = ${F} \\Rightarrow q = ${F}/(${p-v}) \\approx ${exactQ.toFixed(2)}$, so ${qItems} items.`
       };
     }
     
     function genU789_WR_Mixture(){
-      const p1 = ri(10,30), p2 = ri(40,70);   // %
+      const p1 = ri(10,30), p2 = ri(40,70);
       const T = ri(p1+5, p2-5);
-      const V = ri(6,16);                      // L
+      const V = ri(6,16);
       const y = (V*(T - p1))/(p2 - p1);
       const x = V - y;
       return {
-        q: `A solution at ${p1}\\% is mixed with one at ${p2}\\% to make ${V} L of a ${T}\\% solution. How many litres of each solution are needed?`,
+        q: `A solution at ${p1}% is mixed with one at ${p2}% to make ${V} L of a ${T}% solution. How many litres of each solution are needed?`,
         answer:
-          `Let $x$ be litres of ${p1}\\% and $y$ litres of ${p2}\\% with $x+y=${V}$ and ${p1}x+${p2}y=${T}\\cdot${V}$ (percent–litre units). ` +
-          `Solve $y=\\dfrac{${V}(${T}-${p1})}{${p2}-${p1}}\\approx ${y.toFixed(2)}$ L and $x=${V}-y\\approx ${x.toFixed(2)}$ L.`
+          `Let $x$ be litres of ${p1}% and $y$ litres of ${p2}% with $x + y = ${V}$ and ${p1}$x$ + ${p2}$y$ = ${T}\\cdot ${V}$ (percent-litre units). ` +
+          `Solving gives $y = \\dfrac{${V}(${T} - ${p1})}{${p2} - ${p1}} \\approx ${y.toFixed(2)}$ L and $x = ${V} - y \\approx ${x.toFixed(2)}$ L.`
       };
     }
     
@@ -3234,13 +3230,13 @@
       const A = ri(2,12), B = ri(4,20);
       const rhs = B - 2*A;
       return {
-        q: `Solve in terms of $k$ the system $x+ky=${A}$ and $2x+8y=${B}$. Classify values of $k$ that give a unique solution, no solution, or infinitely many solutions.`,
+        q: `Solve in terms of $k$ the system $x + ky = ${A}$ and $2x + 8y = ${B}$. Classify values of $k$ that give a unique solution, no solution, or infinitely many solutions.`,
         answer:
-          `From $x=${A}-ky$. Substitute into $2x+8y=${B}$ to get $2(${A}-ky)+8y=${B}$, so $y(8-2k)=${B}-2${A}=${rhs}$. ` +
-          `If $k\\neq 4$ then $y=${rhs}/(8-2k)$ and $x=${A}-ky$ (unique). If $k=4$, the second becomes $8y=${rhs}$. ` +
+          `From the first equation $x = ${A} - ky$. Substitute into the second: $2(${A} - ky) + 8y = ${B}$, so $y(8 - 2k) = ${rhs}$. ` +
+          `If $k \\neq 4$ then $y = ${rhs}/(8 - 2k)$ and $x = ${A} - ky$ (unique solution). If $k = 4$, the second becomes $8y = ${rhs}$. ` +
           (rhs===0
-            ? `Here ${rhs}=0, so there are infinitely many solutions (same line).`
-            : `Here ${rhs}\\neq 0, so there is no solution (parallel distinct lines).`)
+            ? `Here ${rhs} = 0, so there are infinitely many solutions (same line).`
+            : `Here ${rhs} \\neq 0, so there is no solution (parallel distinct lines).`)
       };
     }
     
@@ -3250,10 +3246,10 @@
       const mAC = (C[1]-A[1])/(C[0]-A[0]);
       const mBD = (D[1]-B[1])/(D[0]-B[0]);
       return {
-        q: `Show that the diagonals of the quadrilateral with vertices (${A[0]},${A[1]}), (${B[0]},${B[1]}), (${C[0]},${C[1]}), (${D[0]},${D[1]}) are perpendicular.`,
+        q: `Show that the diagonals of the quadrilateral with vertices (${A[0]}, ${A[1]}), (${B[0]}, ${B[1]}), (${C[0]}, ${C[1]}), (${D[0]}, ${D[1]}) are perpendicular.`,
         answer:
-          `Diagonal slopes: $m_{AC}=\\dfrac{${C[1]}-${A[1]}}{${C[0]}-${A[0]}}=${mAC}$ and $m_{BD}=\\dfrac{${D[1]}-${B[1]}}{${D[0]}-${B[0]}}=${mBD}$. ` +
-          `Since $m_{AC}\\cdot m_{BD}=-1$, the diagonals are perpendicular.`
+          `Diagonal slopes: $m_{AC} = \\dfrac{${C[1]} - ${A[1]}}{${C[0]} - ${A[0]}} = ${mAC}$ and $m_{BD} = \\dfrac{${D[1]} - ${B[1]}}{${D[0]} - ${B[0]}} = ${mBD}$. ` +
+          `Since $m_{AC} \\cdot m_{BD} = -1$, the diagonals are perpendicular.`
       };
     }
     
@@ -3269,9 +3265,9 @@
       const uniq = Array.from(new Set(cs)).sort((a,b)=>a-b);
       const sampleC = uniq.slice(0,8).join(', ');
       return {
-        q: `Find equations of lines parallel to $3x-4y+7=0$ that pass through integer lattice points with $-3\\le x,y\\le 3$. Express each as $3x-4y+c=0$.`,
+        q: `Find equations of lines parallel to $3x - 4y + 7 = 0$ that pass through integer lattice points with $-3 \\le x, y \\le 3$. Express each as $3x - 4y + c = 0$.`,
         answer:
-          `Any such line has form $3x-4y+c=0$ with $c=-(3x_0-4y_0)$ for a lattice point $(x_0,y_0)$. Possible $c$ values include: ${sampleC}, ...`
+          `Any such line has form $3x - 4y + c = 0$ with $c = -(3x_0 - 4y_0)$ for a lattice point $(x_0, y_0)$. Possible $c$ values include: ${sampleC}, ...`
       };
     }
     
@@ -3283,8 +3279,8 @@
         while(new Set([m1,m2,m3]).size<3){ m2=rsign()*ri(1,4); m3=rsign()*ri(1,4); }
         const b1=y0-m1*x0, b2=y0-m2*x0, b3=y0-m3*x0;
         return {
-          q: `Determine whether the system is consistent. If so, find the common solution: $y=${m1}x${b1>=0?'+':''}${b1}$, $y=${m2}x${b2>=0?'+':''}${b2}$, $y=${m3}x${b3>=0?'+':''}${b3}$.`,
-          answer: `All three lines intersect at $(${x0},${y0})$, so the system is consistent with a unique common solution.`
+          q: `Determine whether the system is consistent. If so, find the common solution: $y = ${m1}x ${b1>=0?'+':''}${b1}$, $y = ${m2}x ${b2>=0?'+':''}${b2}$, $y = ${m3}x ${b3>=0?'+':''}${b3}$.`,
+          answer: `All three lines intersect at $(${x0}, ${y0})$, so the system is consistent with a unique common solution.`
         };
       } else {
         const m=rsign()*ri(1,4);
@@ -3292,7 +3288,7 @@
         let m3=rsign()*ri(1,4); if(m3===m) m3*=-1;
         const b3=rsign()*ri(0,6);
         return {
-          q: `Determine whether the system is consistent: $y=${m}x${b1>=0?'+':''}${b1}$, $y=${m}x${b2>=0?'+':''}${b2}$, $y=${m3}x${b3>=0?'+':''}${b3}$.`,
+          q: `Determine whether the system is consistent: $y = ${m}x ${b1>=0?'+':''}${b1}$, $y = ${m}x ${b2>=0?'+':''}${b2}$, $y = ${m3}x ${b3>=0?'+':''}${b3}$.`,
           answer: `The first two lines are parallel and distinct (same slope, different intercepts), so no single point lies on all three lines. The system is inconsistent.`
         };
       }
@@ -3306,12 +3302,13 @@
       const exact = (A0 - B0) / ((b - a)/100);
       const m = Math.ceil(exact);
       return {
-        q: `Plan A costs \\$${A0d} plus \\$${pa} per minute. Plan B costs \\$${B0d} plus \\$${pb} per minute. Write linear cost models in minutes $t$ and find the break-even usage (nearest minute).`,
+        q: `Plan A costs \$${A0d} plus \$${pa} per minute. Plan B costs \$${B0d} plus \$${pb} per minute. Write linear cost models in minutes $t$ and find the break-even usage (nearest minute).`,
         answer:
-          `$C_A(t)=${A0d}+${pa}t$, $C_B(t)=${B0d}+${pb}t$. Setting $C_A=C_B$ gives $(${pb}-${pa})t=${(A0-B0).toFixed(2)}$, ` +
-          `so $t\\approx ${exact.toFixed(2)}\\approx ${m}$ minutes.`
+          `$C_A(t) = ${A0d} + ${pa}t$, $C_B(t) = ${B0d} + ${pb}t$. Setting $C_A = C_B$ gives $(${pb} - ${pa})t = ${(A0 - B0).toFixed(2)}$, ` +
+          `so $t \\approx ${exact.toFixed(2)} \\approx ${m}$ minutes.`
       };
     }
+
 
 
 
