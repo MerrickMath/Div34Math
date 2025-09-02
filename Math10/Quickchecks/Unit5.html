@@ -2702,38 +2702,34 @@
   
     document.getElementById('printBtn').addEventListener('click', () => window.print());
   
-    // Render only after all deferred scripts (KaTeX) have loaded
-    // Render only after KaTeX auto-render is actually ready
-    (function () {
-      const start = () => renderQuiz();
-    
-      // Fire immediately if KaTeX's render function is already present
-      if (window.renderMathInElement) {
-        start();
-        return;
+    <script>
+    // Render ASAP when DOM is ready (don’t depend on KaTeX)
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        renderQuiz();
+        document.body.dataset.quizRendered = '1';
+      } catch (err) {
+        console.error('Quiz render failed:', err);
       }
-    
-      // Prefer the signal from the auto-render script
-      window.addEventListener('katex:ready', start, { once: true });
-    
-      // Fallbacks in case the signal is missed
-      document.addEventListener('DOMContentLoaded', () => {
-        if (window.renderMathInElement) start();
-      });
-      window.addEventListener('load', () => {
-        if (!document.body.dataset.quizRendered) start();
-      });
-    })();
-
+    });
+  
+    // If/when KaTeX auto-render is ready, typeset what’s already on the page
+    window.addEventListener('katex:ready', () => {
+      const quizEl = document.getElementById('quiz');
+      const keyEl  = document.getElementById('answerKey');
+      if (quizEl) typeset(quizEl);
+      if (keyEl)  typeset(keyEl);
+    });
   </script>
   
-  <!-- KaTeX (deferred) -->
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
-  <script
-    defer
-    src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"
-    onload="window.dispatchEvent(new Event('katex:ready'))">
-  </script>
+    
+    <!-- KaTeX (deferred) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"
+      onload="window.dispatchEvent(new Event('katex:ready'))">
+    </script>
 
 </body>
 </html>
