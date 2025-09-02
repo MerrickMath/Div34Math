@@ -152,8 +152,7 @@
           { type: 'mcgen', gen: genU56_MC_QuadraticFactorable },
           { type: 'mcgen', gen: genU56_MC_PerfectSquareTrinomial },
           { type: 'mcgen', gen: genU56_MC_FactorCubicCommon }
-        ]},
-
+        ]};
       {
         title: 'B. Numeric Response',
         note: 'Write your final numeric answer clearly in the box.',
@@ -163,23 +162,20 @@
           { type: 'gen', gen: genU56_NR_DiffSquaresEvaluate },
           { type: 'gen', gen: genU56_NR_FactorByAC_Zeros },
           { type: 'gen', gen: genU56_NR_ExpandTripleEvaluate }
-        ]
-      };
-
+        ]};
       {
         title: 'C. Written Response',
-        note: 'Show full reasoning; round to nearest tenth of a degree or 2 decimals unless exact values are required.',
+        note: 'Show full reasoning and justify each step.',
         items: [
-          { type: 'gen', gen: genU4_WR_Kite },
-          { type: 'gen', gen: genU4_WR_Surveyor },
-          { type: 'gen', gen: genU4_WR_Airplane },
-          { type: 'gen', gen: genU4_WR_CableTower },
-          { type: 'gen', gen: genU4_WR_TreeAcrossRiver },
-          { type: 'gen', gen: genU4_WR_Ladder },
-          { type: 'gen', gen: genU4_WR_Canyon },
-          { type: 'gen', gen: genU4_WR_Navigation },
-          { type: 'gen', gen: genU4_WR_Observatory }
-        ]}
+          { type: 'gen', gen: genU56_WR_ExpandBinomialTrinomial },
+          { type: 'gen', gen: genU56_WR_FactorGCF_DoS },
+          { type: 'gen', gen: genU56_WR_FactorByGrouping },
+          { type: 'gen', gen: genU56_WR_RectangleDims },
+          { type: 'gen', gen: genU56_WR_CompleteSquare },
+          { type: 'gen', gen: genU56_WR_FactorCubicKnownRoot },
+          { type: 'gen', gen: genU56_WR_RevenueMax },
+          { type: 'gen', gen: genU56_WR_IdentityProof }
+        ]};
     ];
 
     const quizEl = document.getElementById('quiz');
@@ -2561,6 +2557,127 @@
       const q = `Evaluate $(x+${a})(x-${a})(x${b>=0?'+':''}${b})$ at $x=${xval}$.`;
       return { q, answer: `${val}` };
     }
+    // ========== Unit 5/6: Written Response Generators ==========
+
+    // WR1) Expand & simplify: (ax + b)(x^2 + px + q)
+    function genU56_WR_ExpandBinomialTrinomial(){
+      const a = ri(2,5), b = ri(-6,6) || 3;
+      const p = ri(-5,5), q = ri(-6,8);
+      const A = a;                      // ax^3 term coeff
+      const B = a*p + b;                // x^2 term
+      const C = a*q + b*p;              // x term
+      const D = b*q;                    // constant
+      const sign = n => (n>=0?`+${n}`:`${n}`);
+      const qText = `Expand and simplify: $(${a}x${sign(b)})(x^{2}${sign(p)}x${sign(q)})$.`;
+      const ans = `$${A}x^{3}${sign(B)}x^{2}${sign(C)}x${sign(D)}$`;
+      return { q: qText, answer: ans };
+    }
+    
+    // WR2) Factor completely: common factor + difference of squares
+    function genU56_WR_FactorGCF_DoS(){
+      const k = ri(2,7);
+      const m = ri(2,6), n = ri(2,6);
+      const qText = `Factor completely: $${k*m*m}x^{2}-${k*n*n}$.`;
+      const ans = `$${k}\\big(${m}^{2}x^{2}-${n}^{2}\\big)=${k}(${m}x-${n})(${m}x+${n})$.`;
+      return { q: qText, answer: ans };
+    }
+    
+    // WR3) Factor by grouping: ax^3 + bx^2 + cx + d (built to group)
+    function genU56_WR_FactorByGrouping(){
+      // Build as (px+q)(rx^2 + sx + t) but ensure grouping is clean:
+      // Use structure: (ux + v)(ax^2 + bx + c) with u divides (b,u*c + v*b pattern)
+      const u = ri(2,5), v = ri(-5,5) || 1;
+      const a = ri(1,3), b = ri(-4,4), c = ri(-5,5);
+      const A = u*a;                // x^3
+      const B = u*b + v*a;          // x^2
+      const C = u*c + v*b;          // x
+      const D = v*c;                // const
+      const qText = `Factor by grouping: $${A}x^{3}${B>=0?'+':''}${B}x^{2}${C>=0?'+':''}${C}x${D>=0?'+':''}${D}$.`;
+      const ans = `Group as $(${A}x^{3}${B>=0?'+':''}${B}x^{2})+(${C>=0?'+':''}${C}x${D>=0?'+':''}${D})$.
+      Factor: $x^{2}(${A}x${B>=0?'+':''}${B})+(${C}x${D>=0?'+':''}${D})$.
+      Notice ${C}x${D>=0?'+':''}${D} = ${u}x(${c})+${v}(${c}) = (${u}x+${v})(${c})$ and
+      ${A}x${B>=0?'+':''}${B} = ${a}(${u}x)+${b} = (${u}x+${v})\\cdot ${a} + (${b - v*a})\\text{ (constructed)}$.
+      Final: $(${u}x${v>=0?'+':''}${v})(${a}x^{2}${b>=0?'+':''}${b}x${c>=0?'+':''}${c})$.`;
+      return { q: qText, answer: ans };
+    }
+    
+    // WR4) Rectangle word problem: perimeter & area → dimensions
+    function genU56_WR_RectangleDims(){
+      // width = x + s, length = x + t with integers; give P and A, solve for x
+      const s = ri(1,5), t = s + ri(1,4);
+      const x = ri(2,8);
+      const w = x + s, L = x + t;
+      const P = 2*(w + L), A = w*L;
+      const qText = `A rectangle has width $x+${s}$ and length $x+${t}$. Its perimeter is $${P}$ and area is $${A}$. Solve for $x$, then state the dimensions.`;
+      const ans = `Since $P=2\\big((x+${s})+(x+${t})\\big)=4x+2(${s+t})$, we get $4x+${2*(s+t)}=${P}\\Rightarrow x=${x}$.
+      Then width $=x+${s}=${w}$ and length $=x+${t}=${L}$.`;
+      return { q: qText, answer: ans };
+    }
+    
+    // WR5) Complete the square to vertex form and give vertex
+    function genU56_WR_CompleteSquare(){
+      const a = sample([1,1,1,2]);          // mostly 1, sometimes 2
+      const p = ri(-6,6), q = ri(-9,9);
+      // Vertex for ax^2+px+q → if a=1, vertex (-p/2, q - p^2/4). For a=2, do factoring.
+      let qText, ans;
+      if (a === 1){
+        const h = -p/2;
+        const k = q - (p*p)/4;
+        qText = `Rewrite $y=x^{2}${p>=0?'+':''}${p}x${q>=0?'+':''}${q}$ in vertex form and state the vertex.`;
+        ans = `Complete square: $y=(x+${(p/2).toFixed(2)})^{2}${k>=0?'+':''}${k.toFixed(2)}$. Vertex $(${h.toFixed(2)},\\ ${k.toFixed(2)})$.`;
+      } else {
+        // a=2
+        const h = -p/(2*a);
+        const k = q - (p*p)/(4*a);
+        qText = `Rewrite $y=${a}x^{2}${p>=0?'+':''}${p}x${q>=0?'+':''}${q}$ in vertex form and state the vertex.`;
+        ans = `Factor: $y=${a}\\Big(x^{2}${(p/a)>=0?'+':''}${(p/a).toFixed(2)}x\\Big)${q>=0?'+':''}${q}
+        =${a}\\Big(x+${(p/(2*a)).toFixed(2)}\\Big)^{2}${k>=0?'+':''}${k.toFixed(2)}$. Vertex $(${h.toFixed(2)},\\ ${k.toFixed(2)})$.`;
+      }
+      return { q: qText, answer: ans };
+    }
+    
+    // WR6) Factor a cubic given a known integer root (Factor Theorem)
+    function genU56_WR_FactorCubicKnownRoot(){
+      // Build (x - r)(x^2 + bx + c) where quadratic has integer factorization too.
+      const r = sample([-3,-2,-1,1,2,3]);
+      const s = ri(-5,5) || 2, t = ri(-5,5) || -3;
+      const b = s + t, c = s*t;
+      // Expand: x^3 + (b - r) x^2 + (c - br) x - cr
+      const A = 1;
+      const B = b - r;
+      const C = c - b*r;
+      const D = -c*r;
+      const qText = `Given that $x=${r}$ is a root of $P(x)=x^{3}${B>=0?'+':''}${B}x^{2}${C>=0?'+':''}${C}x${D>=0?'+':''}${D}$, factor $P(x)$ completely.`;
+      const ans = `Since $P(${r})=0$, $(x-${r})$ is a factor. Divide (or observe construction):
+      $P(x)=(x-${r})(x^{2}${b>=0?'+':''}${b}x${c>=0?'+':''}${c})=(x-${r})(x${s>=0?'+':''}${s})(x${t>=0?'+':''}${t})$.`;
+      return { q: qText, answer: ans };
+    }
+    
+    // WR7) Revenue/Profit quadratic: maximize
+    function genU56_WR_RevenueMax(){
+      // R(p) = (A - Bp)(p) = -B p^2 + A p; choose nice A,B so vertex is at p = A/(2B)
+      const B = ri(2,6), A = 2*B*ri(5,12);   // ensures vertex price integer
+      const pStar = A/(2*B);
+      const Rmax = -B*pStar*pStar + A*pStar;
+      const qText = `A store sells an item at price $p$. Demand is $D(p)=${A}-${B}p$ (items). Revenue is $R(p)=p\\,D(p)$. 
+    Find the price that maximizes revenue and the maximum revenue.`;
+      const ans = `Since $R(p)=-${B}p^{2}+${A}p$, the vertex is at $p=\\dfrac{${A}}{2\\cdot ${B}}=${pStar}$. 
+    Max revenue $R(${pStar})=${Rmax}$.`;
+      return { q: qText, answer: ans };
+    }
+    
+    // WR8) Identity / proof style: show (ax + b)^2 - (ax - b)^2 = 4abx
+    function genU56_WR_IdentityProof(){
+      const a = ri(2,7), b = ri(1,8);
+      const qText = `Show that $( ${a}x+${b} )^{2}-( ${a}x-${b} )^{2}=4\\cdot ${a}\\cdot ${b}\\cdot x$.`;
+      const ans = `Expand:
+      $( ${a}x+${b} )^{2}=${a*a}x^{2}+${2*a*b}x+${b*b}$ and $( ${a}x-${b} )^{2}=${a*a}x^{2}-${2*a*b}x+${b*b}$.
+      Subtract to get $(${a*a}x^{2}+${2*a*b}x+${b*b})-(${a*a}x^{2}-${2*a*b}x+${b*b})= ${4*a*b}x = 4\\cdot ${a}\\cdot ${b}\\cdot x$.`;
+      return { q: qText, answer: ans };
+    }
+
+
+    
     
 
     document.getElementById('generate').addEventListener('click', renderQuiz);
