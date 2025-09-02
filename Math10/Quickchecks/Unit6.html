@@ -3371,26 +3371,35 @@
       }
     }
     
-    // WR13: Two cellphone plans — break-even usage
+    // WR13: Two cellphone plans — break-even usage (fixed)
     function genU789_WR_TwoPlanBreakEven(){
-      const A0 = ri(20,40), a = ri(5,15);           // base + cents/min
-      const B0 = ri(10,30), b = a + ri(5,20);       // base + higher cents/min
+      // ensure Plan A has higher base fee and lower per-minute so they cross at t>0
+      const a = ri(5,15);                 // A cents/min
+      const b = a + ri(5,20);             // B cents/min, strictly higher
+      let A0 = ri(25,45), B0 = ri(10,35); // dollars
+      while (A0 <= B0) {                  // force A0 > B0 for positive break-even
+        A0 = ri(25,45);
+        B0 = ri(10,35);
+      }
+    
       const A0d = A0.toFixed(2), B0d = B0.toFixed(2);
-      const exact = (A0 - B0) / ((b - a)/100);
+      const exact = (A0 - B0) / ((b - a)/100); // minutes
       const m = Math.ceil(exact);
+    
       return {
-        q: `Plan A costs \$${A0d} plus \$${(a/100).toFixed(2)} per minute.
+        q: `Plan A costs \\$${A0d} plus \\$${(a/100).toFixed(2)} per minute.
     Plan B costs \\$${B0d} plus \\$${(b/100).toFixed(2)} per minute.
     Write linear cost models in minutes $t$ and find the break-even usage (nearest minute).`,
         answer:
     `$C_A(t)=${A0d}+${(a/100).toFixed(2)}t,\\quad C_B(t)=${B0d}+${(b/100).toFixed(2)}t.$
     Solve $C_A=C_B$:
     \\[
-    \\big(${(b/100).toFixed(2)}-${(a/100).toFixed(2)}\\big)t=${(A0-B0).toFixed(2)}\\quad\\Rightarrow\\quad
-    t\\approx ${exact.toFixed(2)}\\approx ${m}\\text{ minutes}.
+    \\big(${(b/100).toFixed(2)}-${(a/100).toFixed(2)}\\big)t=${(A0-B0).toFixed(2)}
+    \\;\\Rightarrow\\; t\\approx ${exact.toFixed(2)}\\;\\Rightarrow\\; \\boxed{${m}\\text{ minutes}}.
     \\]`
       };
     }
+
 
 
 
