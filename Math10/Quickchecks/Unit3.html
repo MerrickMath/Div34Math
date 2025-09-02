@@ -1786,7 +1786,7 @@
       const wrong3 = `$${fixedClean(litres*(1.1 + Math.random()*0.2),1)}\\ \\text{L}$`;
     
       const choices = [correct, wrong1, wrong2, wrong3].sort(()=>Math.random()-0.5);
-      return { q: `A rectangular box measures ${L}\\,in $\\times$ ${W}\\,in $\\times$ ${H}\\,in. Its volume in litres is closest to`, choices, answerIndex: choices.indexOf(correct) };
+      return { q: `A rectangular box measures ${L}in $\\times$ ${W}in $\\times$ ${H}in. Its volume in litres is closest to`, choices, answerIndex: choices.indexOf(correct) };
     }
     
     /** 6) Hair unit (randomized order only) */
