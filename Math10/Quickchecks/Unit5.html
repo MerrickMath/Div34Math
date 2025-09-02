@@ -2127,15 +2127,16 @@
     
     // 8) Identity that always holds
     function genU4_MC_PythagoreanIdentity(){
-      const correct = '$\\sin^{2}\\theta+\\cos^{2}\\theta=1$';
+      const correct = '\\sin^{2}\\theta+\\cos^{2}\\theta=1';
       const wrongs = [
-        '$\\tan\\theta=\\cos\\theta/\\sin\\theta$',
-        '$\\cos\\theta=1/\\sin\\theta$',
-        '$\\sin\\theta+\\cos\\theta=1$'
+        '\\tan\\theta=\\cos\\theta/\\sin\\theta',
+        '\\cos\\theta=1/\\sin\\theta',
+        '\\sin\\theta+\\cos\\theta=1'
       ];
-      const choices = [`$${correct}$`, ...wrongs.map(s=>`$${s}$`)].sort(()=>Math.random()-0.5);
+      const choices = [correct, ...wrongs].sort(()=>Math.random()-0.5).map(s => `$${s}$`);
       return { q: 'Which identity always holds?', choices, answerIndex: choices.indexOf(`$${correct}$`) };
     }
+
     
     // 9) Given sinθ decimal, find cosθ (acute)
     function genU4_MC_CosFromSin(){
