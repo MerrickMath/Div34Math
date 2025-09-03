@@ -126,64 +126,66 @@
     function typeset(el){ if(window.renderMathInElement){ window.renderMathInElement(el,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false}); } }
 
     const BANK = [
-      {
-        title:'A. Multiple Choice',
-        note:'Select one option.',
-        items:[
-          {type:'mcgen', gen: genMC_Prime},
-          {type:'mcgen', gen: genMC_PrimeFactorization},
-          {type:'mcgen', gen: genMC_GCD},
-          {type:'mcgen', gen: genMC_LCM},
-          {type:'mcgen', gen: genMC_PerfectSquare},
-          {type:'mcgen', gen: genMC_PerfectCube},
-          {type:'mcgen', gen: genMC_EntireRadical},
-          {type:'mcgen', gen: genMC_MixedRadical},
-          {type:'mcgen', gen: genMC_SimplifyRootXY},
-          {type:'mcgen', gen: genMC_CuberootNeg},
-          {type:'mcgen', gen: genMC_Irrational},
-          {type:'mcgen', gen: genMC_SimplifyProductRoots},
-          {type:'mcgen', gen: genMC_FourthPower}
-        ]},
-
-      {
-        title:'B. Numeric Response',
-        note:'Write your final answer clearly in the box.',
-        items:[
-          { type:'gen', gen: genNR_GCD },
-          { type:'gen', gen: genNR_LCM3 },
-          { type:'gen', gen: genNR_SumPrimeExponents }
-        ]},
-
-      {
-        title:'C. Written Response',
-        note:'Show full reasoning; express final answers with positive exponents/radicals.',
-        items:[
-          { type:'gen', gen: genWR_SimplifyMonomialRoot },
-          { type:'gen', gen: genWR_RationalizeSimple },
-          { type:'gen', gen: genWR_RepeatingToFraction },
-          { type:'gen', gen: genWR_CuberootNegative },
-          { type:'gen', gen: genWR_PrimeFactorizePairGcdLcm },
-          { type:'gen', gen: genWR_PerfectCubeAdjustment },
-          { type:'gen', gen: genWR_SimplifyRadicalFraction },
-          { type:'gen', gen: genWR_SumMultiples2or3 },
-          { type:'gen', gen: genWR_Babylonian },
-          { type:'gen', gen: randomNumberSystemsInclusions },
-          { type:'gen', gen: randomDivisorQuestion },
-          { type:'gen', gen: randomMultiplesQuestion },
-          { type:'gen', gen: randomSetQuestion },
-          { type:'gen', gen: randomDivisorsTrailingZeroQuestion }
-        ]},
-
-      {
-        title:'D. True / False',
-        note:'Decide if each statement is true or false (use formal set notation).',
-        items:[
-          { type:'gen', gen: genTF_SetInclusion },
-          { type:'gen', gen: genTF_SetInclusion },
-          { type:'gen', gen: genTF_SetInclusion },
-          { type:'gen', gen: genTF_SetInclusion },
-          { type:'gen', gen: genTF_SetInclusion }
-        ]}
+    {
+      title:'A. Multiple Choice',
+      note:'Select one option.',
+      items:[
+        {type:'mcgen', gen: genMCU6_Distance},
+        {type:'mcgen', gen: genMCU6_Midpoint},
+        {type:'mcgen', gen: genMCU6_SlopeTwoPoints},
+        {type:'mcgen', gen: genMCU6_ParallelSlopeFromGeneral},
+        {type:'mcgen', gen: genMCU6_PerpendicularSlopeFromSlope},
+        {type:'mcgen', gen: genMCU6_GeneralFormFromSlopeIntercept},
+        {type:'mcgen', gen: genMCU6_WhichHasYintNeg4},
+        {type:'mcgen', gen: genMCU6_SlopeFromGeneral},
+        {type:'mcgen', gen: genMCU6_Steepest},
+        {type:'mcgen', gen: genMCU6_PerpendicularThroughOrigin}
+      ]},
+  
+    {
+      title:'B. Numeric Response',
+      note:'Write your final answer clearly in the box.',
+      items:[
+        { type:'gen', gen: genNRU6_DistanceHalfInt },
+        { type:'gen', gen: genNRU6_Midpoint },
+        { type:'gen', gen: genNRU6_FindKGivenMidpoint },
+        { type:'gen', gen: genNRU6_LineThroughTwoPointsSlopeIntercept },
+        { type:'gen', gen: genNRU6_InterceptsOfLine },
+        { type:'gen', gen: genNRU6_ParallelLineThroughPoint },
+        { type:'gen', gen: genNRU6_CarSpeedIntercept }
+      ]
+    },
+  
+    {
+      title:'C. Written Response',
+      note:'Show full reasoning.',
+      items:[
+        { type:'gen', gen: genWRU6_DeriveDistance },
+        { type:'gen', gen: genWRU6_ParallelPerpProof },
+        { type:'gen', gen: genWRU6_PerpendicularBisector },
+        { type:'gen', gen: genWRU6_SectionRatio },
+        { type:'gen', gen: genWRU6_SlopeToGeneral },
+        { type:'gen', gen: genWRU6_PointPerpToGiven },
+        { type:'gen', gen: genWRU6_Collinearity },
+        { type:'gen', gen: genWRU6_InterceptGraphAndSlope },
+        { type:'gen', gen: genWRU6_TemperatureModel },
+        { type:'gen', gen: genWRU6_ThroughPointGivenSlopeAllForms },
+        { type:'gen', gen: genWRU6_FindKForParallel },
+        { type:'gen', gen: genWRU6_PointSlopeToIntercepts }
+      ]
+    },
+  
+    {
+      title:'D. Enrichment',
+      note:'Challenge problems.',
+      items:[
+        { type:'gen', gen: genEU6_LatticePointsOnSegment },
+        { type:'gen', gen: genEU6_DistancePointToLine },
+        { type:'gen', gen: genEU6_TriangleAreaParam },
+        { type:'gen', gen: genEU6_DistanceBetweenParallels },
+        { type:'gen', gen: genEU6_SlopeRotationExplain },
+        { type:'gen', gen: genEU6_ConvertFormsAtXIntercept }
+      ]}
 
     ];
 
@@ -1092,6 +1094,437 @@
       };
     }
 
+    /* =======================
+   UNIT 6 — Linear Relations
+   ======================= */
+
+  // ---- tiny helpers specific to Unit 6 ----
+  function frac(n, d){
+    const g = gcd(n, d);
+    const s = (d<0)? -1 : 1;
+    return { n: s*(n/g), d: Math.abs(d/g) };
+  }
+  function fmtFrac(n,d){
+    if (d===1) return `${n}`;
+    if (n===0) return '0';
+    return `\\dfrac{${n}}{${d}}`;
+  }
+  function slopeFromAB(A,B){ // Ax+By+C=0  ->  y = (-A/B)x + (-C/B)
+    return frac(-A, B);
+  }
+  function perpSlope(p){ // p = n/d  ->  -d/n
+    const {n,d} = p;
+    return frac(-d, n);
+  }
+  function addFrac(a,b){ // a={n,d}, b={n,d}
+    return frac(a.n*b.d + b.n*a.d, a.d*b.d);
+  }
+  function mulFrac(a,b){ return frac(a.n*b.n, a.d*b.d); }
+  function negFrac(a){ return { n: -a.n, d: a.d }; }
+  function eqFrac(a,b){ return a.n===b.n && a.d===b.d; }
+  function absFrac(a){ return { n: Math.abs(a.n), d: a.d }; }
+  function toSlopeIntercept(m, b){ // m, b are {n,d}
+    const mTex = (m.n===0) ? '0' : (m.d===1 ? `${m.n}` : `\\dfrac{${m.n}}{${m.d}}`);
+    const bTex = (b.n===0) ? '0' : (b.d===1 ? `${b.n}` : `\\dfrac{${b.n}}{${b.d}}`);
+    return `$y=${mTex}x+${bTex}$`.replace('+ -','- ');
+  }
+  function lineThroughTwoPoints(p1,p2){ // {x,y} ints
+    const dy = p2.y - p1.y, dx = p2.x - p1.x;
+    const m = frac(dy, dx);
+    const b = frac(p1.y*m.d - m.n*p1.x, m.d); // from y = mx+b
+    return { m, b }; // both in reduced form
+  }
+  function genPythagoreanPair(){
+    return sample([
+      [3,4,5],[5,12,13],[8,15,17],[7,24,25],[9,40,41]
+    ]);
+  }
+  
+  // ===================== A. Multiple Choice =====================
+  function genMCU6_Distance(){
+    const [a,b,c] = genPythagoreanPair(); // legs a,b -> hyp c
+    const sx = ri(-5,5), sy = ri(-5,5);
+    const P = {x:sx, y:sy};
+    const Q = {x:sx+a, y:sy+b};
+    const correct = `$${c}$`;
+    const wrongs = [`$\\sqrt{${a*a+b*b}}$`, `$${a+b}$`, `$\\sqrt{${(a+b)**2}}$`];
+    const choices = [correct, ...wrongs];
+    const order = choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
+    return {
+      q: `The distance between $(${P.x},${P.y})$ and $(${Q.x},${Q.y})$ is`,
+      choices: order.map(i=>choices[i]),
+      answerIndex: order.indexOf(0)
+    };
+  }
+  
+  function genMCU6_Midpoint(){
+    const P={x:ri(-9,9), y:ri(-9,9)}, Q={x:ri(-9,9), y:ri(-9,9)};
+    const mx = (P.x+Q.x)/2, my=(P.y+Q.y)/2;
+    const correct = `$(${mx},${my})$`;
+    const wrongs = [
+      `$(${Q.x-P.x},${Q.y-P.y})$`,
+      `$(${(Q.x-P.x)/2},${(Q.y-P.y)/2})$`,
+      `$(${P.x},${Q.y})$`
+    ];
+    const choices=[correct,...wrongs];
+    const order=choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
+    return { q:`The midpoint of $(${P.x},${P.y})$ and $(${Q.x},${Q.y})$ is`,
+             choices: order.map(i=>choices[i]),
+             answerIndex: order.indexOf(0) };
+  }
+  
+  function genMCU6_SlopeTwoPoints(){
+    const x1=ri(-6,3), y1=ri(-3,6);
+    let dx=sample([2,3,4,5]); let dy=sample([-6,-4,-3,-2,2,3,4,6]);
+    const x2=x1+dx, y2=y1+dy;
+    const m=frac(dy,dx);
+    const correct = `$${fmtFrac(m.n,m.d)}$`;
+    const wrongs = [`$${fmtFrac(-m.d,m.n)}$`, `$${fmtFrac(m.d,m.n)}$`, `$${fmtFrac(-m.n,m.d)}$`];
+    const choices=[correct,...wrongs];
+    const order=choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
+    return {
+      q:`The slope of the line through $(${x1},${y1})$ and $(${x2},${y2})$ is`,
+      choices: order.map(i=>choices[i]),
+      answerIndex: order.indexOf(0)
+    };
+  }
+  
+  function genMCU6_ParallelSlopeFromGeneral(){
+    // 3x - 4y + 7 = 0 → slope = 3/4
+    const A=ri(1,6)*(Math.random()<0.5?-1:1);
+    let B=ri(1,6)*(Math.random()<0.5?-1:1); if(B===0) B=2;
+    const C=ri(-9,9);
+    const m = slopeFromAB(A,B); // -A/B
+    const correct = `$${fmtFrac(m.n,m.d)}$`;
+    const wrongs = [
+      `$${fmtFrac(-m.n,m.d)}$`,
+      `$${fmtFrac(B,A)}$`,
+      `$${fmtFrac(-B,A)}$`
+    ];
+    const choices=[correct,...wrongs];
+    const order=choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
+    return {
+      q:`A line parallel to $${A}x${B>=0?'+':''}${B}y${C>=0?'+':''}${C}=0$ has slope`,
+      choices: order.map(i=>choices[i]),
+      answerIndex: order.indexOf(0)
+    };
+  }
+  
+  function genMCU6_PerpendicularSlopeFromSlope(){
+    // y = m x + b
+    const m = frac(sample([ -3,-2,-1,1,2,3,4 ]), sample([2,3,4]));
+    const mp = perpSlope(m);
+    const correct = `$${fmtFrac(mp.n, mp.d)}$`;
+    const wrongs = [`$${fmtFrac(m.n,m.d)}$`, `$${fmtFrac(-m.n,m.d)}$`, `$${fmtFrac(mp.d, mp.n)}$`];
+    const b = ri(-6,6);
+    const choices=[correct,...wrongs];
+    const order=choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
+    return {
+      q:`A line perpendicular to $y=${fmtFrac(m.n,m.d)}x${b>=0?'+':''}${b}$ has slope`,
+      choices: order.map(i=>choices[i]),
+      answerIndex: order.indexOf(0)
+    };
+  }
+  
+  function genMCU6_GeneralFormFromSlopeIntercept(){
+    const m = frac(sample([1,2,3,4,5,6]), sample([2,3,4]));
+    const b = ri(-6,6);
+    // y = (m.n/m.d)x + b -> multiply both sides by m.d: m.d*y = m.n*x + b*m.d
+    const A = m.n, B = -m.d, C = b*m.d; // Ax + By + C = 0 with integers
+    const correct = `$${A}x${B>=0?'+':''}${B}y${C>=0?'+':''}${C}=0$`;
+    const choices = [
+      correct,
+      `$${A}x${-B>=0?'+':''}${-B}y${C>=0?'+':''}${C}=0$`,
+      `$${-A}x${B>=0?'+':''}${B}y${C>=0?'+':''}${C}=0$`,
+      `$${A}x${B>=0?'+':''}${B}y${-C>=0?'+':''}${-C}=0$`
+    ];
+    const order=choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
+    return {
+      q:`The general form of $y=${fmtFrac(m.n,m.d)}x${b>=0?'+':''}${b}$ is`,
+      choices: order.map(i=>choices[i]),
+      answerIndex: order.indexOf(0)
+    };
+  }
+  
+  function genMCU6_WhichHasYintNeg4(){
+    const m = frac(sample([ -3,-2,-1,1,2,3 ]), sample([1,2,3]));
+    const wrongA = `$${2}y=${fmtFrac(m.n,m.d)}x${-8>=0?'+':''}${-8}$`; // 2y = mx - 8 -> y = (m/2)x -4  (actually this still has -4; make a different!)
+    // Make clean options:
+    const choices = [
+      `$y=${fmtFrac(-1,2)}x-4$`,
+      `$y+4=${fmtFrac(3,1)}x$`,
+      `$x=4$`,
+      `$2y=3x-8$`
+    ];
+    const correctIndex = 3; // 2y=3x-8 -> y = (3/2)x -4 has y-int -4
+    const order = choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
+    return {
+      q:`Which line has $y$-intercept $-4$?`,
+      choices: order.map(i=>choices[i]),
+      answerIndex: order.indexOf(correctIndex)
+    };
+  }
+  
+  function genMCU6_SlopeFromGeneral(){
+    let A=ri(-6,6); if(A===0) A=3;
+    let B=ri(-6,6); if(B===0) B=-4;
+    const C=ri(-9,9);
+    const m = slopeFromAB(A,B);
+    const correct = `$-${fmtFrac(Math.abs(A)*Math.sign(A),Math.abs(B)*Math.sign(B))}$`.replace('--','');
+    const choiceVals = [
+      `-${fmtFrac(A,B)}`, `${fmtFrac(A,B)}`, `-${fmtFrac(B,A)}`, `${fmtFrac(B,A)}`
+    ];
+    const correctIdx = 0;
+    const order = choiceVals.map((_,i)=>i).sort(()=>Math.random()-0.5);
+    return {
+      q:`In $${A}x${B>=0?'+':''}${B}y${C>=0?'+':''}${C}=0$ with $B\\neq0$, the slope is`,
+      choices: order.map(i=>`$${choiceVals[i]}$`),
+      answerIndex: order.indexOf(correctIdx)
+    };
+  }
+  
+  function genMCU6_Steepest(){
+    const pool = shuffle([-5,-4,-3,-2,-1,1,2,9/4,3/2,4]).slice(0,4);
+    const mags = pool.map(x=>Math.abs(x));
+    const maxIdx = mags.indexOf(Math.max(...mags));
+    const choices = pool.map(v => Number.isInteger(v)? `$${v}$` : `$\\tfrac{${v*4}}{4}$`.replace(/-?(\d+\.0)\/4/,(m)=>`\\tfrac{${Math.round(v*4)}}{4}`));
+    const order = choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
+    return {
+      q:'Which slope is steepest?',
+      choices: order.map(i=>choices[i]),
+      answerIndex: order.indexOf(maxIdx)
+    };
+  }
+  
+  function genMCU6_PerpendicularThroughOrigin(){
+    const m = frac(sample([2,3,4]), sample([3,4,5]));
+    const mp = perpSlope(m);
+    const choices = [
+      `$y=${fmtFrac(mp.n,mp.d)}x$`,
+      `$y=${fmtFrac(-mp.n,mp.d)}x$`,
+      `$y=${fmtFrac(m.n,m.d)}x$`,
+      `$y=${fmtFrac(-m.n,m.d)}x$`
+    ];
+    const order = choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
+    return {
+      q:`A line perpendicular to $y=${fmtFrac(m.n,m.d)}x${ri(-5,5)>=0?'+':''}${ri(-5,5)}$ and through $(0,0)$ is`,
+      choices: order.map(i=>choices[i]),
+      answerIndex: order.indexOf(0)
+    };
+  }
+  
+  // ===================== B. Numeric Response =====================
+  function genNRU6_DistanceHalfInt(){
+    // Choose a 3-4-5 triangle centered on half-integers to mirror style
+    const [a,b,c] = [4,3,5]; // dx=4, dy=3 -> distance 5
+    const xmid = ri(-3,3); const ymid = ri(-2,2);
+    const P = { x: xmid - a/2, y: ymid + b/2 };
+    const Q = { x: xmid + a/2, y: ymid - b/2 };
+    return {
+      q: `Distance between $\\big(${P.x},\\,${P.y}\\big)$ and $\\big(${Q.x},\\,${Q.y}\\big)$.`,
+      answer: `$${c}$`
+    };
+  }
+  
+  function genNRU6_Midpoint(){
+    const P={x:ri(-9,9), y:ri(-9,9)}, Q={x:ri(-9,9), y:ri(-9,9)};
+    const mx=(P.x+Q.x)/2, my=(P.y+Q.y)/2;
+    return { q:`Midpoint of $(${P.x},${P.y})$ and $(${Q.x},${Q.y})$.`, answer: `$(${mx},${my})$` };
+  }
+  
+  function genNRU6_FindKGivenMidpoint(){
+    const Mx=ri(-5,5), My=ri(-5,5);
+    const y1=ri(-6,8), x2=ri(-4,6), y2=ri(-6,6);
+    const k = 2*Mx - x2;
+    return { q:`Find $k$ so that the midpoint of $(k,${y1})$ and $(${x2},${y2})$ is $(${Mx},${My})$.`, answer:`$k=${k}$` };
+  }
+  
+  function genNRU6_LineThroughTwoPointsSlopeIntercept(){
+    const P={x:ri(-6,6), y:ri(-6,6)}, Q={x:ri(-6,6), y:ri(-6,6)};
+    if (P.x===Q.x) Q.x += 1;
+    const {m,b} = lineThroughTwoPoints(P,Q);
+    return { q:`Line through $(${P.x},${P.y})$ and $(${Q.x},${Q.y})$ in $y=mx+b$ form.`, answer: toSlopeIntercept(m,b) };
+  }
+  
+  function genNRU6_InterceptsOfLine(){
+    // Ax + By = C (avoid zeros)
+    let A=ri(1,6), B=ri(1,6); const C=ri(6,18);
+    const xint = frac(C, A), yint = frac(C, B);
+    return {
+      q:`Find $x$- and $y$-intercepts of $${A}x+${B}y=${C}$.`,
+      answer:`$(${fmtFrac(xint.n,xint.d)},0),\\ (0,${fmtFrac(yint.n,yint.d)})$`
+    };
+  }
+  
+  function genNRU6_ParallelLineThroughPoint(){
+    //  Ax - By + C = 0  parallel: same A,B
+    let A=ri(-4,6); if(A===0) A=3;
+    let B=ri(-5,5); if(B===0) B=-2;
+    const C = ri(-12,12);
+    const P = {x:ri(-6,6), y:ri(-6,6)};
+    // For Ax + By + C = 0, parallel through P has C' so that A x0 + B y0 + C' = 0
+    const Cp = -(A*P.x + B*P.y);
+    return {
+      q:`Equation of the line parallel to $${A}x${B>=0?'+':''}${B}y${C>=0?'+':''}${C}=0$ through $(${P.x},${P.y})$.`,
+      answer:`$${A}x${B>=0?'+':''}${B}y${Cp>=0?'+':''}${Cp}=0$`
+    };
+  }
+  
+  function genNRU6_CarSpeedIntercept(){
+    const t1=ri(0,4), v1=ri(40,80);
+    const t2=t1+ri(1,3), v2=v1+ri(10,40);
+    const m = frac(v2-v1, t2-t1);
+    const b = frac(v1*m.d - m.n*t1, m.d);
+    return {
+      q:`A car passes $(${t1},${v1})$ and $(${t2},${v2})$. Find speed (slope) and intercept.`,
+      answer:`$s(t)=${fmtFrac(m.n,m.d)}t${b.n>=0?'+':''}${fmtFrac(b.n,b.d)}$, speed ${fmtFrac(m.n,m.d)}, intercept ${fmtFrac(b.n,b.d)}`
+    };
+  }
+  
+  // ===================== C. Written Response =====================
+  function genWRU6_DeriveDistance(){
+    const ans = `Let $P(x_1,y_1),Q(x_2,y_2)$. The horizontal and vertical legs have lengths $|x_2-x_1|$ and $|y_2-y_1|$. By Pythagoras, 
+    $$PQ=\\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}.$$`;
+    return { q:`Derive the distance formula from Pythagoras.`, answer: ans };
+  }
+  
+  function genWRU6_ParallelPerpProof(){
+    const ans = `Write both lines in slope–intercept form. If $Ax+By+C=0$ and $A'x+B'y+C'=0$ with $B,B'\\neq0$, then slopes are $m=-\\tfrac{A}{B}$ and $m'=-\\tfrac{A'}{B'}$. Parallel lines have constant difference in $y$ for equal changes in $x$, so $m=m'$. Perpendicular non-vertical lines have direction vectors $(1,m)$ and $(1,m')$ with dot product $1+mm'=0$, hence $mm'=-1$.`;
+    return { q:`Prove that parallel lines have equal slopes, and perpendicular slopes multiply to $-1$.`, answer: ans };
+  }
+  
+  function genWRU6_PerpendicularBisector(){
+    const A={x:ri(-4,2), y:ri(-4,2)}, B={x:A.x+ri(3,8), y:A.y+ri(2,7)};
+    const mid={x:(A.x+B.x)/2, y:(A.y+B.y)/2};
+    const mAB = frac(B.y-A.y, B.x-A.x);
+    const mPerp = perpSlope(mAB);
+    // point–slope through midpoint
+    const ans = `$y-${mid.y}= ${fmtFrac(mPerp.n,mPerp.d)}(x-${mid.x})$`;
+    return { q:`Find the perpendicular bisector of segment $(${A.x},${A.y})$ to $(${B.x},${B.y})$.`, answer: ans };
+  }
+  
+  function genWRU6_SectionRatio(){
+    const A={x:ri(-2,2), y:ri(2,6)}, B={x:A.x+ri(3,7), y:A.y-ri(2,6)};
+    const r1=2, r2=3;
+    const Px = (r1*B.x + r2*A.x)/(r1+r2);
+    const Py = (r1*B.y + r2*A.y)/(r1+r2);
+    return { q:`Point $P$ divides $A(${A.x},${A.y})$ to $B(${B.x},${B.y})$ in ratio $${r1}:${r2}$. Find $P$.`,
+             answer:`$\\left(${Px},\\,${Py}\\right)$` };
+  }
+  
+  function genWRU6_SlopeToGeneral(){
+    const m = frac(-3,2), b = 4;
+    const A = m.n, B = -m.d, C = b*m.d;
+    return { q:`Convert $y=-\\tfrac{3}{2}x+4$ to general form with integer coefficients.`,
+             answer:`$${A}x${B>=0?'+':''}${B}y${C>=0?'+':''}${C}=0$` };
+  }
+  
+  function genWRU6_PointPerpToGiven(){
+    const P={x:ri(5,9), y:ri(-4,2)};
+    const givenM = frac(2,5); // 0.4
+    const mPerp = perpSlope(givenM); // -5/2
+    const b = frac(P.y*mPerp.d - mPerp.n*P.x, mPerp.d);
+    const generalA = mPerp.n, generalB = -mPerp.d, generalC = b.n;
+    return { q:`A line passes through $(${P.x},${P.y})$ and is perpendicular to $y=0.4x+9$. Write its equations (slope–intercept, point–slope, general).`,
+             answer:`Slope–intercept: $y=${fmtFrac(mPerp.n,mPerp.d)}x${b.n>=0?'+':''}${fmtFrac(b.n,b.d)}$; Point–slope: $y-${P.y}=${fmtFrac(mPerp.n,mPerp.d)}(x-${P.x})$; General: $${generalA}x${generalB>=0?'+':''}${generalB}y${generalC>=0?'+':''}${generalC}=0$` };
+  }
+  
+  function genWRU6_Collinearity(){
+    const A={x:-4,y:5}, B={x:0,y:3}, C={x:6,y:0};
+    const mAB = frac(B.y-A.y, B.x-A.x), mBC = frac(C.y-B.y, C.x-B.x);
+    const col = eqFrac(mAB,mBC) ? 'Yes' : 'No';
+    return { q:`Test collinearity of $A(-4,5),\\ B(0,3),\\ C(6,0)$.`,
+             answer:`Slopes $m_{AB}=${fmtFrac(mAB.n,mAB.d)},\\ m_{BC}=${fmtFrac(mBC.n,mBC.d)}$. Collinear? ${col}.` };
+  }
+  
+  function genWRU6_InterceptGraphAndSlope(){
+    const A=ri(1,5), B=ri(1,5), C=ri(4,16);
+    const xint = frac(C,A), yint = frac(C,B);
+    const m = frac(-A,B);
+    return { q:`Graph $${A}x-${B}y=${C}$ using intercepts and state the slope.`,
+             answer:`Intercepts $(${fmtFrac(xint.n,xint.d)},0)$ and $(0,${fmtFrac(yint.n,yint.d)})$; slope $m=${fmtFrac(m.n,m.d)}$.` };
+  }
+  
+  function genWRU6_TemperatureModel(){
+    const t1=13, T1=2, t2=16, T2=-10; // 1 pm to 4 pm example
+    const m = frac(T2-T1, t2-t1); // -12/3 = -4
+    const b = frac(T1 - m.n/m.d*t1, 1);
+    return { q:`A freezer cools from $2^\\circ\\text{C}$ at 1 pm to $-10^\\circ\\text{C}$ at 4 pm. Find linear model, interpret slope.`,
+             answer:`$T(t)=-4t+54$. Slope $-4$ means temperature decreases $4^\\circ\\text{C}$ per hour.` };
+  }
+  
+  function genWRU6_ThroughPointGivenSlopeAllForms(){
+    const P={x:-2, y:5}, m=frac(-3,4);
+    const b=frac(P.y*m.d - m.n*P.x, m.d);
+    const A = m.n, B = -m.d, C = b.n;
+    return { q:`Line through $(-2,5)$ with slope $-\\tfrac{3}{4}$. Give slope–intercept, point–slope, general.`,
+             answer:`$y=${fmtFrac(m.n,m.d)}x${b.n>=0?'+':''}${fmtFrac(b.n,b.d)}$; $y-5=${fmtFrac(m.n,m.d)}(x+2)$; $${A}x${B>=0?'+':''}${B}y${C>=0?'+':''}${C}=0$` };
+  }
+  
+  function genWRU6_FindKForParallel(){
+    const k = ri(-4,8);
+    const targetM = frac(1,2); // slope of 2x-4y+8=0 is 1/2
+    const ansK = 1 + targetM.n/targetM.d; // for y=(k-1)x+3 parallel → k-1 = 1/2 → k=3/2 ; but keep integer? We'll state fraction.
+    return { q:`For which $k$ is $y=(k-1)x+3$ parallel to $2x-4y+8=0$?`,
+             answer:`Slope of $2x-4y+8=0$ is $\\tfrac{1}{2}$, so $k-1=\\tfrac{1}{2}\\Rightarrow k=\\tfrac{3}{2}$.` };
+  }
+  
+  function genWRU6_PointSlopeToIntercepts(){
+    const m = frac(2,3);
+    const x0=3, y0=-1;
+    // y+1 = (2/3)(x-3) -> slope-intercept to find intercepts
+    const b = frac(y0*m.d - m.n*x0, m.d); // b = -1 - (2/3)*(-3)?? We'll compute generally.
+    const xInt = fmtFrac(-b.n, m.n); // x when y=0: 0 = m x + b -> x = -b/m
+    const yInt = fmtFrac(b.n,b.d);
+    return { q:`Graph $y+1=\\tfrac{2}{3}(x-3)$ and find intercepts.`,
+             answer:`$x$-intercept $\\left(${xInt},0\\right)$; $y$-intercept $(0,${yInt})$.` };
+  }
+  
+  // ===================== D. Enrichment =====================
+  function genEU6_LatticePointsOnSegment(){
+    const A={x:2, y:3}, B={x:14, y:9};
+    const dx=Math.abs(B.x-A.x), dy=Math.abs(B.y-A.y);
+    const count = gcd(dx,dy)+1; // inclusive points
+    return { q:`Count integer lattice points on segment $A(2,3)$ to $B(14,9)$.`,
+             answer:`$\\gcd(|${dx}|,|${dy}|)+1=${count}$ points (including endpoints).` };
+  }
+  
+  function genEU6_DistancePointToLine(){
+    const P={x:5,y:-1}; const A=3, B=-4, C=-12;
+    const num=Math.abs(A*P.x + B*P.y + C), den=Math.sqrt(A*A+B*B);
+    return { q:`Find distance from $P(5,-1)$ to $3x-4y-12=0$.`,
+             answer:`$\\dfrac{|3(5)-4(-1)-12|}{\\sqrt{3^2+(-4)^2}}=\\dfrac{11}{5}$.` };
+  }
+  
+  function genEU6_TriangleAreaParam(){
+    const a = ri(1,6);
+    return { q:`Triangle formed by $x+${a}y=6$, $x=0$, $y=0$. Express area in terms of $a$.`,
+             answer:`Intercepts $(6,0)$ and $(0,\\tfrac{6}{${a}})$. Area $\\tfrac12\\cdot6\\cdot\\tfrac{6}{a}=\\dfrac{18}{a}$.` };
+  }
+  
+  function genEU6_DistanceBetweenParallels(){
+    const m = 2, b1 = ri(-2,2), b2 = b1 - ri(3,7);
+    const dist = Math.abs(b1-b2)/Math.sqrt(1+m*m);
+    return { q:`Distance between $y=2x+${b1}$ and $y=2x+${b2}$.`,
+             answer:`$\\dfrac{|${b1}-${b2}|}{\\sqrt{1+2^2}}=\\dfrac{${Math.abs(b1-b2)}}{\\sqrt5}$.` };
+  }
+  
+  function genEU6_SlopeRotationExplain(){
+    const ans = `In $y=mx+b$, $b$ fixes the intersection with the $y$-axis. Changing $m$ changes the rise per run, rotating the line about $(0,b)$ while keeping the intercept fixed.`;
+    return { q:`Explain why changing the slope rotates a line about the $y$-intercept.`, answer: ans };
+  }
+  
+  function genEU6_ConvertFormsAtXIntercept(){
+    const A=4, B=-5, C=20; // 4x-5y=20
+    const m = frac(-A,B); const b = frac(-C,B); // slope-intercept
+    const xint = frac(C,A); // at y=0
+    const pointSlope = `$y-0=${fmtFrac(m.n,m.d)}(x-${fmtFrac(xint.n,xint.d)})$`;
+    return { q:`Convert $4x-5y=20$ into slope–intercept form and point–slope form at the $x$-intercept.`,
+             answer:`Slope–intercept: $y=${fmtFrac(m.n,m.d)}x${b.n>=0?'+':''}${fmtFrac(b.n,b.d)}$; Point–slope at $x$-int $(${fmtFrac(xint.n,xint.d)},0)$: ${pointSlope}` };
+  }
+  
+  // To use Unit 6, replace `BANK` with `BANK_Unit6` in your render path, e.g.:
+  //   BANK = BANK_Unit6;
 
     
 
