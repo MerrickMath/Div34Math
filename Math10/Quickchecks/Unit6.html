@@ -1312,7 +1312,7 @@
     const {m,b} = lineThroughTwoPoints(P,Q);
     const sum = addFrac(m,b);
     return {
-      q: `Line through $(${P.x},${P.y})$ and $(${Q.x},${Q.y})$. Enter $m+b$ as a single number (fraction OK).`,
+      q: `Line through $(${P.x},${P.y})$ and $(${Q.x},${Q.y})$. Enter $m+b$ as a single number.`,
       answer: `$${fmtFrac(sum.n, sum.d)}$`
     };
   }
