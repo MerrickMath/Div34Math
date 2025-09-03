@@ -158,13 +158,13 @@
         title: 'B. Numeric Response',
         note: 'Write your final numeric answer clearly in the box.',
         items: [
-          { type: 'gen', gen: genU789_NR_DistancePoints },
-          { type: 'gen', gen: genU789_NR_Midpoint },
-          { type: 'gen', gen: genU789_NR_SlopeBetween },
-          { type: 'gen', gen: genU789_NR_SlopeOnlyFromTwoPoints },
-          { type: 'gen', gen: genU789_NR_SolveSystem },
-          { type: 'gen', gen: genU789_NR_AvgRateChange },
-          { type: 'gen', gen: genU789_NR_Intersection }
+          { type: 'gen', gen: genU6_NR_Distance },
+          { type: 'gen', gen: genU6_NR_Midpoint },
+          { type: 'gen', gen: genU6_NR_MidpointSolveK },
+          { type: 'gen', gen: genU6_NR_SlopeFromTwoPoints },
+          { type: 'gen', gen: genU6_NR_InterceptsStandard },
+          { type: 'gen', gen: genU6_NR_ParallelCValue },
+          { type: 'gen', gen: genU6_NR_RateAndIntercept }
         ]},
     
       {
@@ -2966,9 +2966,28 @@
     // ================== Unit 7–9 (Linear) — Numeric Response Generators (numeric-only) ==================
     
     // NR1: Distance between two points (exact integer via triple)
-    function genU789_NR_DistancePoints(){
+    /* ======================= Tiny helpers (guarded) ======================= */
+    if (typeof _gcd !== 'function'){
+      var _gcd = function(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ [a,b]=[b,a%b]; } return a; };
+    }
+    if (typeof reduceFrac !== 'function'){
+      var reduceFrac = function(n,d){
+        if(d===0) return {n:1,d:0};
+        let s = (n<0)^(d<0) ? -1 : 1;
+        n=Math.abs(n); d=Math.abs(d);
+        const g=_gcd(n,d); n/=g; d/=g;
+        return { n: s*n, d };
+      };
+    }
+    const rsign = ()=> Math.random()<0.5? -1 : 1;
+    const fmtPair = (a,b)=> `\\big(${a},\\,${b}\\big)`;
+    
+    /* ================== Unit 6 — Numeric Response Generators ================== */
+    
+    /** NR1) Distance between two points (Pythagorean triple → exact integer) */
+    function genU6_NR_Distance(){
       const triples = [[3,4,5],[5,12,13],[8,15,17],[7,24,25]];
-      const [a,b,c] = triples[Math.floor(Math.random()*triples.length)];
+      const [a,b,c] = sample(triples);
       const x1 = ri(-6,6), y1 = ri(-6,6);
       const x2 = x1 + (Math.random()<0.5? a : -a);
       const y2 = y1 + (Math.random()<0.5? b : -b);
@@ -2978,78 +2997,84 @@
       };
     }
     
-    // NR2: Midpoint — ask for the x-coordinate (numeric)
-    function genU789_NR_Midpoint(){
+    /** NR2) Midpoint of two points (ordered pair; integers or halves) */
+    function genU6_NR_Midpoint(){
       const x1=ri(-9,9), y1=ri(-9,9), x2=ri(-9,9), y2=ri(-9,9);
-      const mx = (x1+x2)/2;
+      const mx=(x1+x2)/2, my=(y1+y2)/2;
+      const fx = Number.isInteger(mx)? `${mx}` : `\\dfrac{${x1+x2}}{2}`;
+      const fy = Number.isInteger(my)? `${my}` : `\\dfrac{${y1+y2}}{2}`;
       return {
-        q: `Find the $x$-coordinate of the midpoint of $(${x1},${y1})$ and $(${x2},${y2})$.`,
-        answer: `$${Number.isInteger(mx) ? mx : ( (x1+x2)+"/2" )}$`
+        q: `Find the midpoint of $(${x1},${y1})$ and $(${x2},${y2})$. (Give an ordered pair.)`,
+        answer: `$${fmtPair(fx,fy)}$`
       };
     }
     
-    // NR3: Slope between two points (simplified fraction or integer)
-    function genU789_NR_SlopeBetween(){
-      let x1=ri(-8,8), x2=ri(-8,8);
-      while(x2===x1) x2=ri(-8,8);
-      const y1=ri(-8,8), y2=ri(-8,8);
-      const {n,d} = reduceFrac(y2-y1, x2-x1);
-      const ans = (d===1) ? `${n}` : `\\dfrac{${n}}{${d}}`;
+    /** NR3) Find k so midpoint matches a target point (solve for k) */
+    function genU6_NR_MidpointSolveK(){
+      // midpoint((k,a),(b,c)) = (mx,my) → k = 2*mx - b
+      const a=rsign()*ri(1,9), b=rsign()*ri(1,9), c=rsign()*ri(1,9);
+      const mx=rsign()*ri(0,6), my=rsign()*ri(0,6);
+      const k = 2*mx - b;
       return {
-        q: `Compute the slope of the line through $(${x1},${y1})$ and $(${x2},${y2})$ (simplify).`,
+        q: `Find $k$ so that the midpoint of $\\big(k,\\,${a}\\big)$ and $\\big(${b},\\,${c}\\big)$ is $${fmtPair(mx,my)}$.`,
+        answer: `$${k}$`
+      };
+    }
+    
+    /** NR4) Slope from two points (reduced fraction or integer) */
+    function genU6_NR_SlopeFromTwoPoints(){
+      let x1=ri(-8,8), x2=ri(-8,8);
+      while (x2===x1) x2=ri(-8,8);
+      const y1=ri(-8,8), y2=ri(-8,8);
+      const {n:dy,d:dx} = reduceFrac(y2-y1, x2-x1);
+      const ans = (dx===1) ? `${dy}` : `\\dfrac{${dy}}{${dx}}`;
+      return {
+        q: `Compute the slope of the line through $(${x1},${y1})$ and $(${x2},${y2})$.`,
         answer: `$${ans}$`
       };
     }
     
-    // NR4: Slope only from two points chosen so slope is an integer
-    function genU789_NR_SlopeOnlyFromTwoPoints(){
-      const m = rsign()*ri(1,6);
-      const x1=ri(-6,6), y1=ri(-6,6);
-      const x2=x1+ri(1,6);
-      const y2=y1+m*(x2-x1);
+    /** NR5) Intercepts of Ax+By=C (returns ordered pair (x-int, y-int)) */
+    function genU6_NR_InterceptsStandard(){
+      // Ensure A,B ≠ 0; choose C so x- and y-intercepts are integers
+      let A=rsign()*ri(1,6), B=rsign()*ri(1,6);
+      const x0 = rsign()*ri(1,8), y0 = rsign()*ri(1,8);
+      const C = A*x0;                 // x-int = C/A = x0
+      // Adjust to also make y-int integer: want C/B = y0 → set C = lcm(A,B) * t, but simpler: rebuild using both.
+      // We'll rebuild equation from the desired intercepts: x/x0 + y/y0 = 1 → (y0)x + (x0)y = x0*y0
+      A = y0; B = x0; const C2 = x0*y0;
       return {
-        q: `Find the slope of the line through $(${x1},${y1})$ and $(${x2},${y2})$.`,
-        answer: `$${m}$`
+        q: `For the line $${A}x${B>=0?'+':''}${B}y=${C2}$, find the $x$- and $y$-intercepts as an ordered pair $\\big(x\\text{-int},\\,y\\text{-int}\\big)$.`,
+        answer: `$${fmtPair(x0,y0)}$`
       };
     }
     
-    // NR5: Solve a 2×2 system — ask for x (numeric)
-    function genU789_NR_SolveSystem(){
-      const x0=rsign()*ri(0,6), y0=rsign()*ri(0,6);
-      let a1=rsign()*ri(1,6), b1=rsign()*ri(1,6);
-      let a2=rsign()*ri(1,6), b2=rsign()*ri(1,6);
-      while (a1*b2 === a2*b1){ a2=rsign()*ri(1,6); b2=rsign()*ri(1,6); }
-      const c1 = a1*x0 + b1*y0;
-      const c2 = a2*x0 + b2*y0;
+    /** NR6) Parallel to given line through (x1,y1): return only the constant C in Ax-By+C=0 */
+    function genU6_NR_ParallelCValue(){
+      // Keep form  Ax - By + C = 0  (B>0) for uniqueness; return C only
+      let A=rsign()*ri(1,6), B=ri(1,6); // B positive
+      const x1=rsign()*ri(1,8), y1=rsign()*ri(1,8);
+      // Line parallel to Ax - By + C = 0 → same A,B. Through (x1,y1): A x1 - B y1 + C = 0 ⇒ C = B y1 - A x1
+      const C = B*y1 - A*x1;
       return {
-        q: `Solve $\\begin{cases}${a1}x${b1>=0?'+':''}${b1}y=${c1}\\\\ ${a2}x${b2>=0?'+':''}${b2}y=${c2}\\end{cases}$. Enter the value of $x$.`,
-        answer: `$${x0}$`
+        q: `A line parallel to $${A}x-${B}y+K=0$ passes through $(${x1},${y1})$. Find the value of $C$ so the line is $${A}x-${B}y+C=0$.`,
+        answer: `$${C}$`
       };
     }
     
-    // NR6: Average rate of change for a linear function (equals m)
-    function genU789_NR_AvgRateChange(){
-      const m = rsign()*ri(1,8), b = rsign()*ri(0,10);
-      let x1=ri(-6,2), x2=ri(3,9);
-      if(x1===x2) x2+=1;
+    /** NR7) Rate of change & intercept from two data points (returns (m,b)) */
+    function genU6_NR_RateAndIntercept(){
+      // Choose integer slope and intercept so outputs are clean
+      const m = rsign()*ri(1,6), b = rsign()*ri(0,10);
+      let x1=ri(0,4), x2=ri(5,9); if (x2===x1) x2+=1;
+      const y1 = m*x1 + b, y2 = m*x2 + b;
       return {
-        q: `For $f(x)=${m}x${b>=0?'+':''}${b}$, compute the average rate of change from $x=${x1}$ to $x=${x2}$.`,
-        answer: `$${m}$`
+        q: `A linear function passes through $(${x1},${y1})$ and $(${x2},${y2})$. Return the ordered pair $\\big(m,\\,b\\big)$ for $y=mx+b$.`,
+        answer: `$${fmtPair(m,b)}$`
       };
     }
     
-    // NR7: Intersection of two lines — ask for x-coordinate (numeric)
-    function genU789_NR_Intersection(){
-      const x0=rsign()*ri(0,5), y0=rsign()*ri(0,5);
-      let m1=rsign()*ri(1,5), m2=rsign()*ri(1,5);
-      while(m2===m1) m2=rsign()*ri(1,5);
-      const b1=y0 - m1*x0, b2=y0 - m2*x0;
-      return {
-        q: `Find the intersection of $y=${m1}x${b1>=0?'+':''}${b1}$ and $y=${m2}x${b2>=0?'+':''}${b2}$. Enter the $x$-coordinate.`,
-        answer: `$${x0}$`
-      };
-    }
-    
+        
     // ================== Unit 7–9 (Linear) — Written Response Generators (LaTeX-safe) ==================
     /* ================== Unit 7–9 (Linear) — Written Response Generators (All Inline Math, No $ currency) ================== */
 
