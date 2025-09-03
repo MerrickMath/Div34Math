@@ -1142,7 +1142,10 @@
     function eqFrac(a,b){ return a.n===b.n && a.d===b.d; }
     function absFrac(a){ return { n: Math.abs(a.n), d: a.d }; }
     function genPythagoreanPair(){ return sample([[3,4,5],[5,12,13],[8,15,17],[7,24,25],[9,40,41]]); }
-    
+
+    // helper used below (keeps everything reduced)
+    function addFrac(a, b){ return frac(a.n*b.d + b.n*a.d, a.d*b.d); }
+
     /* =====================================================
        A. Multiple Choice
        ===================================================== */
@@ -1302,16 +1305,18 @@
                answer:`$${k}$` };
     }
     
-    // 1) Line through two points -> answer is "m,b" (both numeric), not an equation
-    function genNRU6_LineThroughTwoPointsSlopeIntercept_NUM(){
-      const P={x:ri(-6,6), y:ri(-6,6)}, Q={x:ri(-6,6), y:ri(-6,6)};
-      if (P.x===Q.x) Q.x += 1; // avoid vertical
-      const {m,b} = lineThroughTwoPoints(P,Q);
-      return {
-        q: `Line through $(${P.x},${P.y})$ and $(${Q.x},${Q.y})$. Enter $m,b$ (comma-separated).`,
-        answer: `$${fmtFrac(m.n,m.d)},${fmtFrac(b.n,b.d)}$`
-      };
-    }
+   // 1) Line through two points — answer is a single number: m + b
+  function genNRU6_LineThroughTwoPointsSlopeIntercept_NUM(){
+    const P={x:ri(-6,6), y:ri(-6,6)}, Q={x:ri(-6,6), y:ri(-6,6)};
+    if (P.x===Q.x) Q.x += 1; // avoid vertical
+    const {m,b} = lineThroughTwoPoints(P,Q);
+    const sum = addFrac(m,b);
+    return {
+      q: `Line through $(${P.x},${P.y})$ and $(${Q.x},${Q.y})$. Enter $m+b$ as a single number (fraction OK).`,
+      answer: `$${fmtFrac(sum.n, sum.d)}$`
+    };
+  }
+
     
     // 2) Intercepts of Ax+By=C -> ask for ONLY the x-intercept (single number)
     function genNRU6_XInterceptOnly_NUM(){
@@ -1324,29 +1329,34 @@
     }
     
     // 3) Parallel line through point -> ask ONLY for the C' in Ax+By+C'=0 (single number)
+    // 2) Parallel line through point — ask for C in Ax+By+C=0 (single number)
     function genNRU6_ParallelLine_Conly_NUM(){
       let A=ri(-4,6); if(A===0) A=3;
       let B=ri(-5,5); if(B===0) B=-2;
-      const C=ri(-12,12); // shown but irrelevant to C'
+      const Cshown = ri(-12,12); // shown only
       const P={x:ri(-6,6), y:ri(-6,6)};
-      const Cp = -(A*P.x + B*P.y); // Ax0 + By0 + C' = 0 → C' = -(Ax0 + By0)
+      const C = -(A*P.x + B*P.y); // Ax0 + By0 + C = 0
       return {
-        q:`Line parallel to $${A}x${fmtSignedInt(B)}y${fmtSignedInt(C)}=0$ through $(${P.x},${P.y})$. In general form $${A}x${fmtSignedInt(B)}y+C'=0$, enter $C'$ only.`,
-        answer:`$${Cp}$`
+        q:`Line parallel to $${A}x${fmtSignedInt(B)}y${fmtSignedInt(Cshown)}=0$ through $(${P.x},${P.y})$. In general form $${A}x${fmtSignedInt(B)}y+C=0$, enter $C$ only.`,
+        answer:`$${C}$`
       };
     }
+
     
     // 4) Car speed & intercept -> answer is "m,b" (both numeric), not an equation
+    // 3) Car speed & intercept — answer is a single number: m + b
     function genNRU6_CarSpeedIntercept_NUM(){
       const t1=ri(0,4), v1=ri(40,80);
       const t2=t1+ri(1,3), v2=v1+ri(10,40);
       const m = frac(v2-v1, t2-t1);
       const b = frac(v1*m.d - m.n*t1, m.d);
+      const sum = addFrac(m,b);
       return {
-        q:`A car passes $(${t1},${v1})$ and $(${t2},${v2})$. Enter $m,b$ (slope, intercept).`,
-        answer:`$${fmtFrac(m.n,m.d)},${fmtFrac(b.n,b.d)}$`
+        q:`A car passes $(${t1},${v1})$ and $(${t2},${v2})$. Enter $m+b$ as a single number (fraction OK).`,
+        answer:`$${fmtFrac(sum.n, sum.d)}$`
       };
     }
+
     
     /* =====================================================
        C. Written Response
