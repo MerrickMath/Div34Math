@@ -674,7 +674,7 @@
       const rat3 = `$${ri(1,9)}.${ri(10,99)}$`;
       const choices = [irr, rat1, rat2, rat3];
       const order = choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
-      return { q:'Which number is \\emph{irrational}?', choices: order.map(i=>choices[i]), answerIndex: order.indexOf(0) };
+      return { q:'Which number is <b>irrational}</b>?', choices: order.map(i=>choices[i]), answerIndex: order.indexOf(0) };
     }
 
 
@@ -1684,7 +1684,7 @@
         `${dec3[0]} and ${dec3[1]}`
       ];
       const order = choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
-      return { q:`Which pair describes \\emph{parallel} lines?`, choices: order.map(i=>choices[i]), answerIndex: order.indexOf(0) };
+      return { q:`Which pair describes <b>parallel</b> lines?`, choices: order.map(i=>choices[i]), answerIndex: order.indexOf(0) };
     }
     
     // 8) Cramer’s rule (pick x-formula)
@@ -1716,7 +1716,7 @@
       const dec3 = `$\\begin{cases} x+y=${ri(4,10)},\\\\ x-y=${ri(1,7)}\\end{cases}$`;
       const choices=[correct, dec1, dec2, dec3];
       const order=choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
-      return { q:`Which system has \emph{infinitely many} solutions?`, choices: order.map(i=>choices[i]), answerIndex: order.indexOf(0) };
+      return { q:`Which system has <b>infinitely many</b> solutions?`, choices: order.map(i=>choices[i]), answerIndex: order.indexOf(0) };
     }
     
     // 11) “Solution must satisfy both”
