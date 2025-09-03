@@ -130,62 +130,69 @@
         title:'A. Multiple Choice',
         note:'Select one option.',
         items:[
-          {type:'mcgen', gen: genMCU6_Distance},
-          {type:'mcgen', gen: genMCU6_Midpoint},
-          {type:'mcgen', gen: genMCU6_SlopeTwoPoints},
-          {type:'mcgen', gen: genMCU6_ParallelSlopeFromGeneral},
-          {type:'mcgen', gen: genMCU6_PerpendicularSlopeFromSlope},
-          {type:'mcgen', gen: genMCU6_GeneralFormFromSlopeIntercept},
-          {type:'mcgen', gen: genMCU6_WhichHasYintNeg4},
-          {type:'mcgen', gen: genMCU6_SlopeFromGeneral},
-          {type:'mcgen', gen: genMCU6_Steepest},
-          {type:'mcgen', gen: genMCU6_PerpendicularThroughOrigin}
+          { type:'mcgen', gen: genMC_SYS_SolveTwoSL },
+          { type:'mcgen', gen: genMC_SYS_ClassifyMult },
+          { type:'mcgen', gen: genMC_SYS_Elim },
+          { type:'mcgen', gen: genMC_SYS_kInfinite },
+          { type:'mcgen', gen: genMC_SYS_Plans },
+          { type:'mcgen', gen: genMC_SYS_Fractional },
+          { type:'mcgen', gen: genMC_SYS_ParallelPair },
+          { type:'mcgen', gen: genMC_SYS_CramersX },
+          { type:'mcgen', gen: genMC_SYS_PerpendUnique },
+          { type:'mcgen', gen: genMC_SYS_WhichInfinite },
+          { type:'mcgen', gen: genMC_SYS_SolutionMust }
         ]
       },
+    
       {
         title:'B. Numeric Response',
-        note:'Enter a number or a comma-separated pair as instructed.',
+        note:'Enter a single number (fractions OK).',
         items:[
-          { type:'gen', gen: genNRU6_DistanceHalfInt },                 // numeric (single)
-          { type:'gen', gen: genNRU6_Midpoint },                        // numeric pair "(x,y)" — keep if acceptable; or swap to x-only if you prefer single
-          { type:'gen', gen: genNRU6_FindKGivenMidpoint },              // numeric (single)
-          { type:'gen', gen: genNRU6_LineThroughTwoPointsSlopeIntercept_NUM }, // "m,b"
-          { type:'gen', gen: genNRU6_XInterceptOnly_NUM },              // single number
-          { type:'gen', gen: genNRU6_ParallelLine_Conly_NUM },          // single number C'
-          { type:'gen', gen: genNRU6_CarSpeedIntercept_NUM }            // "m,b"
+          { type:'gen', gen: genNR_SYS_SumXY_TwoSL },
+          { type:'gen', gen: genNR_SYS_3xPlus2y },
+          { type:'gen', gen: genNR_SYS_24xPlus24y },
+          { type:'gen', gen: genNR_SYS_kInfinite },
+          { type:'gen', gen: genNR_SYS_Tickets1 },
+          { type:'gen', gen: genNR_SYS_PointSlopeSum },
+          { type:'gen', gen: genNR_SYS_3x3_Sum },
+          { type:'gen', gen: genNR_SYS_Tickets2 },
+          { type:'gen', gen: genNR_SYS_7Sum },
+          { type:'gen', gen: genNR_SYS_mNoSolution }
         ]
       },
+    
       {
         title:'C. Written Response',
-        note:'Show full reasoning.',
+        note:'Show full reasoning. Use exact arithmetic.',
         items:[
-          { type:'gen', gen: genWRU6_DeriveDistance },
-          { type:'gen', gen: genWRU6_ParallelPerpProof },
-          { type:'gen', gen: genWRU6_PerpendicularBisector },
-          { type:'gen', gen: genWRU6_SectionRatio },
-          { type:'gen', gen: genWRU6_SlopeToGeneral },
-          { type:'gen', gen: genWRU6_PointPerpToGiven },
-          { type:'gen', gen: genWRU6_Collinearity },
-          { type:'gen', gen: genWRU6_InterceptGraphAndSlope },
-          { type:'gen', gen: genWRU6_TemperatureModel },
-          { type:'gen', gen: genWRU6_ThroughPointGivenSlopeAllForms },
-          { type:'gen', gen: genWRU6_FindKForParallel },
-          { type:'gen', gen: genWRU6_PointSlopeToIntercepts }
+          { type:'gen', gen: genWR_SYS_GraphIntersection },
+          { type:'gen', gen: genWR_SYS_ClassifyThree },
+          { type:'gen', gen: genWR_SYS_Substitution },
+          { type:'gen', gen: genWR_SYS_Elimination },
+          { type:'gen', gen: genWR_SYS_ClearDenominators },
+          { type:'gen', gen: genWR_SYS_Mixture },
+          { type:'gen', gen: genWR_SYS_Rates },
+          { type:'gen', gen: genWR_SYS_ParameterAnalysis },
+          { type:'gen', gen: genWR_SYS_3Var },
+          { type:'gen', gen: genWR_SYS_PointSlopeIntersect },
+          { type:'gen', gen: genWR_SYS_CreateInfinite },
+          { type:'gen', gen: genWR_SYS_BreakEven }
         ]
       },
+    
       {
         title:'D. Enrichment',
         note:'Challenge problems.',
         items:[
-          { type:'gen', gen: genEU6_LatticePointsOnSegment },
-          { type:'gen', gen: genEU6_DistancePointToLine },
-          { type:'gen', gen: genEU6_TriangleAreaParam },
-          { type:'gen', gen: genEU6_DistanceBetweenParallels },
-          { type:'gen', gen: genEU6_SlopeRotationExplain },
-          { type:'gen', gen: genEU6_ConvertFormsAtXIntercept }
-        ]
-      }
-
+          { type:'gen', gen: genEN_SYS_CramersSolve },
+          { type:'gen', gen: genEN_SYS_ParametricConditions },
+          { type:'gen', gen: genEN_SYS_IntegerSolutions },
+          { type:'gen', gen: genEN_SYS_ThreeVariables },
+          { type:'gen', gen: genEN_SYS_Sensitivity },
+          { type:'gen', gen: genEN_SYS_Families },
+          { type:'gen', gen: genEN_SYS_DistanceBetweenParallels },
+          { type:'gen', gen: genEN_SYS_ThreeTypeTickets }
+        ]}
     ];
 
     const quizEl = document.getElementById('quiz');
@@ -1503,6 +1510,441 @@
       return { q:`Convert $4x-5y=20$ into slope–intercept form and point–slope form at the $x$-intercept.`,
                answer:`Slope–intercept: ${fmtMxPlusB(m,b)}; Point–slope at $(${fmtFrac(xI.n,xI.d)},0)$: $y-0=${fmtFrac(m.n,m.d)}(x-${fmtFrac(xI.n,xI.d)})$.` };
     }
+
+  /* =========================================================
+   UNIT — Systems of Linear Equations
+   Reuses helpers: frac, fmtFrac, fmtSignedInt, fmtSignedFrac, fmtMxPlusB, addFrac
+   Extra small helpers for this unit
+   ========================================================= */
+
+    function solve2(A,B,C, D,E,F){               // Ax+By=C, Dx+Ey=F  →  {x:{n,d}, y:{n,d}}
+      const det = A*E - B*D;
+      // caller builds non-singular systems; in case, return zeros
+      if(det===0) return { x: frac(0,1), y: frac(0,1), det:0 };
+      const xn = C*E - B*F;
+      const yn = A*F - C*D;
+      return { x: frac(xn, det), y: frac(yn, det), det };
+    }
+    function addLin(a, x, b, y){                  // a*x + b*y  where x,y are fracs → frac
+      return addFrac( {n:a*x.n, d:x.d}, {n:b*y.n, d:y.d} );
+    }
+    function eqSlopeInt(m1,b1,m2,b2){             // lines equal?
+      return (m1.n===m2.n && m1.d===m2.d && b1.n===b2.n && b1.d===b2.d);
+    }
+    function parallelDiff(m1,b1,m2,b2){           // parallel with different intercepts?
+      return (m1.n===m2.n && m1.d===m2.d && !(b1.n===b2.n && b1.d===b2.d));
+    }
+    
+    /* =====================================================
+       A. Multiple Choice
+       ===================================================== */
+    
+    // 1) Solve two slope–intercept lines
+    function genMC_SYS_SolveTwoSL(){
+      // build intersection with nice integers
+      const x=ri(-3,5), y=ri(-4,6);
+      const m1=frac(sample([-3,-2,-1,1,2,3]), sample([1,2]));
+      const b1=frac(y*m1.d - m1.n*x, m1.d);       // y = m1 x + b1 passes (x,y)
+      // choose a different slope for line 2, also pass through (x,y)
+      let m2=frac(sample([-5,-4,-3,-2,-1,1,2,3,4,5]), sample([1,2,3]));
+      while(m2.n*m1.d===m1.n*m2.d) m2=frac(m2.n+1, m2.d);   // avoid parallel
+      const b2=frac(y*m2.d - m2.n*x, m2.d);
+    
+      const correct = `$(${x},${y})$`;
+      const wrongs  = [
+        `$(${x+1},${y-2})$`,
+        `$(${x-1},${y+2})$`,
+        `$(${x+2},${y})$`
+      ];
+      const choices=[correct,...wrongs];
+      const order=choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
+      return {
+        q:`Solve the system ${fmtMxPlusB(m1,b1)} and ${fmtMxPlusB(m2,b2)}.`,
+        choices: order.map(i=>choices[i]),
+        answerIndex: order.indexOf(0)
+      };
+    }
+    
+    // 2) Classify: infinite vs none (proportional LHS)
+    function genMC_SYS_ClassifyMult(){
+      // Make A2,B2 proportional to A1,B1
+      const A1=ri(-4,4)||2, B1=ri(-4,4)||-3, k=sample([2,3,4]);
+      const A2=k*A1, B2=k*B1;
+      const C1=ri(-10,10), C2 = Math.random()<0.5 ? k*C1 : k*C1 + sample([1,-1,2,-2]);
+      const type = (C2===k*C1) ? 'inf' : 'none';
+      const gf1 = `$${A1}x${fmtSignedInt(B1)}y=${C1}$`;
+      const gf2 = `$${A2}x${fmtSignedInt(B2)}y=${C2}$`;
+      const correct = (type==='inf')? 'Infinitely many' : 'None';
+      const choices = ['None','Exactly one','Infinitely many','Cannot be determined'];
+      const order = choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
+      return {
+        q:`How many solutions does the system ${gf1}, ${gf2} have?`,
+        choices: order.map(i=>choices[i]),
+        answerIndex: order.indexOf( choices.indexOf(correct) )
+      };
+    }
+    
+    // 3) Solve by elimination (clean rationals)
+    function genMC_SYS_Elim(){
+      // choose solution first
+      const xs = frac(sample([2,3,4,5,6]), sample([1,2]));   // 2,3,4,5,6 or halves
+      const ys = frac(sample([1,2,3,4,5,6,7,8,9]), sample([1,2])); 
+      // construct two equations with small integer coefficients
+      const A=sample([3,4,5,6]), B=sample([2,3,4,5]);
+      const D=sample([5,6,7]),   E=sample([ -3,-2,2,3 ]);
+      const C = A*xs.n/xs.d + B*ys.n/ys.d;
+      const F = D*xs.n/xs.d + E*ys.n/ys.d;
+      // scale to integers
+      const L = (xs.d*ys.d);
+      const A1=A*L, B1=B*L, C1=Math.round(C*L);
+      const D1=D*L, E1=E*L, F1=Math.round(F*L);
+      const sol = `$\\left(${fmtFrac(xs.n,xs.d)},\\,${fmtFrac(ys.n,ys.d)}\\right)$`;
+      const wrongs = [
+        `$\\left(${fmtFrac(ys.n,ys.d)},\\,${fmtFrac(xs.n,xs.d)}\\right)$`,
+        `$(${Math.round(xs.n/xs.d)+1},${Math.round(ys.n/ys.d)-1})$`,
+        `$(${Math.round(xs.n/xs.d)-1},${Math.round(ys.n/ys.d)+1})$`
+      ];
+      const choices=[sol,...wrongs];
+      const order=choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
+      return {
+        q:`Solve by elimination: $\\begin{cases}${A1}x${fmtSignedInt(B1)}y=${C1},\\\\${D1}x${fmtSignedInt(E1)}y=${F1}\\end{cases}$.`,
+        choices: order.map(i=>choices[i]),
+        answerIndex: order.indexOf(0)
+      };
+    }
+    
+    // 4) Parameter k for infinitely many solutions
+    function genMC_SYS_kInfinite(){
+      // base line y = m x + b
+      const m=frac(sample([-3,-2,-1,1,2,3]), sample([1,2,3]));
+      const b=ri(-6,6);
+      // second as Ax - By = k  -> y = (A/B)x - k/B ; we choose A/B = m
+      const A=m.n, B=-m.d; // so slope is m
+      const correctK = -B*b; // -(-m.d)*b = m.d*b  but general formula: y = (A/B)x - k/B equals m x + b ⇒ -k/B = b ⇒ k = -bB
+      const wrongs = [correctK+2, correctK-3, correctK+sample([-4,4])];
+      const choices = [correctK, ...wrongs].map(v=>`$${v}$`);
+      const order=choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
+      return {
+        q:`For which value of $k$ does the system ${fmtMxPlusB(m,b)} and $${A}x${fmtSignedInt(B)}y=k$ have infinitely many solutions?`,
+        choices: order.map(i=>choices[i]),
+        answerIndex: order.indexOf(0)
+      };
+    }
+    
+    // 5) Plans equal cost: solve C_A=a+rx, C_B=b+s x
+    function genMC_SYS_Plans(){
+      const a=sample([15,20,25]), b=sample([0,5,10]);
+      let r = sample([10,12,15,20])/100, s = sample([18,20,22,25])/100;
+      if (r===s) s += 0.01;
+      const x = Math.round((a-b)/(s-r));  // make it nice-ish integer
+      const correct = `$${x}$`;
+      const choices = [x, x+50, x-50, x+100].map(v=>`$${v}$`);
+      const order=choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
+      return {
+        q:`Two plans cost $C_A=${a}+${(r*100).toFixed(0)}\\text{¢}\\,x$ and $C_B=${b}+${(s*100).toFixed(0)}\\text{¢}\\,x$. For what $x$ are costs equal?`,
+        choices: order.map(i=>choices[i]),
+        answerIndex: order.indexOf(0)
+      };
+    }
+    
+    // 6) Fractions system MC
+    function genMC_SYS_Fractional(){
+      // choose clean solution, back-solve to fractional system
+      const xs=frac(sample([5,7,9]),2);              // 5/2, 7/2, 9/2
+      const ys=frac(sample([3,5,7]),1);              // ints
+      const A=frac(1,3), B=frac(1,2), C = addFrac( {n:A.n*xs.n, d:A.d*xs.d}, {n:B.n*ys.n, d:B.d*ys.d} ); // A x + B y
+      const D=frac(1,2), E=frac(-1,4), F = addFrac( {n:D.n*xs.n, d:D.d*xs.d}, {n:E.n*ys.n, d:E.d*ys.d} );
+      const sys = `$\\begin{cases}\\tfrac{${A.n}}{${A.d}}x+\\tfrac{${B.n}}{${B.d}}y=${fmtFrac(C.n,C.d)},\\\\\\tfrac{${D.n}}{${D.d}}x-\\tfrac{${Math.abs(E.n)}}{${E.d}}y=${fmtFrac(F.n,F.d)}\\end{cases}$`;
+      const correct = `$\\left(${fmtFrac(xs.n,xs.d)},\\,${fmtFrac(ys.n,ys.d)}\\right)$`;
+      const wrongs = [
+        `$\\left(${fmtFrac(ys.n,ys.d)},\\,${fmtFrac(xs.n,xs.d)}\\right)$`,
+        `$(${fmtFrac(xs.n,xs.d)},${fmtFrac(ys.n,ys.d+1)})$`,
+        `$(${fmtFrac(xs.n+1,xs.d)},${fmtFrac(ys.n,ys.d)})$`
+      ];
+      const choices=[correct,...wrongs];
+      const order=choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
+      return { q:`Solve ${sys}.`, choices: order.map(i=>choices[i]), answerIndex: order.indexOf(0) };
+    }
+    
+    // 7) Which pair is parallel?
+    function genMC_SYS_ParallelPair(){
+      // Build a guaranteed-parallel pair
+      const m=frac(sample([ -3,-2,-1,1,2,3 ]), sample([1,2]));
+      let b1=ri(-6,6), b2=b1+sample([2,3,4,5]);
+      const optA = [ fmtMxPlusB(m,b1), `$${m.n}x${fmtSignedInt(-m.d)}y=${-b1*m.d}$` ]; // same slope 3/2 & 3x-2y=const
+      // Three decoys
+      const mB=frac(m.n, m.d); b1+=2; const dec1=[ fmtMxPlusB(mB,b1), fmtMxPlusB(frac(-m.n,m.d), b2) ]; // not parallel (different slope)
+      const dec2=[ fmtMxPlusB(frac(1,2), b1), fmtMxPlusB(frac(2,1), b2) ];
+      const dec3=[ fmtMxPlusB(frac(-3,2), b1), `$x=${ri(-5,5)}` ];
+    
+      const choices = [
+        `${optA[0]} and ${optA[1]}`,
+        `${dec1[0]} and ${dec1[1]}`,
+        `${dec2[0]} and ${dec2[1]}`,
+        `${dec3[0]} and ${dec3[1]}`
+      ];
+      const order = choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
+      return { q:`Which pair describes \\emph{parallel} lines?`, choices: order.map(i=>choices[i]), answerIndex: order.indexOf(0) };
+    }
+    
+    // 8) Cramer’s rule (pick x-formula)
+    function genMC_SYS_CramersX(){
+      const choices = [
+        '$x=\\dfrac{ce-bf}{ae-bd}$',
+        '$x=\\dfrac{cf-be}{ae-bd}$',
+        '$x=\\dfrac{bf-ce}{ad-be}$',
+        '$x=\\dfrac{be-cf}{ad-be}$'
+      ];
+      const order=choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
+      return { q:`The solution $(x,y)$ to $\\begin{cases}ax+by=c,\\\\dx+ey=f\\end{cases}$ is given (when denominator is nonzero) by`, choices: order.map(i=>choices[i]), answerIndex: order.indexOf( choices.indexOf(choices[0]) ) };
+    }
+    
+    // 9) Perpendicular lines ⇒ number of solutions
+    function genMC_SYS_PerpendUnique(){
+      const choices=['No solution','Exactly one solution','Infinitely many solutions','Exactly two solutions'];
+      const order=choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
+      return { q:`If two nonvertical lines are perpendicular, a linear system formed by them has`, choices: order.map(i=>choices[i]), answerIndex: order.indexOf( choices.indexOf('Exactly one solution') ) };
+    }
+    
+    // 10) Which system has infinitely many solutions?
+    function genMC_SYS_WhichInfinite(){
+      const baseA=ri(1,4), baseB=ri(1,4), baseC=ri(5,12);
+      const k=sample([2,3]);
+      const correct = `$\\begin{cases} ${baseA}x${fmtSignedInt(baseB)}y=${baseC},\\\\ ${k*baseA}x${fmtSignedInt(k*baseB)}y=${k*baseC}\\end{cases}$`;
+      const dec1 = `$\\begin{cases} ${baseA}x${fmtSignedInt(baseB)}y=${baseC},\\\\ ${k*baseA}x${fmtSignedInt(k*baseB)}y=${k*baseC+1}\\end{cases}$`;
+      const dec2 = `$\\begin{cases} ${baseA}x${fmtSignedInt(baseB)}y=${baseC},\\\\ ${baseA+1}x${fmtSignedInt(baseB)}y=${baseC}\\end{cases}$`;
+      const dec3 = `$\\begin{cases} x+y=${ri(4,10)},\\\\ x-y=${ri(1,7)}\\end{cases}$`;
+      const choices=[correct, dec1, dec2, dec3];
+      const order=choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
+      return { q:`Which system has \\emph{infinitely many} solutions?`, choices: order.map(i=>choices[i]), answerIndex: order.indexOf(0) };
+    }
+    
+    // 11) “Solution must satisfy both”
+    function genMC_SYS_SolutionMust(){
+      const choices=[
+        'It satisfies at least one equation.',
+        'It satisfies both equations.',
+        'It satisfies neither equation.',
+        'It lies on a vertical line.'
+      ];
+      const order=choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
+      return { q:`If $(2,-3)$ solves a system, which must be true?`, choices: order.map(i=>choices[i]), answerIndex: order.indexOf( choices.indexOf('It satisfies both equations.') ) };
+    }
+    
+    /* =====================================================
+       B. Numeric Response  (single-number outputs only)
+       ===================================================== */
+    
+    // NR1: Solve two lines, ask x+y
+    function genNR_SYS_SumXY_TwoSL(){
+      const x=ri(-3,5), y=ri(-4,6);
+      const m1=frac(sample([-3,-2,-1,1,2,3]), sample([1,2]));
+      const b1=frac(y*m1.d - m1.n*x, m1.d);
+      let m2=frac(sample([-5,-4,-3,-2,-1,1,2,3,4,5]), sample([1,2,3]));
+      while(m2.n*m1.d===m1.n*m2.d) m2=frac(m2.n+1, m2.d);
+      const b2=frac(y*m2.d - m2.n*x, m2.d);
+      const sum = x + y;
+      return { q:`Solve ${fmtMxPlusB(m1,b1)} and ${fmtMxPlusB(m2,b2)} and enter $x+y$.`, answer:`$${sum}$` };
+    }
+    
+    // NR2: Substitution style; ask 3x+2y
+    function genNR_SYS_3xPlus2y(){
+      // choose solution then build system
+      const xs=ri(-4,6), ys=ri(-5,7);
+      const a1=2, b1=-1, c1=2*xs - ys;             // 2x - y = ...
+      const a2=1, b2=3,  c2=xs + 3*ys;             // x + 3y = ...
+      const lin = 3*xs + 2*ys;
+      return { q:`Solve $\\begin{cases}2x-y=${c1},\\\\x+3y=${c2}\\end{cases}$ and enter $3x+2y$.`, answer:`$${lin}$` };
+    }
+    
+    // NR3: Decimals; ask 24x+24y
+    function genNR_SYS_24xPlus24y(){
+      // start with integer system then divide by 10 to show decimals
+      const A=4,B=3, D=4,E=-3;
+      const xs=ri(3,7), ys=ri(2,6);                 // nice integers
+      const C = A*xs + B*ys, F = D*xs + E*ys;
+      const q1 = `0.${A}x+0.${B}y=${(C/10).toFixed(1)}`;
+      const q2 = `0.${D}x-0.${Math.abs(E)}y=${(F/10).toFixed(1)}`;
+      const value = 24*xs + 24*ys;
+      return { q:`Solve $\\begin{cases}${q1},\\\\ ${q2}\\end{cases}$ and enter $24x+24y$.`, answer:`$${value}$` };
+    }
+    
+    // NR4: k for infinitely many
+    function genNR_SYS_kInfinite(){
+      const m=frac(sample([-3,-2,-1,1,2,3]), sample([1,2,3]));
+      const b=ri(-6,6);
+      const A=m.n, B=-m.d;
+      const k = -B*b;
+      return { q:`For which $k$ does ${fmtMxPlusB(m,b)} and $${A}x${fmtSignedInt(B)}y=k$ have infinitely many solutions? Enter $k$.`, answer:`$${k}$` };
+    }
+    
+    // NR5: Tickets (adult count)
+    function genNR_SYS_Tickets1(){
+      const aPrice=12, sPrice=8;
+      const total=20, revenue=208;
+      const a = Math.round((revenue - sPrice*total)/(aPrice - sPrice)); // 12
+      return { q:`Adult $\\$${aPrice}$, student $\\$${sPrice}$. If ${total} tickets total $\\$${revenue}$, enter the number of adult tickets.`, answer:`$${a}$` };
+    }
+    
+    // NR6: Point–slope intersection; enter x+y
+    function genNR_SYS_PointSlopeSum(){
+      const m1=2, x1=4, y1=1;       // y-1 = 2(x-4)
+      const m2=frac(-1,2), x2=2, y2=-3; // y+3 = -(1/2)(x-2)
+      const b1 = 1 - m1*(-x1);      // actually easier to expand: y = 2x -7
+      const line1 = {m:frac(2,1), b:frac(-7,1)};
+      const line2 = {m:frac(-1,2), b:frac(-2,1)};
+      // solve
+      const sol = solve2(2,-1,-7, 1,2,-4); // 2x - y = -7, x + 2y = -4
+      const sum = fmtFrac( addFrac(sol.x, sol.y).n, addFrac(sol.x, sol.y).d );
+      return { q:`Lines $y-1=2(x-4)$ and $y+3=-\\tfrac{1}{2}(x-2)$ intersect at $(x,y)$. Enter $x+y$.`, answer:`$${sum}$` };
+    }
+    
+    // NR7: 3×3 system; enter x+y+z (constructed to be a fixed number)
+    function genNR_SYS_3x3_Sum(){
+      // Choose a target sum S and construct equations so sum is S
+      const S = sample([6,9,12]);
+      // Build random system whose row-sum adds to 1·x + 1·y + 1·z each time
+      const sys = [
+        {a:1,b:1,c:1, d:S},
+        {a:2,b:-1,c:1, d:ri(3,10)},
+        {a:3,b:1,c:-1, d:ri(3,10)}
+      ];
+      // Solve fully to be safe, but we only ask x+y+z
+      // Use elimination to get x+y+z from the first equation directly:
+      return { q:`Solve $\\begin{cases}x+y+z=${S},\\\\${sys[1].a}x${fmtSignedInt(sys[1].b)}y${fmtSignedInt(sys[1].c)}z=${sys[1].d},\\\\${sys[2].a}x${fmtSignedInt(sys[2].b)}y${fmtSignedInt(sys[2].c)}z=${sys[2].d}\\end{cases}$ and enter $x+y+z$.`, answer:`$${S}$` };
+    }
+    
+    // NR8: Tickets (bigger numbers) — adult count
+    function genNR_SYS_Tickets2(){
+      const total=230, revenue=4750, aPrice=25, sPrice=15;
+      const a = Math.round((revenue - sPrice*total)/(aPrice - sPrice)); // 130
+      return { q:`A concert sold ${total} tickets for $\\$${revenue}$. Adult $\\$${aPrice}$, student $\\$${sPrice}$. Enter adult tickets.`, answer:`$${a}$` };
+    }
+    
+    // NR9: Fractional coefficients; ask 7(x+y)
+    function genNR_SYS_7Sum(){
+      // Solve integers first, then present as fractions
+      const A=8,B=-3,C=12, D=2,E=1,F=14;          // from the example
+      const sol = solve2(A,B,C, D,E,F);
+      const sum = addFrac( {n:7*sol.x.n, d:sol.x.d}, {n:7*sol.y.n, d:sol.y.d} );
+      const q1 = `$\\tfrac{2}{3}x-\\tfrac{1}{4}y=1$`;
+      const q2 = `$x+\\tfrac{1}{2}y=7$`;
+      return { q:`Solve ${q1}, ${q2} and enter $7(x+y)$.`, answer:`$${fmtFrac(sum.n,sum.d)}$` };
+    }
+    
+    // NR10: “m from no solution” — parallel different intercepts; ask m
+    function genNR_SYS_mNoSolution(){
+      // base line y = px + q
+      const p = frac(-2,5), q=4;
+      // ask m so that y = m x + 1 is parallel and distinct → m = slope of base line
+      const m = fmtFrac(p.n,p.d);
+      return { q:`For which $m$ does $\\begin{cases}2x+5y=20,\\\\ y=mx+1\\end{cases}$ have no solution? Enter $m$.`, answer:`$${m}$` };
+    }
+    
+    /* =====================================================
+       C. Written Response (text/derivations)
+       ===================================================== */
+    
+    function genWR_SYS_GraphIntersection(){
+      const m1=frac(1,2), b1=2, m2=frac(-3,2), b2=-1;
+      const {x,y} = solve2(1,-2,4, 3,2,-2);   // from 1/2x - y = -2 etc.
+      const ans = `Intersect by solving $\\tfrac{1}{2}x+2=-\\tfrac{3}{2}x-1\\Rightarrow2x=-3\\Rightarrow x=-\\tfrac{3}{2}$, then $y=\\tfrac{1}{2}(-\\tfrac{3}{2})+2=\\tfrac{5}{4}$.`;
+      return { q:`Graph ${fmtMxPlusB(m1,b1)} and ${fmtMxPlusB(m2,b2)}. Label the intersection and state the solution.`, answer: ans };
+    }
+    
+    function genWR_SYS_ClassifyThree(){
+      const a = `\\begin{cases}3x+2y=8,\\\\6x+4y=16\\end{cases}`;
+      const b = `\\begin{cases}4x-6y=9,\\\\-8x+12y=18\\end{cases}`;
+      const c = `\\begin{cases}5x+2y=7,\\\\10x+4y=15\\end{cases}`;
+      const ans = `(a) infinitely many (same line), (b) none (parallel distinct), (c) one (not proportional).`;
+      return { q:`For each system decide: none / one / infinitely many. Justify. <br>(i) ${a}<br>(ii) ${b}<br>(iii) ${c}`, answer: ans };
+    }
+    
+    function genWR_SYS_Substitution(){
+      const ans = `Substitute $y=\\tfrac{3}{4}x-\\tfrac{5}{2}$ into $2x-y=\\tfrac{7}{2}$. Then $2x-(\\tfrac{3}{4}x-\\tfrac{5}{2})=\\tfrac{7}{2}\\Rightarrow\\tfrac{5}{4}x=1\\Rightarrow x=\\tfrac{4}{5}$, and $y=\\tfrac{3}{4}\\cdot\\tfrac{4}{5}-\\tfrac{5}{2}=-\\tfrac{19}{10}$.`;
+      return { q:`Solve $\\begin{cases}y=\\tfrac{3}{4}x-\\tfrac{5}{2},\\\\2x-y=\\tfrac{7}{2}\\end{cases}$.`, answer: ans };
+    }
+    
+    function genWR_SYS_Elimination(){
+      const ans = `Multiply to align $y$: $\\begin{cases}10x+6y=22,\\\\21x-6y=-3\\end{cases}\\Rightarrow31x=19\\Rightarrow x=\\tfrac{19}{31}$. Then $5x+3y=11\\Rightarrow 3y=11-5\\cdot\\tfrac{19}{31}=\\tfrac{246}{31}\\Rightarrow y=\\tfrac{82}{31}$.`;
+      return { q:`Solve $\\begin{cases}5x+3y=11,\\\\7x-2y=-1\\end{cases}$ by elimination.`, answer: ans };
+    }
+    
+    function genWR_SYS_ClearDenominators(){
+      const ans = `Clear denominators by $10$: $\\begin{cases}3x+2y=29,\\\\12x-y=14\\end{cases}$. Then $y=12x-14$. Substitute: $3x+2(12x-14)=29\\Rightarrow27x=57\\Rightarrow x=\\tfrac{19}{9}$, $y=-\\tfrac{50}{9}$.`;
+      return { q:`Solve $\\begin{cases}0.3x+\\tfrac{1}{5}y=\\tfrac{29}{10},\\\\1.2x-0.1y=\\tfrac{7}{5}\\end{cases}$ by clearing denominators.`, answer: ans };
+    }
+    
+    function genWR_SYS_Mixture(){
+      const ans = `Let $x$ be litres of 40% and $y$ of 10%. $x+y=30$, $0.40x+0.10y=7.5$. Solving gives $x=15$, $y=15$.`;
+      return { q:`A $40\\%$ saline solution is mixed with a $10\\%$ solution to make $25\\%$ solution. How many litres of each for $30$ L?`, answer: ans };
+    }
+    
+    function genWR_SYS_Rates(){
+      const ans = `Let slower speed $v$ and faster $v+4$. They approach: $3v+3(v+4)=90\\Rightarrow v=11$, $v+4=15$ km/h.`;
+      return { q:`Two cyclists start $90$ km apart and ride toward each other. One rides $4$ km/h faster. They meet in $3$ h. Find both speeds.`, answer: ans };
+    }
+    
+    function genWR_SYS_ParameterAnalysis(){
+      const ans = `Compare $\\dfrac{k-1}{3}$ with $\\dfrac{2}{6}=\\tfrac13$. At $k=2$ coefficients are proportional and constants match $\\Rightarrow$ infinitely many. For $k\\ne2$ the coefficients differ $\\Rightarrow$ one solution. “None” does not occur.`;
+      return { q:`For $\\begin{cases}(k-1)x+2y=8,\\\\3x+6y=24\\end{cases}$ determine $k$ for: (i) one solution, (ii) none, (iii) infinitely many.`, answer: ans };
+    }
+    
+    function genWR_SYS_3Var(){
+      return { q:`Solve $\\begin{cases}x+2y-z=4,\\\\2x-y+3z=9,\\\\-x+y+2z=1\\end{cases}$.`, answer:`One solution $(x,y,z)=(2,1,2)$ (by Gaussian elimination).` };
+    }
+    
+    function genWR_SYS_PointSlopeIntersect(){
+      return { q:`Solve the intersection of $y-5=3(x+1)$ and $y+2=-2(x-4)$.`, answer:`$y=3x+8$ and $y=-2x+6\\Rightarrow 5x=-2\\Rightarrow x=-\\tfrac{2}{5}$, $y=\\tfrac{34}{5}$.` };
+    }
+    
+    function genWR_SYS_CreateInfinite(){
+      return { q:`Write a nontrivial system with \\emph{infinitely many} solutions and explain.`, answer:`Example: $2x+3y=7$ and $4x+6y=14$. The second is $2\\times$ the first, so they are the same line.` };
+    }
+    
+    function genWR_SYS_BreakEven(){
+      return { q:`A company’s costs are $C=1200+8q$ and revenue $R=15q$. Find the break-even quantity and interpret.`, answer:`$15q=1200+8q\\Rightarrow q=\\tfrac{1200}{7}\\approx171.43$. At this $q$, costs equal revenue (the intersection).` };
+    }
+    
+    /* =====================================================
+       D. Enrichment
+       ===================================================== */
+    
+    function genEN_SYS_CramersSolve(){
+      const ans = `\\(\\Delta=\\begin{vmatrix}2&-3\\\\-1&4\\end{vmatrix}=8-3=5\\), \
+    \\(\\Delta_x=\\begin{vmatrix}5&-3\\\\6&4\\end{vmatrix}=38\\), \
+    \\(\\Delta_y=\\begin{vmatrix}2&5\\\\-1&6\\end{vmatrix}=17\\). So $(x,y)=(\\tfrac{38}{5},\\tfrac{17}{5})$.`;
+      return { q:`Solve $\\begin{cases}2x-3y=5,\\\\-x+4y=6\\end{cases}$ using determinants.`, answer: ans };
+    }
+    function genEN_SYS_ParametricConditions(){
+      const ans = `Let $\\Delta=ae-bd$. If $\\Delta\\neq0$: unique solution. If $\\Delta=0$ and $\\tfrac{a}{d}=\\tfrac{b}{e}=\\tfrac{c}{f}$ (all defined): infinitely many. If $\\Delta=0$ but $\\tfrac{a}{d}=\\tfrac{b}{e}\\ne\\tfrac{c}{f}$: none.`;
+      return { q:`For $\\begin{cases}ax+by=c,\\\\dx+ey=f\\end{cases}$, state conditions for one / none / infinitely many solutions.`, answer: ans };
+    }
+    function genEN_SYS_IntegerSolutions(){
+      const ans = `One solution to $3x+5y=1$ is $(2,-1)$. General integer solution: $x=2+5t,\\ y=-1-3t,\\ t\\in\\mathbb Z$.`;
+      return { q:`Find all integer solutions to $3x+5y=1$.`, answer: ans };
+    }
+    function genEN_SYS_ThreeVariables(){
+      return { q:`Solve $\\begin{cases}x+y+z=9,\\\\2x-y+z=8,\\\\3x+2y-z=7\\end{cases}$.`, answer:`$(x,y,z)=(2,1,6)$ (by Gaussian elimination).` };
+    }
+    function genEN_SYS_Sensitivity(){
+      return { q:`For $\\begin{cases}2x+3y=7,\\\\2x+3y=7+t\\end{cases}$ find the solution set as a function of $t$ and explain.`, answer:`If $t=0$: infinitely many (same line). If $t\\ne0$: none (parallel, distinct constants).` };
+    }
+    function genEN_SYS_Families(){
+      const ans = `Solve $y=mx+1$ with $2x-y=4\\Rightarrow(2-m)x=5\\Rightarrow x=\\tfrac{5}{2-m}$, \
+    $y=\\tfrac{5m}{2-m}+1$. Integers when $2-m\\in\\{\\pm1,\\pm5\\}$.`;
+      return { q:`Line $\\ell_1: y=mx+1$ intersects $\\ell_2: 2x-y=4$ at $(p,q)$. Express $(p,q)$ in terms of $m$ and find all $m$ such that $p,q\\in\\mathbb Z$.`, answer: ans };
+    }
+    function genEN_SYS_DistanceBetweenParallels(){
+      const ans = `Convert to general: $2x-y-3=0$ and $2x-y+5=0$. Distance $=\\dfrac{|5-(-3)|}{\\sqrt{2^2+(-1)^2}}=\\dfrac{8}{\\sqrt{5}}$.`;
+      return { q:`Find the distance between $y=2x+3$ and $y=2x-5$ using $\\dfrac{|C_2-C_1|}{\\sqrt{A^2+B^2}}$.`, answer: ans };
+    }
+    function genEN_SYS_ThreeTypeTickets(){
+      const ans = `Let $(c,s,a)$ be counts. $c+s+a=200$, $6c+9s+12a=1890$, $a=c+30$. Solve: $(c,s,a)=(70,30,100)$.`;
+      return { q:`A theatre sells child ($\\$6$), student ($\\$9$), adult ($\\$12$) tickets. On one night, 200 tickets brought in $\\$1890$ and adult exceeded child by 30. Find $(c,s,a)$.`, answer: ans };
+    }
+    
+
     
 
 
