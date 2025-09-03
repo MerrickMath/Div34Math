@@ -1297,21 +1297,29 @@
   }
   
   function genMCU6_PerpendicularThroughOrigin(){
-    const m = frac(sample([2,3,4]), sample([3,4,5]));
-    const mp = perpSlope(m);
+    const m  = frac(sample([2,3,4]), sample([3,4,5])); // given slope
+    const mp = perpSlope(m);                            // perpendicular slope
+  
+    // draw b ONCE and format it safely (no "+-3", no missing "+")
+    const b = ri(-5, 5);
+    const bStr = (b === 0) ? '' : (b > 0 ? `+${b}` : `${b}`);
+  
+    const prompt = `A line perpendicular to $y=${fmtFrac(m.n,m.d)}x${bStr}$ and through $(0,0)$ is`;
+  
     const choices = [
-      `$y=${fmtFrac(mp.n,mp.d)}x$`,
+      `$y=${fmtFrac(mp.n,mp.d)}x$`,      // correct: through origin
       `$y=${fmtFrac(-mp.n,mp.d)}x$`,
       `$y=${fmtFrac(m.n,m.d)}x$`,
       `$y=${fmtFrac(-m.n,m.d)}x$`
     ];
     const order = choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
     return {
-      q:`A line perpendicular to $y=${fmtFrac(m.n,m.d)}x${ri(-5,5)>=0?'+':''}${ri(-5,5)}$ and through $(0,0)$ is`,
+      q: prompt,
       choices: order.map(i=>choices[i]),
       answerIndex: order.indexOf(0)
     };
   }
+
   
   // ===================== B. Numeric Response =====================
   function genNRU6_DistanceHalfInt(){
