@@ -666,7 +666,7 @@
       const rat3 = `$${ri(1,9)}.${ri(10,99)}$`;
       const choices = [irr, rat1, rat2, rat3];
       const order = choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
-      return { q:'Which number is \\emph{irrational}?', choices: order.map(i=>choices[i]), answerIndex: order.indexOf(0) };
+      return { q:'Which number is <b>irrational</b>?', choices: order.map(i=>choices[i]), answerIndex: order.indexOf(0) };
     }
 
 
