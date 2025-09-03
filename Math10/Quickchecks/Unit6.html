@@ -2717,7 +2717,7 @@
     /** Convenience: sanitize all math-bearing strings inside a generated object */
     function sanitizeGenerated(obj){
       if (!obj || typeof obj !== 'object') return obj;
-      const out = { ...obj };
+      const out = { ...obj };             // <-- fixed
       if (typeof out.q === 'string') out.q = cleanSigns(out.q);
       if (typeof out.answer === 'string') out.answer = cleanSigns(out.answer);
       if (Array.isArray(out.choices)) out.choices = out.choices.map(cleanSigns);
@@ -2725,6 +2725,7 @@
       if (typeof out.title === 'string') out.title = cleanSigns(out.title);
       return out;
     }
+
     
     /* ===================== USE THE SANITIZER DURING RENDER ===================== */
     /* In your renderQuiz() where you call item.gen(), sanitize its outputs before
