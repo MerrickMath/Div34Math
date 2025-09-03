@@ -1716,7 +1716,7 @@
       const dec3 = `$\\begin{cases} x+y=${ri(4,10)},\\\\ x-y=${ri(1,7)}\\end{cases}$`;
       const choices=[correct, dec1, dec2, dec3];
       const order=choices.map((_,i)=>i).sort(()=>Math.random()-0.5);
-      return { q:`Which system has \\emph{infinitely many} solutions?`, choices: order.map(i=>choices[i]), answerIndex: order.indexOf(0) };
+      return { q:`Which system has \emph{infinitely many} solutions?`, choices: order.map(i=>choices[i]), answerIndex: order.indexOf(0) };
     }
     
     // 11) “Solution must satisfy both”
