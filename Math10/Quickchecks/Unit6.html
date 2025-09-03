@@ -2823,7 +2823,7 @@
         `$${fmtFrac(Math.abs(dy),Math.abs(dx))}$`  // lost sign
       ];
       const q = `The slope of the line through $(${x1},${y1})$ and $(${x2},${y2})$ is`;
-      const choices=[correct,...wrongs].sort(()=>Math.random()-0.5);
+      const choices = [correct, ...wrongs].sort(() => Math.random() - 0.5);
       return { q, choices, answerIndex: choices.indexOf(correct) };
     }
     
