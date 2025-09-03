@@ -1853,12 +1853,19 @@
     }
     
     function genWR_SYS_ClassifyThree(){
-      const a = `\\begin{cases}3x+2y=8,\\\\6x+4y=16\\end{cases}`;
-      const b = `\\begin{cases}4x-6y=9,\\\\-8x+12y=18\\end{cases}`;
-      const c = `\\begin{cases}5x+2y=7,\\\\10x+4y=15\\end{cases}`;
-      const ans = `(a) infinitely many (same line), (b) none (parallel distinct), (c) one (not proportional).`;
-      return { q:`For each system decide: none / one / infinitely many. Justify. <br>(i) ${a}<br>(ii) ${b}<br>(iii) ${c}`, answer: ans };
+      const a = '\\begin{cases}3x+2y=8\\\\6x+4y=16\\end{cases}';
+      const b = '\\begin{cases}4x-6y=9\\\\-8x+12y=18\\end{cases}';
+      const c = '\\begin{cases}5x+2y=7\\\\10x+4y=15\\end{cases}';
+      const q =
+        'For each system decide: none / one / infinitely many. Justify using slopes or algebra.' +
+        `<br>(i) $$${a}$$` +
+        `<br>(ii) $$${b}$$` +
+        `<br>(iii) $$${c}$$`;
+    
+      const ans = '(a) infinitely many (same line), (b) none (parallel distinct), (c) one (not proportional).';
+      return { q, answer: ans };
     }
+
     
     function genWR_SYS_Substitution(){
       const ans = `Substitute $y=\\tfrac{3}{4}x-\\tfrac{5}{2}$ into $2x-y=\\tfrac{7}{2}$. Then $2x-(\\tfrac{3}{4}x-\\tfrac{5}{2})=\\tfrac{7}{2}\\Rightarrow\\tfrac{5}{4}x=1\\Rightarrow x=\\tfrac{4}{5}$, and $y=\\tfrac{3}{4}\\cdot\\tfrac{4}{5}-\\tfrac{5}{2}=-\\tfrac{19}{10}$.`;
