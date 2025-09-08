@@ -89,19 +89,6 @@
 
     details .panel{padding:0 14px 12px 14px}
     details .panel > ul{margin-top:.5rem}
-
-    /* Expand/Collapse controls */
-    .controls{display:flex;gap:8px;margin:8px 0 2px}
-    .btn{
-      border:1px solid var(--ring);
-      background:var(--surface-alt);
-      padding:6px 10px;
-      border-radius:10px;
-      color:var(--indigo);
-      font-weight:600;
-      cursor:pointer;
-    }
-    .btn:focus{outline:2px solid var(--ring);outline-offset:2px}
   </style>
 </head>
 <body>
@@ -117,17 +104,10 @@
 
   <main class="container" id="content" role="main">
     <section class="grid" aria-label="Course sections">
-      <!--
-      <article class="card col-12">
-        <p>Welcome to our MATH course page. Here you will find the important dates for homework and tests.</p>
-      </article>
-      --> 
-
       <article class="card col-12" aria-labelledby="h-homework">
         <h2 id="h-homework">Homework</h2>
         <ul>
           <li><strong>September 3-11:</strong> <em>Complete all chapter 1 lessons (1-8) from Math 10 books.</em></li>
-          <!--- <li><strong>September 11-16:</strong> <em>Finish supplumentary handouts. Ensure you're comfortable with unit 1 quickcheck.</em></li> --->
         </ul>
       </article>
 
@@ -135,23 +115,11 @@
         <h2 id="h-dates">Important Dates</h2>
         <ul>
           <li><strong>Unit Test 1 (Number):</strong> <em>September 17</em></li>
-          <!--- <li><strong>Unit Test 2:</strong> <em> </em></li>
-          <li><strong>Unit Test 3:</strong> <em> </em></li>
-          <li><strong>Unit Test 4:</strong> <em> </em></li>
-          <li><strong>Unit Test 5:</strong> <em> </em></li>
-          <li><strong>Unit Test 6:</strong> <em> </em></li>
-          <li><strong>Unit Test 7:</strong> <em> </em></li>
-          <li><strong>Unit Test 8:</strong> <em> </em></li>
-          <li><strong>Unit Test 9:</strong> <em> </em></li> ---> 
         </ul>
       </article>
 
       <article class="card col-12" aria-labelledby="h-materials" id="materials">
         <h2>In-Class Materials</h2>
-        <div class="controls" aria-label="Unit controls">
-          <button class="btn" id="expandAll" type="button">Expand all</button>
-          <button class="btn" id="collapseAll" type="button">Collapse all</button>
-        </div>
         <div class="accordion" role="list">
           <details>
             <summary><strong>General</strong></summary>
@@ -177,20 +145,9 @@
             </div>
           </details>
 
-          <!-- Template for future units: duplicate and update the title/links
-          <details>
-            <summary><strong>Unit 2: TITLE</strong></summary>
-            <div class="panel">
-              <ul>
-                <li><a href="#">Worksheet</a></li>
-                <li><a href="#">Worksheet (Solutions)</a></li>
-                <li><a href="#">Extra Practice</a></li>
-              </ul>
-            </div>
-          </details> -->
+          <!-- Template for future units -->
         </div>
       </article>
-
 
       <article class="card col-12" aria-labelledby="h-resources">
         <h2 id="h-resources">Class Resources</h2>
@@ -228,22 +185,10 @@
       el.textContent = d.toLocaleDateString(undefined, opts);
     })();
 
-    // Expand/Collapse all controls for unit materials
+    // Keyboard support for accordion
     (function(){
       const scope = document.getElementById('materials');
       if(!scope) return;
-      const allDetails = () => Array.from(scope.querySelectorAll('details'));
-      const expandAllBtn = document.getElementById('expandAll');
-      const collapseAllBtn = document.getElementById('collapseAll');
-
-      expandAllBtn?.addEventListener('click', ()=>{
-        allDetails().forEach(d => d.open = true);
-      });
-      collapseAllBtn?.addEventListener('click', ()=>{
-        allDetails().forEach(d => d.open = false);
-      });
-
-      // Allow right/left arrows on summary to open/close for keyboard users
       scope.addEventListener('keydown', (e)=>{
         if(e.target.tagName.toLowerCase() === 'summary'){
           const parent = e.target.parentElement;
