@@ -161,27 +161,72 @@
   </main>
 
   <script>
-    // Render a friendly "Last updated" date (local)
-    (function(){
-      const el = document.querySelector('#last-updated span');
-      if(!el) return;
-      const d = new Date();
-      const opts = { month: 'short', day: '2-digit', year: 'numeric' };
-      el.textContent = d.toLocaleDateString(undefined, opts);
-    })();
+/* Last updated = date of the last GitHub commit that touched this page */
+(async function () {
+  const target = document.querySelector('#last-updated span');
+  if (!target) return;
 
-    // Keyboard support for accordion
-    (function(){
-      const scope = document.getElementById('materials');
-      if(!scope) return;
-      scope.addEventListener('keydown', (e)=>{
-        if(e.target.tagName.toLowerCase() === 'summary'){
-          const parent = e.target.parentElement;
-          if(e.key === 'ArrowRight') parent.open = true;
-          if(e.key === 'ArrowLeft') parent.open = false;
-        }
-      });
-    })();
-  </script>
+  /* EDIT THESE for your repo */
+  const OWNER  = 'merrickmath';   // GitHub username or org
+  const REPO   = 'Div34Math';     // Repository name
+  const BRANCH = '';              // e.g. 'gh-pages' if your site builds from that branch ('' = default)
+  const siteBase = '/Div34Math/'; // If your site lives at https://<user>.github.io/Div34Math/, keep this.
+                                  // If your site is at the root (https://<user>.github.io/), set to ''.
+
+  // Compute the source file path within the repo for the current URL
+  let path = window.location.pathname;
+  if (siteBase && path.startsWith(siteBase)) path = path.slice(siteBase.length);
+  path = path.replace(/^\/+/, '');
+  if (!path || path.endsWith('/')) path += 'index.html';
+
+  const commitURL = (filePath) => {
+    const u = new URL(`https://api.github.com/repos/${OWNER}/${REPO}/commits`);
+    u.searchParams.set('path', filePath);
+    u.searchParams.set('per_page', '1');
+    if (BRANCH) u.searchParams.set('sha', BRANCH);
+    return u.toString();
+  };
+
+  const fmt = (iso) => {
+    const d = new Date(iso);
+    const opts = { month: 'short', day: '2-digit', year: 'numeric' };
+    return { short: d.toLocaleDateString(undefined, opts), full: d.toLocaleString() };
+  };
+
+  try {
+    // Try: last commit that touched this file
+    let res = await fetch(commitURL(path), { headers: { 'Accept': 'application/vnd.github+json' } });
+    if (!res.ok) throw new Error('GitHub API error');
+    const commits = await res.json();
+
+    let iso =
+      commits?.[0]?.commit?.committer?.date ||
+      commits?.[0]?.commit?.author?.date;
+
+    // Fallback: repo last pushed_at (not file-specific, but better than "today")
+    if (!iso) {
+      const repoRes = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}`);
+      if (repoRes.ok) {
+        const repo = await repoRes.json();
+        iso = repo?.pushed_at || null;
+      }
+    }
+
+    // Final fallback: server-provided modified time of this document
+    if (!iso) iso = document.lastModified;
+
+    const { short, full } = fmt(iso);
+    target.textContent = short;
+    target.title = `Last update source time: ${full}`;
+  } catch (err) {
+    // On error, still show something useful
+    const { short, full } = fmt(document.lastModified);
+    target.textContent = short;
+    target.title = `Fallback from document.lastModified (${full})`;
+  }
+})();
+</script>
+
 </body>
 </html>
+
